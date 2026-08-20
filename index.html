@@ -126,6 +126,175 @@
             transform: translateX(-50%) translateY(0)
         }
 
+        #alienEventOverlay {
+            position: absolute;
+            inset: 0;
+            z-index: 34;
+            pointer-events: none;
+            opacity: 0;
+            background:
+                repeating-linear-gradient(0deg, rgba(216, 180, 254, .035) 0, rgba(216, 180, 254, .035) 1px,
+                    transparent 1px, transparent 5px),
+                radial-gradient(circle at 50% 18%, rgba(168, 85, 247, .20), transparent 47%),
+                linear-gradient(180deg, rgba(49, 11, 91, .16), rgba(88, 28, 135, .05));
+            box-shadow: inset 0 0 95px rgba(76, 29, 149, .40);
+            transition: opacity .16s linear
+        }
+
+        #alienEventOverlay.jammed {
+            animation: alienOverlayGlitch .15s steps(2, end) infinite;
+            background:
+                repeating-linear-gradient(0deg, rgba(134, 239, 172, .09) 0, rgba(134, 239, 172, .09) 2px,
+                    transparent 2px, transparent 7px),
+                radial-gradient(circle at 50% 24%, rgba(74, 222, 128, .24), rgba(126, 34, 206, .13) 45%, transparent 72%)
+        }
+
+        #alienEventBanner {
+            position: absolute;
+            top: 120px;
+            left: 50%;
+            z-index: 65;
+            pointer-events: none;
+            min-width: min(390px, 86vw);
+            padding: 10px 24px;
+            border: 1px solid rgba(216, 180, 254, .55);
+            border-radius: 18px;
+            color: #fff;
+            text-align: center;
+            font-family: 'Baloo 2', cursive;
+            background: linear-gradient(135deg, rgba(46, 16, 101, .90), rgba(88, 28, 135, .86));
+            box-shadow: 0 0 30px rgba(168, 85, 247, .48), inset 0 0 20px rgba(255, 255, 255, .06);
+            backdrop-filter: blur(9px);
+            opacity: 0;
+            transform: translateX(-50%) translateY(-12px) scale(.96);
+            transition: opacity .28s, transform .28s
+        }
+
+        #alienEventBanner.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0) scale(1)
+        }
+
+        #alienEventBanner strong {
+            display: block;
+            color: #d8b4fe;
+            font-size: 1rem;
+            letter-spacing: .08em;
+            text-shadow: 0 0 12px rgba(192, 132, 252, .85)
+        }
+
+        #alienEventStatus {
+            display: block;
+            margin-top: 1px;
+            color: #f5f3ff;
+            font-size: .78rem;
+            font-weight: 800
+        }
+
+        #alienIndicator {
+            display: none;
+            align-items: center;
+            gap: .4rem;
+            padding: .38rem .75rem;
+            border: 1px solid rgba(216, 180, 254, .42);
+            border-radius: .75rem;
+            color: #fff;
+            font-size: .72rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, rgba(109, 40, 217, .92), rgba(76, 29, 149, .92));
+            box-shadow: 0 0 18px rgba(168, 85, 247, .35);
+            backdrop-filter: blur(5px)
+        }
+
+        #volcanoEventBanner {
+            position: absolute;
+            top: 120px;
+            left: 50%;
+            z-index: 65;
+            pointer-events: none;
+            min-width: min(410px, 88vw);
+            padding: 10px 24px;
+            border: 1px solid rgba(253, 186, 116, .72);
+            border-radius: 18px;
+            color: #fff;
+            text-align: center;
+            font-family: 'Baloo 2', cursive;
+            background: linear-gradient(135deg, rgba(124, 45, 18, .94), rgba(69, 10, 10, .91));
+            box-shadow: 0 0 34px rgba(249, 115, 22, .52), inset 0 0 20px rgba(255, 237, 213, .08);
+            backdrop-filter: blur(9px);
+            opacity: 0;
+            transform: translateX(-50%) translateY(-12px) scale(.96);
+            transition: opacity .28s, transform .28s
+        }
+
+        #volcanoEventBanner.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0) scale(1)
+        }
+
+        #volcanoEventBanner strong {
+            display: block;
+            color: #fdba74;
+            font-size: 1rem;
+            letter-spacing: .08em;
+            text-shadow: 0 0 12px rgba(251, 146, 60, .9)
+        }
+
+        #volcanoEventStatus {
+            display: block;
+            margin-top: 1px;
+            color: #fff7ed;
+            font-size: .78rem;
+            font-weight: 800
+        }
+
+        #volcanoIndicator {
+            display: none;
+            align-items: center;
+            gap: .4rem;
+            padding: .38rem .75rem;
+            border: 1px solid rgba(253, 186, 116, .5);
+            border-radius: .75rem;
+            color: #fff;
+            font-size: .72rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, rgba(194, 65, 12, .94), rgba(127, 29, 29, .94));
+            box-shadow: 0 0 18px rgba(249, 115, 22, .42);
+            backdrop-filter: blur(5px)
+        }
+
+        #volcanoImpactFlash {
+            position: absolute;
+            inset: 0;
+            z-index: 36;
+            pointer-events: none;
+            opacity: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 237, 213, .42), rgba(249, 115, 22, .26) 36%, rgba(127, 29, 29, .08) 72%);
+            box-shadow: inset 0 0 90px rgba(239, 68, 68, .55);
+            transition: opacity .14s
+        }
+
+        #volcanoImpactFlash.show {
+            opacity: 1
+        }
+
+        #gameHUD.alien-jammed {
+            animation: alienHudGlitch .10s steps(2, end) infinite;
+            filter: hue-rotate(42deg) saturate(1.55) contrast(1.12)
+        }
+
+        @keyframes alienOverlayGlitch {
+            0%, 100% { transform: translate(0, 0); filter: brightness(1) }
+            33% { transform: translate(2px, -1px); filter: brightness(1.2) }
+            66% { transform: translate(-2px, 1px); filter: brightness(.88) }
+        }
+
+        @keyframes alienHudGlitch {
+            0%, 100% { transform: translateX(0) }
+            35% { transform: translate(3px, -1px) }
+            70% { transform: translate(-3px, 1px) }
+        }
+
         #loadingOverlay {
             position: absolute;
             inset: 0;
@@ -382,6 +551,228 @@
         #lobbyLogo img {
             width: 100%;
             height: auto
+        }
+
+        .pilot-rank-card {
+            --rank-color: #94a3b8;
+            position: absolute;
+            top: 14px;
+            left: 50%;
+            z-index: 4;
+            width: 278px;
+            min-height: 82px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 13px;
+            transform: translateX(-50%);
+            border: 1px solid color-mix(in srgb, var(--rank-color) 62%, transparent);
+            border-radius: 22px;
+            background: linear-gradient(145deg, rgba(15, 23, 42, .91), rgba(30, 41, 59, .78));
+            box-shadow: 0 12px 34px rgba(0, 0, 0, .36), 0 0 24px color-mix(in srgb, var(--rank-color) 20%, transparent);
+            backdrop-filter: blur(10px);
+            color: #fff;
+            font-family: 'Baloo 2', cursive;
+            cursor: pointer;
+            border-style: solid;
+            text-align: left;
+            transition: transform .16s, box-shadow .16s
+        }
+
+        .pilot-rank-card:hover {
+            transform: translateX(-50%) translateY(-2px);
+            box-shadow: 0 15px 38px rgba(0, 0, 0, .42), 0 0 30px color-mix(in srgb, var(--rank-color) 30%, transparent)
+        }
+
+        .pilot-rank-card:active {
+            transform: translateX(-50%) scale(.97)
+        }
+
+        .pilot-rank-badge {
+            width: 56px;
+            height: 56px;
+            flex: 0 0 56px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            color: #fff;
+            font-size: 1.55rem;
+            font-weight: 900;
+            border: 2px solid color-mix(in srgb, var(--rank-color) 76%, white 24%);
+            background: radial-gradient(circle at 34% 28%, color-mix(in srgb, var(--rank-color) 78%, white 22%), color-mix(in srgb, var(--rank-color) 58%, #0f172a 42%) 56%, #0f172a 100%);
+            box-shadow: inset 0 0 0 4px rgba(15, 23, 42, .55), 0 0 16px color-mix(in srgb, var(--rank-color) 38%, transparent)
+        }
+
+        .pilot-rank-info {
+            flex: 1;
+            min-width: 0
+        }
+
+        .pilot-rank-topline,
+        .pilot-rank-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 7px
+        }
+
+        .pilot-rank-topline {
+            color: #cbd5e1;
+            font-size: .58rem;
+            font-weight: 900;
+            letter-spacing: .12em
+        }
+
+        #lobbyRankMetric {
+            color: var(--rank-color);
+            letter-spacing: .03em
+        }
+
+        #lobbyRankName {
+            margin-top: -1px;
+            color: #fff;
+            font-size: 1.28rem;
+            font-weight: 900;
+            line-height: 1.08;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis
+        }
+
+        .pilot-rank-meta {
+            margin-top: 3px;
+            color: #94a3b8;
+            font-size: .6rem;
+            font-weight: 800
+        }
+
+        #lobbyRankNext {
+            color: #e2e8f0;
+            white-space: nowrap
+        }
+
+        .pilot-rank-track {
+            height: 5px;
+            margin-top: 5px;
+            overflow: hidden;
+            border-radius: 999px;
+            background: rgba(148, 163, 184, .18)
+        }
+
+        .pilot-rank-fill {
+            width: 0;
+            height: 100%;
+            border-radius: inherit;
+            background: linear-gradient(90deg, color-mix(in srgb, var(--rank-color) 65%, white 10%), var(--rank-color));
+            box-shadow: 0 0 10px var(--rank-color);
+            transition: width .65s cubic-bezier(.22, 1, .36, 1)
+        }
+
+        .rank-modal-card {
+            --rank-color: #94a3b8;
+            width: min(430px, 92vw);
+            max-height: 86vh;
+            overflow: hidden;
+            border: 1px solid color-mix(in srgb, var(--rank-color) 56%, transparent);
+            border-radius: 26px;
+            background: linear-gradient(150deg, #0f172a, #172033);
+            box-shadow: 0 25px 80px rgba(0, 0, 0, .68), 0 0 34px color-mix(in srgb, var(--rank-color) 20%, transparent)
+        }
+
+        .rank-ladder {
+            max-height: 44vh;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding-right: 3px
+        }
+
+        .rank-ladder-row {
+            display: grid;
+            grid-template-columns: 34px 1fr auto;
+            align-items: center;
+            gap: 10px;
+            min-height: 42px;
+            padding: 7px 10px;
+            border: 1px solid rgba(148, 163, 184, .12);
+            border-radius: 13px;
+            color: #94a3b8;
+            background: rgba(15, 23, 42, .7)
+        }
+
+        .rank-ladder-row.current {
+            color: #fff;
+            border-color: var(--row-color);
+            background: color-mix(in srgb, var(--row-color) 14%, #0f172a 86%);
+            box-shadow: inset 3px 0 0 var(--row-color)
+        }
+
+        .rank-ladder-row.unlocked {
+            color: #cbd5e1
+        }
+
+        .rank-ladder-icon {
+            display: grid;
+            place-items: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: color-mix(in srgb, var(--row-color) 24%, #0f172a 76%);
+            color: var(--row-color);
+            font-weight: 900
+        }
+
+        .gameover-rank-card {
+            --rank-color: #94a3b8;
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 10px 12px;
+            border: 1px solid color-mix(in srgb, var(--rank-color) 45%, transparent);
+            border-radius: 15px;
+            background: rgba(2, 6, 23, .72);
+            text-align: left
+        }
+
+        #gameOverScreen > div {
+            max-height: 94vh;
+            overflow-y: auto
+        }
+
+        .gameover-rank-card .pilot-rank-badge {
+            width: 44px;
+            height: 44px;
+            flex-basis: 44px;
+            font-size: 1.15rem
+        }
+
+        #rankPromotionText {
+            display: none;
+            margin-top: 3px;
+            color: #fde68a;
+            font-size: .7rem;
+            font-weight: 900
+        }
+
+        @media(max-width:700px) {
+            .pilot-rank-card {
+                top: 104px;
+                width: 236px;
+                min-height: 70px;
+                padding: 8px 10px
+            }
+
+            .pilot-rank-badge {
+                width: 46px;
+                height: 46px;
+                flex-basis: 46px;
+                font-size: 1.25rem
+            }
+
+            #lobbyRankName {
+                font-size: 1.08rem
+            }
         }
 
         .mute-btn-lobby {
@@ -892,6 +1283,15 @@
             <span style="font-size:1.6rem">💰</span><span id="lobbyCoins" style="font-size:1.5rem;font-weight:900;color:#fcd34d">0</span>
             <div id="lobbyMuteBtn" class="mute-btn-lobby">🔊</div>
         </div>
+        <button id="lobbyRankCard" class="pilot-rank-card" onclick="openRankModal()" aria-label="Ver patentes do piloto">
+            <span id="lobbyRankBadge" class="pilot-rank-badge">◇</span>
+            <span class="pilot-rank-info">
+                <span class="pilot-rank-topline"><span id="lobbyRankLabel">PATENTE DO PILOTO</span><span id="lobbyRankMetric">CALIBRAÇÃO</span></span>
+                <span id="lobbyRankName">Cadete</span>
+                <span class="pilot-rank-meta"><span id="lobbyRankSubtitle">0/3 voos avaliados</span><span id="lobbyRankNext">abrir detalhes ›</span></span>
+                <span class="pilot-rank-track"><span id="lobbyRankProgress" class="pilot-rank-fill"></span></span>
+            </span>
+        </button>
         <button onclick="openShop()" class="absolute text-white flex flex-col items-center gap-1 active:scale-95 transition-all" style="left:6px;top:50%;transform:translateY(-50%);z-index:2;background:transparent;border:none;cursor:pointer">
             <div style="background:rgba(15,23,42,.7);backdrop-filter:blur(8px);border-radius:1rem;width:56px;height:56px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.12);margin-bottom:4px"><span style="font-size:1.55rem">✈️</span></div>
             <span style="font-size:.8rem;font-weight:800;text-shadow:0 1px 4px #000" id="shopLabel">Loja</span>
@@ -919,6 +1319,18 @@
                 <h2 class="text-xl font-black text-amber-400 text-center mb-4">🏆 Histórico Pessoal</h2>
                 <div id="rankingList" class="flex flex-col gap-2 max-h-60 overflow-auto"></div>
                 <button onclick="document.getElementById('rankingModal').classList.add('hidden')" class="mt-4 w-full py-2 bg-amber-500 rounded-xl font-black">Fechar</button>
+            </div>
+        </div>
+        <div id="rankModal" class="hidden absolute inset-0 flex items-center justify-center z-20 bg-black/70 backdrop-blur-sm px-3">
+            <div id="rankModalCard" class="rank-modal-card text-white p-5">
+                <div class="flex items-center gap-3 mb-3">
+                    <div id="rankModalBadge" class="pilot-rank-badge">◇</div>
+                    <div class="min-w-0 flex-1"><div id="rankModalEyebrow" class="text-[10px] font-black tracking-[.15em] text-slate-400">SUA PATENTE</div><div id="rankModalName" class="text-2xl font-black leading-none">Cadete</div><div id="rankModalIndex" class="text-xs font-extrabold text-slate-400 mt-1">Calibração 0/3</div></div>
+                    <button onclick="closeRankModal()" class="w-9 h-9 rounded-xl bg-white/10 text-slate-300 font-black" aria-label="Fechar">✕</button>
+                </div>
+                <div id="rankRuleText" class="rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-xs font-bold text-slate-300 mb-3">A melhor média de 3 partidas define a sua patente. Ela nunca diminui.</div>
+                <div id="rankLadder" class="rank-ladder"></div>
+                <button id="rankModalCloseBtn" onclick="closeRankModal()" class="mt-4 w-full py-2.5 rounded-xl bg-amber-500 text-slate-950 font-black">Entendi</button>
             </div>
         </div>
     </div>
@@ -1005,12 +1417,18 @@
         <div class="absolute top-20 left-3 flex flex-col gap-1.5 pointer-events-none">
             <div id="shieldIndicator" style="display:none" class="bg-red-600/88 text-white font-extrabold text-xs px-3 py-1.5 rounded-xl border border-red-300/30 backdrop-blur-sm flex items-center gap-1.5"><span>🛡️</span><span id="shieldTimerText">20s</span></div>
             <div id="fuelLockIndicator" style="display:none" class="bg-blue-600/88 text-white font-extrabold text-xs px-3 py-1.5 rounded-xl border border-blue-300/30 backdrop-blur-sm flex items-center gap-1.5"><span>⛽</span><span id="fuelLockTimerText">20s</span></div>
+            <div id="alienIndicator"><span>🛸</span><span id="alienTimerText">INTERFERÊNCIA 20s</span></div>
+            <div id="volcanoIndicator"><span>🌋</span><span id="volcanoTimerText">VULCÃO À FRENTE</span></div>
         </div>
         <div id="mobileControls" class="pointer-events-auto flex justify-between items-end w-full px-2 pb-2">
             <div class="flex gap-3"><button id="btnLeft" class="dpad-btn">←</button><button id="btnRight" class="dpad-btn">→</button></div>
             <div class="flex flex-col gap-3"><button id="btnUp" class="dpad-btn">↑</button><button id="btnDown" class="dpad-btn">↓</button></div>
         </div>
     </div>
+    <div id="alienEventOverlay"></div>
+    <div id="alienEventBanner"><strong id="alienEventTitle">🛸 INTERFERÊNCIA ALIENÍGENA</strong><span id="alienEventStatus">Sinal desconhecido detectado</span></div>
+    <div id="volcanoImpactFlash"></div>
+    <div id="volcanoEventBanner"><strong id="volcanoEventTitle">🌋 ERUPÇÃO VULCÂNICA</strong><span id="volcanoEventStatus">Obstáculo no centro — passe pelas laterais</span></div>
     <div id="nearMissFeedback">⚡ QUASE! +250 pts</div>
     <div id="actionFeedback">+</div>
     <div id="biomeBanner"></div>
@@ -1032,6 +1450,10 @@
                 <div><span class="text-xs text-slate-400 font-extrabold block" id="finalRingsLabel">ANÉIS</span><span id="finalRings" class="text-3xl font-black text-emerald-400">0</span></div>
             </div>
             <div class="bg-amber-950/60 p-3 rounded-xl border border-amber-700/40 text-center"><span class="text-xs text-amber-400 font-extrabold block" id="coinsEarnedLabel">MOEDAS GANHAS</span><span id="coinsEarned" class="text-2xl font-black text-amber-300">+0 moedas</span><span class="text-[10px] text-slate-500 block mt-0.5">Total: <span id="totalCoins">0</span> moedas</span></div>
+            <div id="gameOverRankCard" class="gameover-rank-card">
+                <div id="gameOverRankBadge" class="pilot-rank-badge">◇</div>
+                <div class="flex-1 min-w-0"><div id="gameOverRankLabel" class="text-[9px] font-black tracking-[.12em] text-slate-400">PATENTE</div><div class="flex justify-between items-end gap-2"><span id="gameOverRankName" class="text-lg font-black leading-tight">Cadete</span><span id="gameOverRankIndex" class="text-[10px] font-extrabold text-slate-400">0/3 voos</span></div><div class="pilot-rank-track"><div id="gameOverRankProgress" class="pilot-rank-fill"></div></div><div id="rankPromotionText">PROMOÇÃO!</div></div>
+            </div>
             <button id="reviveBtn" onclick="reviveAfterAd()">📺 Reviver (Ver Anúncio)</button>
             <div class="flex gap-3"><button id="btnBackLobby" class="flex-1 py-3 bg-slate-700 text-white font-extrabold text-base rounded-2xl shadow active:scale-95 transition-all">🏠 Lobby</button><button id="btnRestart" class="flex-1 py-3 bg-gradient-to-r from-red-500 to-orange-500 text-white font-extrabold text-base rounded-2xl shadow active:scale-95 transition-all">▶ Jogar</button></div>
         </div>
@@ -1079,6 +1501,170 @@
             } catch (e) { console.warn('Erro submit score:', e) }
         }
 
+        // ==================== PATENTES DO PILOTO ====================
+        // A patente usa a melhor média de três partidas consecutivas. Assim, uma partida
+        // excepcional ajuda, mas a progressão continua premiando consistência. A melhor
+        // patente alcançada fica salva e nunca regride.
+        const PILOT_RANKS = [
+            { id: 'cadet', pt: 'Cadete', en: 'Cadet', min: 0, icon: '◇', color: '#94a3b8' },
+            { id: 'aspirant', pt: 'Aspirante', en: 'Aspirant', min: 7000, icon: '◆', color: '#34d399' },
+            { id: 'lieutenant', pt: 'Tenente', en: 'Lieutenant', min: 16000, icon: '◆◆', color: '#60a5fa' },
+            { id: 'captain', pt: 'Capitão', en: 'Captain', min: 28000, icon: '✦', color: '#a78bfa' },
+            { id: 'major', pt: 'Major', en: 'Major', min: 44000, icon: '✦✦', color: '#fbbf24' },
+            { id: 'colonel', pt: 'Coronel', en: 'Colonel', min: 64000, icon: '★', color: '#fb923c' },
+            { id: 'brigadier', pt: 'Brigadeiro', en: 'Brigadier', min: 90000, icon: '★★', color: '#fb7185' },
+            { id: 'marshal', pt: 'Marechal do Ar', en: 'Air Marshal', min: 125000, icon: '♛', color: '#fde047' }
+        ];
+        let lastRankUpdate = null;
+
+        function cleanRankScores(scores) {
+            return (Array.isArray(scores) ? scores : []).map(Number).filter(Number.isFinite).map(v => Math.max(0,
+                Math.floor(v))).slice(0, 10)
+        }
+
+        function bestThreeRunAverage(scores) {
+            const clean = cleanRankScores(scores);
+            if (clean.length < 3) return 0;
+            let best = 0;
+            for (let i = 0; i <= clean.length - 3; i++) best = Math.max(best, Math.round((clean[i] + clean[i + 1] +
+                clean[i + 2]) / 3));
+            return best
+        }
+
+        function getPilotRank(index) {
+            const value = Math.max(0, Number(index) || 0);
+            let result = PILOT_RANKS[0];
+            for (const rank of PILOT_RANKS) {
+                if (value >= rank.min) result = rank;
+                else break
+            }
+            return result
+        }
+
+        function getPilotRankName(rank) {
+            return currentLanguage === 'en' ? rank.en : rank.pt
+        }
+
+        function formatRankPoints(value) {
+            return Math.max(0, Math.round(Number(value) || 0)).toLocaleString(currentLanguage === 'en' ? 'en-US' :
+                'pt-BR')
+        }
+
+        function getRankView(save) {
+            const scores = cleanRankScores(save?.rankScores),
+                index = Math.max(0, Number(save?.rankIndex) || 0),
+                calibrated = scores.length >= 3 || index > 0,
+                current = calibrated ? getPilotRank(index) : PILOT_RANKS[0],
+                currentPosition = PILOT_RANKS.findIndex(rank => rank.id === current.id),
+                next = PILOT_RANKS[currentPosition + 1] || null;
+            let progress;
+            if (!calibrated) progress = scores.length / 3;
+            else if (!next) progress = 1;
+            else progress = (index - current.min) / Math.max(1, next.min - current.min);
+            return { scores, index, calibrated, current, next, progress: Math.max(0, Math.min(1, progress)) }
+        }
+
+        function recordRankScore(save, runScore) {
+            const before = getRankView(save);
+            save.rankScores = cleanRankScores(save.rankScores);
+            save.rankScores.unshift(Math.max(0, Math.floor(Number(runScore) || 0)));
+            if (save.rankScores.length > 10) save.rankScores.length = 10;
+            const recentAverage = save.rankScores.length >= 3 ? Math.round((save.rankScores[0] + save.rankScores[1] +
+                save.rankScores[2]) / 3) : 0;
+            save.rankIndex = Math.max(0, Number(save.rankIndex) || 0, recentAverage);
+            const after = getRankView(save),
+                promoted = after.calibrated && before.current.id !== after.current.id;
+            lastRankUpdate = { before, after, recentAverage, promoted };
+            return lastRankUpdate
+        }
+
+        function paintRankSurface(element, color) {
+            if (element) element.style.setProperty('--rank-color', color)
+        }
+
+        function updateLobbyRankCard(save = loadSave()) {
+            const view = getRankView(save),
+                isEnglish = currentLanguage === 'en',
+                rankName = getPilotRankName(view.current),
+                card = document.getElementById('lobbyRankCard');
+            paintRankSurface(card, view.current.color);
+            const badge = document.getElementById('lobbyRankBadge'),
+                label = document.getElementById('lobbyRankLabel'),
+                metric = document.getElementById('lobbyRankMetric'),
+                name = document.getElementById('lobbyRankName'),
+                subtitle = document.getElementById('lobbyRankSubtitle'),
+                next = document.getElementById('lobbyRankNext'),
+                progress = document.getElementById('lobbyRankProgress');
+            if (badge) badge.innerText = view.current.icon;
+            if (label) label.innerText = isEnglish ? 'PILOT RANK' : 'PATENTE DO PILOTO';
+            if (metric) metric.innerText = view.calibrated ? `${formatRankPoints(view.index)} IP` : (isEnglish ?
+                'CALIBRATION' : 'CALIBRAÇÃO');
+            if (name) name.innerText = rankName;
+            if (subtitle) subtitle.innerText = view.calibrated ? (isEnglish ? `Best average: ${formatRankPoints(view.index)}` :
+                `Melhor média: ${formatRankPoints(view.index)}`) : (isEnglish ? `${view.scores.length}/3 flights rated` :
+                `${view.scores.length}/3 voos avaliados`);
+            if (next) next.innerText = view.next ? (isEnglish ? `${formatRankPoints(Math.max(0, view.next.min - view.index))} to go` :
+                `faltam ${formatRankPoints(Math.max(0, view.next.min - view.index))}`) : (isEnglish ? 'maximum rank' :
+                'patente máxima');
+            if (progress) progress.style.width = `${Math.round(view.progress * 100)}%`;
+            if (card) card.setAttribute('aria-label', isEnglish ? `Pilot rank ${rankName}. Open details` :
+                `Patente ${rankName}. Abrir detalhes`)
+        }
+
+        function renderRankModal(save = loadSave()) {
+            const view = getRankView(save),
+                isEnglish = currentLanguage === 'en',
+                card = document.getElementById('rankModalCard');
+            paintRankSurface(card, view.current.color);
+            paintRankSurface(document.getElementById('rankModalBadge'), view.current.color);
+            document.getElementById('rankModalBadge').innerText = view.current.icon;
+            document.getElementById('rankModalEyebrow').innerText = isEnglish ? 'YOUR RANK' : 'SUA PATENTE';
+            document.getElementById('rankModalName').innerText = getPilotRankName(view.current);
+            document.getElementById('rankModalIndex').innerText = view.calibrated ? `${formatRankPoints(view.index)} IP · ${
+                isEnglish ? 'best 3-flight average' : 'melhor média de 3 voos'}` : `${isEnglish ? 'Calibration' : 'Calibração'} ${
+                view.scores.length}/3`;
+            document.getElementById('rankRuleText').innerText = isEnglish ?
+                'Your best average across 3 consecutive matches defines your rank. Once earned, it never decreases.' :
+                'A sua melhor média em 3 partidas consecutivas define a patente. Depois de conquistada, ela nunca diminui.';
+            document.getElementById('rankModalCloseBtn').innerText = isEnglish ? 'Got it' : 'Entendi';
+            const currentPos = PILOT_RANKS.findIndex(rank => rank.id === view.current.id);
+            document.getElementById('rankLadder').innerHTML = PILOT_RANKS.map((rank, position) => {
+                const state = position === currentPos ? 'current' : (position < currentPos ? 'unlocked' : ''),
+                    requirement = rank.min === 0 ? (isEnglish ? 'Start' : 'Início') : `${formatRankPoints(rank.min)} IP`,
+                    marker = position < currentPos ? '✓' : (position === currentPos ? (isEnglish ? 'YOU' : 'VOCÊ') : '🔒');
+                return `<div class="rank-ladder-row ${state}" style="--row-color:${rank.color}"><span class="rank-ladder-icon">${rank.icon}</span><span><b style="display:block;color:${position === currentPos ? rank.color : 'inherit'}">${getPilotRankName(rank)}</b><small style="font-size:.63rem;opacity:.72">${requirement}</small></span><b style="font-size:.62rem;color:${position === currentPos ? rank.color : 'inherit'}">${marker}</b></div>`
+            }).join('')
+        }
+
+        function openRankModal() {
+            renderRankModal(loadSave());
+            document.getElementById('rankModal').classList.remove('hidden')
+        }
+
+        function closeRankModal() {
+            document.getElementById('rankModal').classList.add('hidden')
+        }
+
+        function updateGameOverRankCard(save, update = lastRankUpdate) {
+            const view = getRankView(save),
+                card = document.getElementById('gameOverRankCard'),
+                isEnglish = currentLanguage === 'en';
+            paintRankSurface(card, view.current.color);
+            paintRankSurface(document.getElementById('gameOverRankBadge'), view.current.color);
+            document.getElementById('gameOverRankBadge').innerText = view.current.icon;
+            document.getElementById('gameOverRankLabel').innerText = isEnglish ? 'PILOT RANK' : 'PATENTE';
+            document.getElementById('gameOverRankName').innerText = getPilotRankName(view.current);
+            document.getElementById('gameOverRankIndex').innerText = view.calibrated ? `${formatRankPoints(view.index)} IP` :
+                `${view.scores.length}/3 ${isEnglish ? 'flights' : 'voos'}`;
+            document.getElementById('gameOverRankProgress').style.width = `${Math.round(view.progress * 100)}%`;
+            const promotion = document.getElementById('rankPromotionText');
+            if (update?.promoted) {
+                promotion.style.display = 'block';
+                promotion.innerText = isEnglish ? `PROMOTED TO ${getPilotRankName(view.current).toUpperCase()}!` :
+                    `PROMOVIDO A ${getPilotRankName(view.current).toUpperCase()}!`
+            } else promotion.style.display = 'none'
+        }
+
         function defaultSave() {
             return {
                 totalRuns: 0,
@@ -1093,7 +1679,9 @@
                 unlockedBiomes: ['campos'],
                 selectedPlane: 'biplane',
                 runHistory: [],
-                version: 1,
+                rankScores: [],
+                rankIndex: 0,
+                version: 2,
                 lastPlayed: null,
                 language: 'pt',
                 nick: '',
@@ -1113,7 +1701,14 @@
                     if (l) d = JSON.parse(l)
                 }
                 if (!d) return defaultSave();
-                return Object.assign(defaultSave(), d)
+                const merged = Object.assign(defaultSave(), d);
+                if (!Array.isArray(d.rankScores)) merged.rankScores = (Array.isArray(merged.runHistory) ? merged
+                    .runHistory : []).map(run => run?.score);
+                merged.rankScores = cleanRankScores(merged.rankScores);
+                if (!Number.isFinite(Number(d.rankIndex))) merged.rankIndex = bestThreeRunAverage(merged.rankScores);
+                else merged.rankIndex = Math.max(0, Number(d.rankIndex) || 0);
+                merged.version = 2;
+                return merged
             } catch (e) { console.warn('Erro load save:', e); return defaultSave() }
         }
 
@@ -1292,7 +1887,24 @@
                 nickPrompt: 'Digite seu nome',
                 close: '✕ Fechar',
                 globalTitle: '🏆 Ranking Global',
-                noRuns: 'Ainda sem corridas registadas.'
+                noRuns: 'Ainda sem corridas registadas.',
+                alienTitle: '🛸 INTERFERÊNCIA ALIENÍGENA',
+                alienArrival: 'Sinal desconhecido detectado acima do avião',
+                alienAttack: 'Desvie do raio — ataque {n}/3',
+                alienDodged: '🛸 Raio evitado! +150',
+                alienPerfect: '👽 Fuga perfeita! Fragmento alienígena +1000',
+                alienEscaped: '🛸 OVNI afastado! +400',
+                alienIndicator: 'INTERFERÊNCIA',
+                volcanoTitle: '🌋 ERUPÇÃO VULCÂNICA',
+                volcanoApproach: 'Obstáculo gigante no centro — passe pelas laterais',
+                volcanoErupting: 'Pedras e lava no ar — continue desviando!',
+                volcanoFallout: 'O vulcão ficou para trás, mas a chuva de rochas continua por 3 km!',
+                volcanoIntense: 'A chuva vulcânica está ficando mais intensa!',
+                volcanoExtreme: 'ERUPÇÃO EXTREMA — projéteis maiores e mais rápidos!',
+                volcanoIndicator: 'VULCÃO',
+                volcanoRockHit: '🪨 Pedra atingiu o avião!',
+                volcanoLavaHit: '🔥 Lava atingiu o avião!',
+                volcanoCollision: 'Colidiste com o vulcão!'
             },
             en: {
                 loading: 'Loading World...',
@@ -1320,7 +1932,24 @@
                 nickPrompt: 'Enter your nickname',
                 close: '✕ Close',
                 globalTitle: '🏆 Global Ranking',
-                noRuns: 'No runs recorded yet.'
+                noRuns: 'No runs recorded yet.',
+                alienTitle: '🛸 ALIEN INTERFERENCE',
+                alienArrival: 'Unknown signal detected above the plane',
+                alienAttack: 'Dodge the beam — attack {n}/3',
+                alienDodged: '🛸 Beam dodged! +150',
+                alienPerfect: '👽 Perfect escape! Alien fragment +1000',
+                alienEscaped: '🛸 UFO driven away! +400',
+                alienIndicator: 'INTERFERENCE',
+                volcanoTitle: '🌋 VOLCANIC ERUPTION',
+                volcanoApproach: 'Giant obstacle in the center — use either side',
+                volcanoErupting: 'Rocks and lava airborne — keep dodging!',
+                volcanoFallout: 'The volcano is behind you, but volcanic rain continues for 3 km!',
+                volcanoIntense: 'The volcanic rain is growing more intense!',
+                volcanoExtreme: 'EXTREME ERUPTION — larger and faster projectiles!',
+                volcanoIndicator: 'VOLCANO',
+                volcanoRockHit: '🪨 A rock hit the plane!',
+                volcanoLavaHit: '🔥 Lava hit the plane!',
+                volcanoCollision: 'You collided with the volcano!'
             }
         };
 
@@ -1480,7 +2109,7 @@
                 mountR: [45, 90], mountCentralChance: 0.22, mountCentralH: [140, 260], mountCentralR: [40, 80],
                 ringFreq: .55, ringExtra: .30, treeGroups: true, treeCount: [2, 4], treeDense: false, towers: true,
                 blimps: true, balloons: false, camps: false, campChance: 0, lakes: false, lakeChance: 0, river: false },
-            { id: 'canions', name: 'Cânions', icon: '🏜️', startDist: 28000, mountLateral: 175, mountH: [240, 420],
+            { id: 'canions', name: 'Cânions', icon: '🏜️', startDist: 28000, mountLateral: 205, mountH: [240, 420],
                 mountR: [65, 130], mountCentralChance: 0.35, mountCentralH: [200, 380], mountCentralR: [60, 120],
                 ringFreq: .46, ringExtra: .22, treeGroups: false, treeCount: [0, 0], treeDense: false, towers: true,
                 blimps: false, balloons: false, camps: false, campChance: 0, lakes: false, lakeChance: 0, river: true },
@@ -1540,6 +2169,53 @@
             fuelLockTimer = 0,
             rollAngle = 0,
             rollLocked = false;
+        const alienEvent = {
+            active: false,
+            phase: 'idle',
+            phaseTimer: 0,
+            totalTimer: 0,
+            nextTriggerDistance: 2800 + Math.random() * 1800,
+            currentPulse: -1,
+            beamFiredPulse: -1,
+            resolvedPulse: -1,
+            pulsesDodged: 0,
+            hits: 0,
+            caughtThisPulse: false,
+            beamX: 0,
+            skyBlend: 0,
+            interference: 0,
+            controlFactor: 1,
+            speedFactor: 1,
+            ufo: null,
+            beam: null,
+            targetRing: null,
+            beamTarget: new THREE.Vector3(),
+            beamDirection: new THREE.Vector3()
+        };
+        const volcanoEvent = {
+            active: false,
+            phase: 'idle',
+            totalTimer: 0,
+            nextTriggerDistance: 9500 + Math.random() * 3000,
+            nextShot: 0,
+            burstCount: 0,
+            aggression: 0,
+            dangerStage: 0,
+            maxRange: 3000,
+            impactCooldown: 0,
+            impactShake: 0,
+            dropTimer: 0,
+            x: 0,
+            z: 0,
+            baseRadius: 78,
+            lowerTopRadius: 46,
+            upperTopRadius: 25,
+            lowerHeight: 105,
+            height: 165,
+            craterY: 159,
+            group: null,
+            projectiles: []
+        };
         const keyboard = {},
             touchInputs = { up: false, down: false, left: false, right: false };
         const localColliders = [
@@ -1671,6 +2347,827 @@
         function playNearMissSound() { _tone('sine', 320, 640, .18, .06) }
 
         function playCrashSound() { _tone('sawtooth', 120, 20, .6, .12) }
+
+        // ==================== EVENTO ESPECIAL: INTERFERÊNCIA ALIENÍGENA ====================
+        const ALIEN_EVENT_CONFIG = {
+            arrivalDuration: 4.4,
+            pulseDuration: 7.4,
+            pulseCount: 3,
+            warningDuration: 1.8,
+            beamEnd: 6.0,
+            departureDuration: 4.0,
+            beamRadius: 22
+        };
+        const ALIEN_SKY = {
+            top: new THREE.Color(0x160032),
+            horizon: new THREE.Color(0x6d28d9),
+            bottom: new THREE.Color(0x2e1065),
+            sun: new THREE.Color(0xd8b4fe),
+            ambient: new THREE.Color(0x7e22ce),
+            hemiSky: new THREE.Color(0xa855f7),
+            hemiGround: new THREE.Color(0x1e0938),
+            fog: new THREE.Color(0x4c1d95),
+            cloud: new THREE.Color(0xc4b5fd)
+        };
+        const ALIEN_UP = new THREE.Vector3(0, 1, 0);
+
+        function _alienClamp01(value) { return Math.max(0, Math.min(1, value)) }
+
+        function _alienSmooth(value) {
+            const v = _alienClamp01(value);
+            return v * v * (3 - 2 * v)
+        }
+
+        function createAlienUfo() {
+            const ufo = new THREE.Group(),
+                hullMaterial = new THREE.MeshStandardMaterial({ color: 0x262038, metalness: .82, roughness: .25,
+                    emissive: 0x3b0764, emissiveIntensity: .45, flatShading: true }),
+                lowerMaterial = new THREE.MeshStandardMaterial({ color: 0x4c1d95, metalness: .62, roughness: .30,
+                    emissive: 0x6d28d9, emissiveIntensity: .55, flatShading: true }),
+                glassMaterial = new THREE.MeshStandardMaterial({ color: 0x9fffe0, emissive: 0x22c55e,
+                    emissiveIntensity: .85, transparent: true, opacity: .72, roughness: .08, metalness: .18 }),
+                rimMaterial = new THREE.MeshBasicMaterial({ color: 0xc084fc, transparent: true, opacity: .9,
+                    blending: THREE.AdditiveBlending, depthWrite: false });
+
+            const hull = new THREE.Mesh(new THREE.SphereGeometry(11.5, 18, 8), hullMaterial);
+            hull.scale.set(1.48, .34, 1.48);
+            hull.castShadow = true;
+            ufo.add(hull);
+
+            const lowerHull = new THREE.Mesh(new THREE.CylinderGeometry(10.5, 14.5, 4.2, 18, 1), lowerMaterial);
+            lowerHull.position.y = -1.7;
+            lowerHull.castShadow = true;
+            ufo.add(lowerHull);
+
+            const dome = new THREE.Mesh(new THREE.SphereGeometry(6.2, 16, 9, 0, Math.PI * 2, 0, Math.PI / 2),
+                glassMaterial);
+            dome.position.y = 1.1;
+            dome.scale.y = .85;
+            ufo.add(dome);
+
+            const rotor = new THREE.Group(),
+                rim = new THREE.Mesh(new THREE.TorusGeometry(14.7, 1.35, 7, 30), rimMaterial);
+            rim.rotation.x = Math.PI / 2;
+            rotor.add(rim);
+            for (let i = 0; i < 10; i++) {
+                const angle = i / 10 * Math.PI * 2,
+                    light = new THREE.Mesh(new THREE.SphereGeometry(.75, 6, 5), rimMaterial);
+                light.position.set(Math.cos(angle) * 14.5, -1.1, Math.sin(angle) * 14.5);
+                rotor.add(light)
+            }
+            ufo.add(rotor);
+
+            const glowLight = new THREE.PointLight(0xa855f7, 1.7, 190);
+            glowLight.position.y = -4;
+            ufo.add(glowLight);
+            ufo.userData.rotor = rotor;
+            ufo.userData.rimMaterial = rimMaterial;
+            ufo.userData.glowLight = glowLight;
+
+            const beamMaterial = new THREE.MeshBasicMaterial({ color: 0x86efac, transparent: true, opacity: 0,
+                    side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false }),
+                beam = new THREE.Mesh(new THREE.ConeGeometry(1, 1, 24, 1, true), beamMaterial);
+            beam.visible = false;
+            beam.renderOrder = 6;
+
+            const targetMaterial = new THREE.MeshBasicMaterial({ color: 0xc4b5fd, transparent: true, opacity: 0,
+                    side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false }),
+                targetRing = new THREE.Mesh(new THREE.TorusGeometry(ALIEN_EVENT_CONFIG.beamRadius, .75, 6, 32),
+                    targetMaterial);
+            targetRing.rotation.x = Math.PI / 2;
+            targetRing.visible = false;
+            targetRing.renderOrder = 7;
+
+            scene.add(ufo);
+            scene.add(beam);
+            scene.add(targetRing);
+            return { ufo, beam, targetRing }
+        }
+
+        function disposeAlienObject(root) {
+            if (!root) return;
+            if (root.parent) root.parent.remove(root);
+            const geometries = new Set(), materials = new Set();
+            root.traverse(obj => {
+                if (obj.geometry) geometries.add(obj.geometry);
+                if (obj.material) {
+                    const list = Array.isArray(obj.material) ? obj.material : [obj.material];
+                    list.forEach(mat => materials.add(mat))
+                }
+            });
+            geometries.forEach(geometry => geometry.dispose());
+            materials.forEach(material => material.dispose())
+        }
+
+        function setAlienBanner(statusText) {
+            const banner = document.getElementById('alienEventBanner'),
+                title = document.getElementById('alienEventTitle'),
+                status = document.getElementById('alienEventStatus');
+            if (title) title.innerText = t('alienTitle');
+            if (status) status.innerText = statusText;
+            if (banner) banner.classList.add('show')
+        }
+
+        function applyAlienSky(blend) {
+            if (!dayNightManager || blend <= 0) return;
+            const strength = _alienSmooth(blend),
+                uniforms = dayNightManager.skyMaterial?.uniforms;
+            if (uniforms) {
+                uniforms.uTopColor.value.lerp(ALIEN_SKY.top, strength * .96);
+                uniforms.uHorizonColor.value.lerp(ALIEN_SKY.horizon, strength * .91);
+                uniforms.uBottomColor.value.lerp(ALIEN_SKY.bottom, strength * .95);
+                uniforms.uSunColor.value.lerp(ALIEN_SKY.sun, strength * .72)
+            }
+            if (sunLight) {
+                sunLight.color.lerp(ALIEN_SKY.sun, strength * .68);
+                sunLight.intensity *= 1 - strength * .30
+            }
+            if (ambientLight) {
+                ambientLight.color.lerp(ALIEN_SKY.ambient, strength * .82);
+                ambientLight.intensity = Math.max(ambientLight.intensity, .38 + strength * .20)
+            }
+            if (hemiLight) {
+                hemiLight.color.lerp(ALIEN_SKY.hemiSky, strength * .84);
+                hemiLight.groundColor.lerp(ALIEN_SKY.hemiGround, strength * .88)
+            }
+            if (scene?.fog) {
+                scene.fog.color.lerp(ALIEN_SKY.fog, strength * .82);
+                scene.fog.near = THREE.MathUtils.lerp(scene.fog.near, 380, strength * .55);
+                scene.fog.far = THREE.MathUtils.lerp(scene.fog.far, 1250, strength * .45)
+            }
+            if (dayNightManager.cloudMaterial) dayNightManager.cloudMaterial.color.lerp(ALIEN_SKY.cloud, strength * .78);
+            if (dayNightManager.starsMaterial) dayNightManager.starsMaterial.opacity = Math.max(
+                dayNightManager.starsMaterial.opacity, strength * .62);
+            if (dayNightManager.sunCoreMaterial) dayNightManager.sunCoreMaterial.color.lerp(ALIEN_SKY.sun, strength * .75)
+        }
+
+        function updateAlienBeam(beamOpacity, targetOpacity, activeBeam) {
+            const { ufo, beam, targetRing } = alienEvent;
+            if (!ufo || !beam || !targetRing || !airplane) return;
+            const target = alienEvent.beamTarget.set(alienEvent.beamX, airplane.position.y - 4, airplane.position.z),
+                direction = alienEvent.beamDirection.copy(ufo.position).sub(target),
+                length = Math.max(1, direction.length());
+            beam.position.copy(target).add(ufo.position).multiplyScalar(.5);
+            beam.quaternion.setFromUnitVectors(ALIEN_UP, direction.normalize());
+            beam.scale.set(ALIEN_EVENT_CONFIG.beamRadius, length, ALIEN_EVENT_CONFIG.beamRadius);
+            beam.material.opacity = beamOpacity;
+            beam.material.color.setHex(activeBeam ? 0x86efac : 0xc4b5fd);
+            beam.visible = beamOpacity > .015;
+
+            targetRing.position.copy(target);
+            targetRing.scale.setScalar(1 + Math.sin(alienEvent.totalTimer * 10) * .07);
+            targetRing.material.opacity = targetOpacity;
+            targetRing.material.color.setHex(activeBeam ? 0x86efac : 0xd8b4fe);
+            targetRing.visible = targetOpacity > .015
+        }
+
+        function startAlienEvent() {
+            if (alienEvent.active || volcanoEvent.active || !scene || !airplane || mpActive) return;
+            const visuals = createAlienUfo();
+            alienEvent.active = true;
+            alienEvent.phase = 'arrival';
+            alienEvent.phaseTimer = 0;
+            alienEvent.totalTimer = 0;
+            alienEvent.currentPulse = -1;
+            alienEvent.beamFiredPulse = -1;
+            alienEvent.resolvedPulse = -1;
+            alienEvent.pulsesDodged = 0;
+            alienEvent.hits = 0;
+            alienEvent.caughtThisPulse = false;
+            alienEvent.beamX = airplane.position.x;
+            alienEvent.skyBlend = 0;
+            alienEvent.interference = 0;
+            alienEvent.controlFactor = 1;
+            alienEvent.speedFactor = 1;
+            alienEvent.ufo = visuals.ufo;
+            alienEvent.beam = visuals.beam;
+            alienEvent.targetRing = visuals.targetRing;
+            alienEvent.ufo.position.set(airplane.position.x, airplane.position.y + 115, airplane.position.z - 130);
+            alienEvent.ufo.scale.setScalar(.28);
+
+            const indicator = document.getElementById('alienIndicator');
+            if (indicator) indicator.style.display = 'flex';
+            setAlienBanner(t('alienArrival'));
+            _tone('sine', 105, 840, 1.15, .09);
+            _tone('triangle', 72, 360, 1.35, .045)
+        }
+
+        function resolveAlienPulse() {
+            if (alienEvent.currentPulse < 0 || alienEvent.resolvedPulse >= alienEvent.currentPulse) return;
+            if (alienEvent.caughtThisPulse) {
+                alienEvent.hits++
+            } else {
+                alienEvent.pulsesDodged++;
+                score += 150;
+                showFeedback(t('alienDodged'), true)
+            }
+            alienEvent.resolvedPulse = alienEvent.currentPulse
+        }
+
+        function beginAlienDeparture() {
+            resolveAlienPulse();
+            alienEvent.phase = 'departure';
+            alienEvent.phaseTimer = 0;
+            alienEvent.controlFactor = 1;
+            const perfect = alienEvent.pulsesDodged === ALIEN_EVENT_CONFIG.pulseCount,
+                reward = perfect ? 1000 : 400;
+            score += reward;
+            fuel = Math.min(100, fuel + (perfect ? 12 : 5));
+            if (perfect) {
+                shieldActive = true;
+                shieldTimer = Math.max(shieldTimer, 7)
+            }
+            const rewardText = perfect ? t('alienPerfect') : t('alienEscaped');
+            setAlienBanner(rewardText);
+            showFeedback(rewardText, true);
+            _tone('sine', 380, 1180, .65, .08)
+        }
+
+        function resetAlienEvent(restoreSky = true, nextDistance = null) {
+            disposeAlienObject(alienEvent.ufo);
+            disposeAlienObject(alienEvent.beam);
+            disposeAlienObject(alienEvent.targetRing);
+            alienEvent.active = false;
+            alienEvent.phase = 'idle';
+            alienEvent.phaseTimer = 0;
+            alienEvent.totalTimer = 0;
+            alienEvent.currentPulse = -1;
+            alienEvent.beamFiredPulse = -1;
+            alienEvent.resolvedPulse = -1;
+            alienEvent.pulsesDodged = 0;
+            alienEvent.hits = 0;
+            alienEvent.caughtThisPulse = false;
+            alienEvent.skyBlend = 0;
+            alienEvent.interference = 0;
+            alienEvent.controlFactor = 1;
+            alienEvent.speedFactor = 1;
+            alienEvent.ufo = null;
+            alienEvent.beam = null;
+            alienEvent.targetRing = null;
+            alienEvent.nextTriggerDistance = Number.isFinite(nextDistance) ? nextDistance : 2800 + Math.random() * 1800;
+
+            const overlay = document.getElementById('alienEventOverlay'),
+                banner = document.getElementById('alienEventBanner'),
+                indicator = document.getElementById('alienIndicator'),
+                hud = document.getElementById('gameHUD');
+            if (overlay) {
+                overlay.style.opacity = '0';
+                overlay.classList.remove('jammed')
+            }
+            if (banner) banner.classList.remove('show');
+            if (indicator) indicator.style.display = 'none';
+            if (hud) hud.classList.remove('alien-jammed');
+            if (restoreSky && dayNightManager) dayNightManager.update(0, airplane ? airplane.position : undefined)
+        }
+
+        function updateAlienEvent(dt, dist) {
+            if (!alienEvent.active) {
+                if (!mpActive && !volcanoEvent.active && !fuelDepleted && dist >= alienEvent.nextTriggerDistance)
+                    startAlienEvent();
+                return
+            }
+            if (!alienEvent.ufo || !airplane) {
+                resetAlienEvent(true, dist + 6500);
+                return
+            }
+
+            alienEvent.phaseTimer += dt;
+            alienEvent.totalTimer += dt;
+            alienEvent.controlFactor = 1;
+            alienEvent.speedFactor = 1;
+            alienEvent.interference = Math.max(0, alienEvent.interference - dt * 2.8);
+
+            let skyBlend = 1,
+                beamOpacity = 0,
+                targetOpacity = 0,
+                activeBeam = false;
+            const ufo = alienEvent.ufo,
+                followAlpha = 1 - Math.exp(-dt * 5.5);
+
+            if (alienEvent.phase === 'arrival') {
+                const progress = _alienClamp01(alienEvent.phaseTimer / ALIEN_EVENT_CONFIG.arrivalDuration);
+                skyBlend = _alienSmooth(progress);
+                alienEvent.beamX += (airplane.position.x - alienEvent.beamX) * followAlpha;
+                ufo.position.x += (alienEvent.beamX - ufo.position.x) * followAlpha;
+                ufo.position.y += (airplane.position.y + 38 - ufo.position.y) * (1 - Math.exp(-dt * 2.3));
+                ufo.position.z += (airplane.position.z - 48 - ufo.position.z) * (1 - Math.exp(-dt * 3.2));
+                ufo.scale.setScalar(.28 + progress * .72);
+                if (progress > .66) {
+                    const warning = (progress - .66) / .34;
+                    beamOpacity = .06 + warning * .16;
+                    targetOpacity = .18 + warning * .38
+                }
+                if (alienEvent.phaseTimer >= ALIEN_EVENT_CONFIG.arrivalDuration) {
+                    alienEvent.phase = 'attack';
+                    alienEvent.phaseTimer = 0;
+                    alienEvent.currentPulse = -1
+                }
+            } else if (alienEvent.phase === 'attack') {
+                const totalAttackDuration = ALIEN_EVENT_CONFIG.pulseDuration * ALIEN_EVENT_CONFIG.pulseCount,
+                    pulse = Math.min(ALIEN_EVENT_CONFIG.pulseCount - 1,
+                        Math.floor(alienEvent.phaseTimer / ALIEN_EVENT_CONFIG.pulseDuration)),
+                    cycleTime = alienEvent.phaseTimer - pulse * ALIEN_EVENT_CONFIG.pulseDuration;
+
+                // A nave interfere durante toda a fase de ataque: os comandos ficam mais pesados,
+                // a velocidade oscila para baixo e há uma turbulência leve mesmo fora do feixe.
+                alienEvent.controlFactor = .82;
+                alienEvent.speedFactor = .90;
+                alienEvent.interference = Math.max(alienEvent.interference, .18);
+                targetX += (Math.sin(alienEvent.totalTimer * 3.2) * 24 +
+                    Math.sin(alienEvent.totalTimer * 8.7) * 10) * dt;
+                targetY += Math.sin(alienEvent.totalTimer * 4.1) * 12 * dt;
+
+                if (pulse !== alienEvent.currentPulse) {
+                    resolveAlienPulse();
+                    alienEvent.currentPulse = pulse;
+                    alienEvent.caughtThisPulse = false;
+                    alienEvent.beamX = airplane.position.x;
+                    setAlienBanner(t('alienAttack').replace('{n}', String(pulse + 1)));
+                    _tone('square', 540, 170, .32, .045)
+                }
+
+                ufo.position.x += (alienEvent.beamX - ufo.position.x) * followAlpha;
+                ufo.position.y += (airplane.position.y + 38 - ufo.position.y) * followAlpha;
+                ufo.position.z += (airplane.position.z - 48 - ufo.position.z) * (1 - Math.exp(-dt * 7.5));
+                ufo.scale.setScalar(1);
+
+                if (cycleTime < ALIEN_EVENT_CONFIG.warningDuration) {
+                    const warningT = cycleTime / ALIEN_EVENT_CONFIG.warningDuration;
+                    beamOpacity = .08 + warningT * .20 + Math.sin(alienEvent.totalTimer * 18) * .035;
+                    targetOpacity = .42 + Math.sin(alienEvent.totalTimer * 14) * .17
+                } else if (cycleTime < ALIEN_EVENT_CONFIG.beamEnd) {
+                    activeBeam = true;
+                    // O feixe continua mirando lentamente o jogador. É possível escapar, mas não
+                    // basta dar um pequeno toque lateral e parar logo em seguida.
+                    alienEvent.beamX += (airplane.position.x - alienEvent.beamX) * Math.min(1, dt * .55);
+                    beamOpacity = .56 + Math.sin(alienEvent.totalTimer * 22) * .12;
+                    targetOpacity = .88;
+                    if (alienEvent.beamFiredPulse !== pulse) {
+                        alienEvent.beamFiredPulse = pulse;
+                        _tone('sawtooth', 210, 72, .72, .065)
+                    }
+                    const horizontalDistance = Math.abs(airplane.position.x - alienEvent.beamX);
+                    if (horizontalDistance < ALIEN_EVENT_CONFIG.beamRadius) {
+                        alienEvent.caughtThisPulse = true;
+                        alienEvent.interference = 1;
+                        const shieldFactor = shieldActive ? .35 : 1;
+                        alienEvent.controlFactor = shieldActive ? .68 : .30;
+                        alienEvent.speedFactor = shieldActive ? .82 : .62;
+                        targetX += (alienEvent.beamX - airplane.position.x) * dt * 3.2 * shieldFactor;
+                        targetX += Math.sin(alienEvent.totalTimer * 21) * dt * 30 * shieldFactor;
+                        targetY += dt * 42 * shieldFactor;
+                        if (!fuelLockActive) fuel = Math.max(0, fuel - dt * 3.8 * shieldFactor)
+                    }
+                } else {
+                    resolveAlienPulse();
+                    beamOpacity = 0;
+                    targetOpacity = .10
+                }
+
+                if (alienEvent.phaseTimer >= totalAttackDuration) beginAlienDeparture()
+            } else if (alienEvent.phase === 'departure') {
+                const departureProgress = _alienClamp01(alienEvent.phaseTimer / ALIEN_EVENT_CONFIG.departureDuration);
+                skyBlend = 1 - _alienSmooth(departureProgress);
+                ufo.position.y += (airplane.position.y + 155 - ufo.position.y) * (1 - Math.exp(-dt * 1.8));
+                ufo.position.x += dt * 34;
+                ufo.position.z -= dt * 90;
+                ufo.rotation.z += dt * .55;
+                ufo.scale.setScalar(1 - departureProgress * .48);
+                if (alienEvent.phaseTimer >= ALIEN_EVENT_CONFIG.departureDuration) {
+                    resetAlienEvent(true, dist + 7000 + Math.random() * 4000);
+                    return
+                }
+            }
+
+            ufo.rotation.y += dt * .72;
+            if (ufo.userData.rotor) ufo.userData.rotor.rotation.y -= dt * 4.8;
+            if (ufo.userData.rimMaterial) ufo.userData.rimMaterial.opacity = .68 +
+                Math.sin(alienEvent.totalTimer * 9) * .24;
+            if (ufo.userData.glowLight) ufo.userData.glowLight.intensity = 1.25 +
+                Math.sin(alienEvent.totalTimer * 7) * .45 + alienEvent.interference * .8;
+
+            alienEvent.skyBlend = skyBlend;
+            updateAlienBeam(Math.max(0, beamOpacity), Math.max(0, targetOpacity), activeBeam);
+            applyAlienSky(skyBlend);
+
+            const overlay = document.getElementById('alienEventOverlay'),
+                indicator = document.getElementById('alienIndicator'),
+                timerText = document.getElementById('alienTimerText'),
+                hud = document.getElementById('gameHUD'),
+                attackDuration = ALIEN_EVENT_CONFIG.pulseDuration * ALIEN_EVENT_CONFIG.pulseCount,
+                totalDuration = ALIEN_EVENT_CONFIG.arrivalDuration + attackDuration + ALIEN_EVENT_CONFIG.departureDuration,
+                remaining = Math.max(0, Math.ceil(totalDuration - alienEvent.totalTimer));
+            if (overlay) {
+                overlay.style.opacity = String(Math.min(.78, .14 * skyBlend + alienEvent.interference * .64));
+                overlay.classList.toggle('jammed', alienEvent.interference > .22)
+            }
+            if (indicator) indicator.style.display = 'flex';
+            if (timerText) timerText.innerText = `${t('alienIndicator')} ${remaining}s`;
+            if (hud) hud.classList.toggle('alien-jammed', alienEvent.interference > .28)
+        }
+
+        // ==================== EVENTO: ERUPÇÃO VULCÂNICA ====================
+        function clearVolcanoCorridor(volcanoZ) {
+            if (!Array.isArray(activeEntities)) return;
+            const removable = new Set(['mountain', 'tree', 'tower', 'balloon', 'blimp', 'ring', 'powerRing', 'deco']);
+            for (let i = activeEntities.length - 1; i >= 0; i--) {
+                const entity = activeEntities[i];
+                if (!entity?.mesh || !removable.has(entity.type)) continue;
+                const rotation = entity.mesh.rotation?.y || 0,
+                    halfDepth = entity.type === 'mountain' && entity.mWidth && entity.mDepth ?
+                    Math.abs(Math.sin(rotation)) * entity.mWidth * .5 + Math.abs(Math.cos(rotation)) * entity.mDepth * .5 :
+                    (entity.type === 'blimp' ? 30 : 28),
+                    halfWidth = entity.type === 'mountain' && entity.mWidth && entity.mDepth ?
+                    Math.abs(Math.cos(rotation)) * entity.mWidth * .5 + Math.abs(Math.sin(rotation)) * entity.mDepth * .5 :
+                    (entity.radius || entity.colRadius || 24),
+                    overlapsDepth = Math.abs(entity.mesh.position.z - volcanoZ) < 135 + halfDepth,
+                    overlapsRoute = Math.abs(entity.mesh.position.x) < 175 + halfWidth;
+                if (!overlapsDepth || !overlapsRoute) continue;
+                if (entity.type === 'mountain') {
+                    const mountainIndex = spawnedMountains.findIndex(m => m.x === entity.mesh.position.x && m.z === entity
+                        .mesh.position.z);
+                    if (mountainIndex >= 0) spawnedMountains.splice(mountainIndex, 1)
+                }
+                scene.remove(entity.mesh);
+                entity.mesh.traverse(child => { if (child.isMesh && child.geometry) child.geometry.dispose() });
+                activeEntities.splice(i, 1)
+            }
+        }
+
+        function createVolcano(x, z) {
+            const group = new THREE.Group(),
+                lowerMaterial = new THREE.MeshStandardMaterial({ color: 0x6b2d1a, roughness: .94, flatShading: true }),
+                upperMaterial = new THREE.MeshStandardMaterial({ color: 0x451a13, roughness: .91, flatShading: true }),
+                darkRockMaterial = new THREE.MeshStandardMaterial({ color: 0x29130f, roughness: 1, flatShading: true }),
+                lavaMaterial = new THREE.MeshStandardMaterial({ color: 0xff5a16, emissive: 0xff2800,
+                    emissiveIntensity: 1.65, roughness: .38, flatShading: true }),
+                rimMaterial = new THREE.MeshStandardMaterial({ color: 0x32130e, emissive: 0x7f1d1d,
+                    emissiveIntensity: .28, roughness: 1, flatShading: true });
+
+            const lower = new THREE.Mesh(new THREE.CylinderGeometry(volcanoEvent.lowerTopRadius,
+                volcanoEvent.baseRadius, volcanoEvent.lowerHeight, 17, 5), lowerMaterial);
+            lower.position.y = volcanoEvent.lowerHeight * .5;
+            lower.rotation.y = .12;
+            lower.castShadow = true;
+            lower.receiveShadow = true;
+            group.add(lower);
+
+            const upperHeight = volcanoEvent.craterY - volcanoEvent.lowerHeight,
+                upper = new THREE.Mesh(new THREE.CylinderGeometry(volcanoEvent.upperTopRadius,
+                    volcanoEvent.lowerTopRadius, upperHeight, 17, 4), upperMaterial);
+            upper.position.y = volcanoEvent.lowerHeight + upperHeight * .5;
+            upper.rotation.y = -.08;
+            upper.castShadow = true;
+            upper.receiveShadow = true;
+            group.add(upper);
+
+            // Camadas rochosas quebram a silhueta perfeita do cone e deixam o vulcão único.
+            for (let i = 0; i < 13; i++) {
+                const angle = i / 13 * Math.PI * 2 + (i % 3) * .13,
+                    radius = 52 + (i % 4) * 6,
+                    rock = new THREE.Mesh(new THREE.IcosahedronGeometry(9 + (i % 3) * 2.2, 0), i % 2 ?
+                        lowerMaterial : darkRockMaterial);
+                rock.scale.set(.82 + (i % 4) * .10, 1.15 + (i % 5) * .12, .72 + ((i + 2) % 4) * .11);
+                rock.position.set(Math.cos(angle) * radius, 8 + (i % 3) * 4, Math.sin(angle) * radius);
+                rock.rotation.set(angle * .17, -angle, angle * .09);
+                rock.castShadow = true;
+                group.add(rock)
+            }
+
+            const craterRim = new THREE.Mesh(new THREE.TorusGeometry(volcanoEvent.upperTopRadius, 5.5, 8, 24),
+                rimMaterial);
+            craterRim.rotation.x = Math.PI / 2;
+            craterRim.position.y = volcanoEvent.craterY;
+            craterRim.castShadow = true;
+            group.add(craterRim);
+
+            const lavaPool = new THREE.Mesh(new THREE.CylinderGeometry(20.5, 22, 3.2, 20), lavaMaterial);
+            lavaPool.position.y = volcanoEvent.craterY - 1.3;
+            group.add(lavaPool);
+
+            const lavaStreams = [];
+            [0.45, 2.35, 4.38].forEach((angle, streamIndex) => {
+                const start = new THREE.Vector3(Math.cos(angle) * 22, volcanoEvent.craterY - 5,
+                        Math.sin(angle) * 22),
+                    endRadius = 55 + streamIndex * 5,
+                    end = new THREE.Vector3(Math.cos(angle) * endRadius, 36 + streamIndex * 7,
+                        Math.sin(angle) * endRadius),
+                    direction = end.clone().sub(start),
+                    stream = new THREE.Mesh(new THREE.CylinderGeometry(1.35, 3.1, direction.length(), 5),
+                        lavaMaterial.clone());
+                stream.position.copy(start).add(end).multiplyScalar(.5);
+                stream.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction.normalize());
+                stream.renderOrder = 2;
+                group.add(stream);
+                lavaStreams.push(stream.material)
+            });
+
+            const smoke = [];
+            for (let i = 0; i < 12; i++) {
+                const material = new THREE.MeshStandardMaterial({ color: i % 3 === 0 ? 0x5b403a : 0x34343a,
+                        transparent: true, opacity: .24, depthWrite: false, roughness: 1, flatShading: true }),
+                    puff = new THREE.Mesh(new THREE.IcosahedronGeometry(7 + (i % 4) * 1.8, 1), material);
+                puff.userData.phase = i / 12;
+                puff.userData.angle = i * 2.17;
+                group.add(puff);
+                smoke.push(puff)
+            }
+
+            const glowLight = new THREE.PointLight(0xff4d16, 2.2, 330);
+            glowLight.position.y = volcanoEvent.craterY + 5;
+            group.add(glowLight);
+            group.position.set(x, 0, z);
+            group.userData.smoke = smoke;
+            group.userData.lavaPoolMaterial = lavaMaterial;
+            group.userData.lavaStreamMaterials = lavaStreams;
+            group.userData.glowLight = glowLight;
+            return group
+        }
+
+        function setVolcanoBanner(statusText) {
+            const banner = document.getElementById('volcanoEventBanner'),
+                title = document.getElementById('volcanoEventTitle'),
+                status = document.getElementById('volcanoEventStatus');
+            if (title) title.innerText = t('volcanoTitle');
+            if (status) status.innerText = statusText;
+            if (banner) banner.classList.add('show')
+        }
+
+        function startVolcanoEvent() {
+            if (volcanoEvent.active || alienEvent.active || mpActive || !scene || !airplane) return;
+            volcanoEvent.x = (Math.random() - .5) * 16;
+            volcanoEvent.z = airplane.position.z - 1050;
+            clearVolcanoCorridor(volcanoEvent.z);
+            volcanoEvent.group = createVolcano(volcanoEvent.x, volcanoEvent.z);
+            scene.add(volcanoEvent.group);
+            volcanoEvent.active = true;
+            volcanoEvent.phase = 'approach';
+            volcanoEvent.totalTimer = 0;
+            volcanoEvent.nextShot = .3;
+            volcanoEvent.burstCount = 0;
+            volcanoEvent.aggression = 0;
+            volcanoEvent.dangerStage = 0;
+            volcanoEvent.impactCooldown = 0;
+            volcanoEvent.impactShake = 0;
+            volcanoEvent.dropTimer = 0;
+            const indicator = document.getElementById('volcanoIndicator');
+            if (indicator) indicator.style.display = 'flex';
+            setVolcanoBanner(t('volcanoApproach'));
+            _tone('sine', 58, 38, 1.15, .11);
+            _tone('sawtooth', 92, 54, .75, .035)
+        }
+
+        function disposeVolcanoProjectile(projectile) {
+            if (!projectile?.mesh) return;
+            disposeAlienObject(projectile.mesh)
+        }
+
+        function resetVolcanoEvent(nextDistance = null) {
+            disposeAlienObject(volcanoEvent.group);
+            volcanoEvent.projectiles.forEach(disposeVolcanoProjectile);
+            volcanoEvent.projectiles.length = 0;
+            volcanoEvent.active = false;
+            volcanoEvent.phase = 'idle';
+            volcanoEvent.totalTimer = 0;
+            volcanoEvent.nextShot = 0;
+            volcanoEvent.burstCount = 0;
+            volcanoEvent.aggression = 0;
+            volcanoEvent.dangerStage = 0;
+            volcanoEvent.impactCooldown = 0;
+            volcanoEvent.impactShake = 0;
+            volcanoEvent.dropTimer = 0;
+            volcanoEvent.group = null;
+            volcanoEvent.nextTriggerDistance = Number.isFinite(nextDistance) ? nextDistance :
+                9500 + Math.random() * 3000;
+            const banner = document.getElementById('volcanoEventBanner'),
+                indicator = document.getElementById('volcanoIndicator'),
+                flash = document.getElementById('volcanoImpactFlash');
+            if (banner) banner.classList.remove('show');
+            if (indicator) indicator.style.display = 'none';
+            if (flash) flash.classList.remove('show')
+        }
+
+        function createVolcanoProjectile(kind, spreadIndex, count, aggression = 0) {
+            if (!volcanoEvent.group || !airplane) return;
+            const intensity = Math.max(0, Math.min(1, aggression)),
+                isLava = kind === 'lava',
+                radius = (isLava ? 4.4 : 5.3) + Math.random() * 2.2 + intensity * 2,
+                material = new THREE.MeshStandardMaterial({ color: isLava ? 0xff6a16 : 0x2b211f,
+                    emissive: isLava ? 0xff2600 : 0x9f2d0b, emissiveIntensity: (isLava ? 2.1 : .55) + intensity * .8,
+                    roughness: isLava ? .32 : .95, flatShading: true }),
+                mesh = new THREE.Mesh(new THREE.IcosahedronGeometry(radius, 1), material),
+                start = new THREE.Vector3(volcanoEvent.x + (Math.random() - .5) * 16,
+                    volcanoEvent.craterY + 5 + Math.random() * 5, volcanoEvent.z + (Math.random() - .5) * 14),
+                flightTime = 2.85 + Math.random() * .55 - intensity * .28,
+                spreadStep = 17 + intensity * 4,
+                sideSpread = (spreadIndex - (count - 1) * .5) * spreadStep + (Math.random() - .5) *
+                    (13 + intensity * 7),
+                target = new THREE.Vector3(airplane.position.x + sideSpread,
+                    Math.max(10, airplane.position.y + (Math.random() - .5) * (18 + intensity * 10)),
+                    airplane.position.z - flightSpeed * flightTime),
+                gravity = -55 - intensity * 18,
+                velocity = new THREE.Vector3((target.x - start.x) / flightTime,
+                    (target.y - start.y - .5 * gravity * flightTime * flightTime) / flightTime,
+                    (target.z - start.z) / flightTime);
+            mesh.position.copy(start);
+            mesh.castShadow = true;
+            const glowMaterial = new THREE.MeshBasicMaterial({ color: isLava ? 0xffb020 : 0xff4d16,
+                    transparent: true, opacity: isLava ? .34 : .12, blending: THREE.AdditiveBlending,
+                    depthWrite: false }),
+                glow = new THREE.Mesh(new THREE.SphereGeometry(radius * 1.38, 7, 5), glowMaterial);
+            mesh.add(glow);
+            scene.add(mesh);
+            volcanoEvent.projectiles.push({ kind, mesh, velocity, gravity, radius, life: 0, power: 1 + intensity * .55,
+                spin: new THREE.Vector3((Math.random() - .5) * (5 + intensity * 4),
+                    (Math.random() - .5) * (6 + intensity * 4), (Math.random() - .5) * (5 + intensity * 4)),
+                glowMaterial })
+        }
+
+        function launchVolcanoBurst(aggression = 0) {
+            const intensity = Math.max(0, Math.min(1, aggression)),
+                count = 3 + (volcanoEvent.burstCount % 2) + Math.floor(intensity * 3),
+                lavaChance = .46 + intensity * .26;
+            for (let i = 0; i < count; i++) createVolcanoProjectile(Math.random() < lavaChance ? 'lava' : 'rock', i,
+                count, intensity);
+            volcanoEvent.burstCount++;
+            _tone('sawtooth', 72 + intensity * 38, 185 - intensity * 55, .35, .055 + intensity * .025)
+        }
+
+        function applyVolcanoProjectileHit(projectile) {
+            const isLava = projectile.kind === 'lava',
+                baseLoss = isLava ? 34 : 24,
+                shieldFactor = shieldActive ? .35 : 1,
+                altitudeLoss = baseLoss * (projectile.power || 1) * shieldFactor;
+            targetY = Math.max(5, targetY - altitudeLoss);
+            airplane.position.y = Math.max(3.5, airplane.position.y - altitudeLoss * .34);
+            volcanoEvent.dropTimer = Math.max(volcanoEvent.dropTimer, (shieldActive ? .35 : .9) +
+                ((projectile.power || 1) - 1) * .45);
+            volcanoEvent.impactCooldown = .72;
+            volcanoEvent.impactShake = Math.min(1.45, projectile.power || 1);
+            pitchAngle = Math.min(.5, pitchAngle + .22);
+            const lostMeters = Math.round(altitudeLoss * 3),
+                shieldText = shieldActive ? (currentLanguage === 'en' ? ' (shield reduced)' : ' (escudo reduziu)') : '';
+            showFeedback(`${t(isLava ? 'volcanoLavaHit' : 'volcanoRockHit')} -${lostMeters}m${shieldText}`, false);
+            const flash = document.getElementById('volcanoImpactFlash');
+            if (flash) {
+                flash.classList.add('show');
+                setTimeout(() => flash.classList.remove('show'), 180)
+            }
+            _tone('square', isLava ? 150 : 105, 48, .34, .085)
+        }
+
+        function updateVolcanoProjectiles(dt) {
+            for (let i = volcanoEvent.projectiles.length - 1; i >= 0; i--) {
+                const projectile = volcanoEvent.projectiles[i];
+                const previousX = projectile.mesh.position.x,
+                    previousY = projectile.mesh.position.y,
+                    previousZ = projectile.mesh.position.z;
+                projectile.life += dt;
+                projectile.velocity.y += projectile.gravity * dt;
+                projectile.mesh.position.addScaledVector(projectile.velocity, dt);
+                projectile.mesh.rotation.x += projectile.spin.x * dt;
+                projectile.mesh.rotation.y += projectile.spin.y * dt;
+                projectile.mesh.rotation.z += projectile.spin.z * dt;
+                projectile.glowMaterial.opacity = (projectile.kind === 'lava' ? .28 : .08) +
+                    Math.max(0, Math.sin(projectile.life * 17)) * (projectile.kind === 'lava' ? .22 : .08);
+
+                let remove = projectile.life > 7 || projectile.mesh.position.y < -8;
+                if (!remove && volcanoEvent.impactCooldown <= 0 && airplane) {
+                    // Usa o segmento percorrido no frame, não apenas a posição final. Isso evita
+                    // que projéteis muito rápidos atravessem o avião entre dois frames sem colisão.
+                    const segmentX = projectile.mesh.position.x - previousX,
+                        segmentY = projectile.mesh.position.y - previousY,
+                        segmentZ = projectile.mesh.position.z - previousZ,
+                        relativeX = previousX - airplane.position.x,
+                        relativeY = previousY - airplane.position.y,
+                        relativeZ = previousZ - airplane.position.z,
+                        segmentLengthSq = segmentX * segmentX + segmentY * segmentY + segmentZ * segmentZ,
+                        closestT = segmentLengthSq > .0001 ? Math.max(0, Math.min(1, -(relativeX * segmentX +
+                            relativeY * segmentY + relativeZ * segmentZ) / segmentLengthSq)) : 0,
+                        closestX = relativeX + segmentX * closestT,
+                        closestY = relativeY + segmentY * closestT,
+                        closestZ = relativeZ + segmentZ * closestT,
+                        hitRadius = projectile.radius + 6.5;
+                    if (closestX * closestX + closestY * closestY + closestZ * closestZ < hitRadius * hitRadius) {
+                        applyVolcanoProjectileHit(projectile);
+                        remove = true
+                    }
+                }
+                if (remove) {
+                    disposeVolcanoProjectile(projectile);
+                    volcanoEvent.projectiles.splice(i, 1)
+                }
+            }
+        }
+
+        function animateVolcano(dt) {
+            const group = volcanoEvent.group;
+            if (!group) return;
+            const eruptionStrength = volcanoEvent.phase === 'eruption' ? 1 + volcanoEvent.aggression * .5 : .45,
+                time = volcanoEvent.totalTimer;
+            (group.userData.smoke || []).forEach(puff => {
+                const progress = (time * (.095 + puff.userData.phase * .018) + puff.userData.phase) % 1,
+                    angle = puff.userData.angle + time * .18;
+                puff.position.set(Math.cos(angle) * (5 + progress * 17), volcanoEvent.craterY + 7 + progress * 105,
+                    Math.sin(angle) * (5 + progress * 14));
+                puff.scale.setScalar((.55 + progress * 2.25) * eruptionStrength);
+                puff.material.opacity = (.28 * (1 - progress) + .035) * eruptionStrength
+            });
+            const pulse = .5 + .5 * Math.sin(time * 7.5),
+                lavaPoolMaterial = group.userData.lavaPoolMaterial;
+            if (lavaPoolMaterial) lavaPoolMaterial.emissiveIntensity = 1.45 + pulse * 1.25;
+            (group.userData.lavaStreamMaterials || []).forEach((material, index) => {
+                material.emissiveIntensity = .9 + Math.max(0, Math.sin(time * 6 + index * 1.8)) * 1.1
+            });
+            if (group.userData.glowLight) group.userData.glowLight.intensity = 1.4 + pulse * 2.2 * eruptionStrength;
+            group.rotation.y += dt * .008
+        }
+
+        function updateVolcanoEvent(dt, dist) {
+            if (!volcanoEvent.active) {
+                if (!mpActive && !alienEvent.active && !fuelDepleted && dist >= volcanoEvent.nextTriggerDistance)
+                    startVolcanoEvent();
+                return
+            }
+            if (!volcanoEvent.group || !airplane) {
+                resetVolcanoEvent(dist + 10500);
+                return
+            }
+            volcanoEvent.totalTimer += dt;
+            volcanoEvent.impactCooldown = Math.max(0, volcanoEvent.impactCooldown - dt);
+            volcanoEvent.impactShake = Math.max(0, volcanoEvent.impactShake - dt * 2.8);
+            if (volcanoEvent.dropTimer > 0) {
+                volcanoEvent.dropTimer = Math.max(0, volcanoEvent.dropTimer - dt);
+                targetY = Math.max(5, targetY - 10 * dt)
+            }
+            animateVolcano(dt);
+            const aheadDistance = airplane.position.z - volcanoEvent.z,
+                passedDistance = Math.max(0, -aheadDistance),
+                aggression = Math.max(0, Math.min(1, passedDistance / volcanoEvent.maxRange));
+            volcanoEvent.aggression = aggression;
+            if (volcanoEvent.phase === 'approach' && aheadDistance <= 640) {
+                volcanoEvent.phase = 'eruption';
+                volcanoEvent.nextShot = .18;
+                setVolcanoBanner(t('volcanoErupting'));
+                _tone('sawtooth', 54, 145, .9, .065)
+            }
+
+            const dangerStage = passedDistance >= 2000 ? 3 : (passedDistance >= 1000 ? 2 : (passedDistance > 0 ? 1 :
+                0));
+            if (dangerStage > volcanoEvent.dangerStage) {
+                volcanoEvent.dangerStage = dangerStage;
+                setVolcanoBanner(t(dangerStage === 1 ? 'volcanoFallout' : (dangerStage === 2 ? 'volcanoIntense' :
+                    'volcanoExtreme')));
+                _tone('sawtooth', 70 + dangerStage * 28, 42, .45 + dangerStage * .12, .055)
+            }
+
+            if (volcanoEvent.phase === 'eruption' && aheadDistance < 650 && passedDistance < volcanoEvent.maxRange) {
+                volcanoEvent.nextShot -= dt;
+                if (volcanoEvent.nextShot <= 0) {
+                    launchVolcanoBurst(aggression);
+                    volcanoEvent.nextShot = 1.05 - aggression * .62 + Math.random() * (.42 - aggression * .22)
+                }
+            }
+            updateVolcanoProjectiles(dt);
+            const indicator = document.getElementById('volcanoIndicator'),
+                timerText = document.getElementById('volcanoTimerText');
+            if (indicator) indicator.style.display = 'flex';
+            if (timerText) {
+                if (aheadDistance > 0) timerText.innerText = `${t('volcanoIndicator')} ${Math.ceil(aheadDistance)}m`;
+                else {
+                    const dangerLevel = 1 + Math.min(2, Math.floor(aggression * 3)),
+                        remaining = Math.max(0, Math.ceil(volcanoEvent.maxRange - passedDistance));
+                    timerText.innerText = `${t('volcanoIndicator')} · ${currentLanguage === 'en' ? 'DANGER' : 'PERIGO'} ${
+                        dangerLevel}/3 · ${remaining}m`
+                }
+            }
+            if (passedDistance >= volcanoEvent.maxRange) resetVolcanoEvent(dist + 11000 + Math.random() * 5000)
+        }
+
+        function getVolcanoSurfaceHeight(worldX, worldZ) {
+            if (!volcanoEvent.active || !volcanoEvent.group) return null;
+            const dx = worldX - volcanoEvent.x,
+                dz = worldZ - volcanoEvent.z,
+                radius = Math.sqrt(dx * dx + dz * dz);
+            if (radius > volcanoEvent.baseRadius) return null;
+            if (radius <= volcanoEvent.upperTopRadius) return volcanoEvent.height;
+            if (radius <= volcanoEvent.lowerTopRadius) return volcanoEvent.lowerHeight +
+                (volcanoEvent.height - volcanoEvent.lowerHeight) *
+                (volcanoEvent.lowerTopRadius - radius) / (volcanoEvent.lowerTopRadius - volcanoEvent.upperTopRadius);
+            return volcanoEvent.lowerHeight * (volcanoEvent.baseRadius - radius) /
+                (volcanoEvent.baseRadius - volcanoEvent.lowerTopRadius)
+        }
+
+        function testVolcanoBodyCollision(points) {
+            // Uma pedra pode derrubar o avião sobre a cratera. Esta curta tolerância garante
+            // que o impacto aplique primeiro a penalidade de altitude, em vez de virar morte instantânea.
+            if (!volcanoEvent.active || volcanoEvent.impactCooldown > 0) return false;
+            for (const point of points) {
+                const surface = getVolcanoSurfaceHeight(point.x, point.z);
+                if (surface !== null && point.y <= surface) return true
+            }
+            return false
+        }
 
         // ==================== SISTEMA DE CICLO DIA & NOITE ====================
 // Convertido do protótipo React/TypeScript para JS puro, para encaixar
@@ -2279,113 +3776,252 @@ function _obstacleMountainDims(b, central, rng) {
             spawnedMountains.push({ x, z, radius: baseRadius * 1.1 })
         }
 
-        // Formação de cânion: paredão quase vertical com patamares sedimentares erodidos e talude na base.
-// Mesma técnica low-poly da createLowPolyMountain (heightGrid para colisão, faceted, vertex colors),
-// mas com um perfil radial de falésia em vez de morro arredondado.
-function createCanyonFormation({ width = 220, depth = 220, height = 260, segments = 24, color = 0xbf360c,
-    seed = Math.random() * 99999 } = {}) {
-    function random(x, z) { const s = Math.sin(x * 127.1 + z * 311.7 + seed * 13.7) * 43758.5453123; return s - Math.floor(s) }
-    function hash1(n) { const s = Math.sin(n * 12.9898 + seed * 78.233) * 43758.5453123; return s - Math.floor(s) }
+        // Formação exclusiva dos Cânions. As três silhuetas são deliberadamente maiores,
+        // assimétricas e recortadas, para não se confundirem com as montanhas cônicas comuns.
+        // Todas usam uma grelha de alturas real, que também é reutilizada pela colisão.
+        function createCanyonFormation({ width = 220, depth = 220, height = 150, segments = 24,
+            color = 0xbf360c, style = 'mesa', seed = Math.random() * 99999 } = {}) {
+            function random(x, z) {
+                const s = Math.sin(x * 127.1 + z * 311.7 + seed * 13.7) * 43758.5453123;
+                return s - Math.floor(s)
+            }
 
-    // Contorno irregular do cânion (baías/esporões erodidos) — várias oitavas, amplitude maior
-    // que a versão anterior para deixar de parecer um bloco redondo/retangular.
-    function angleNoise(theta, oct) {
-        let v = 0, amp = 1, freq = 1;
-        for (let i = 0; i < oct; i++) {
-            v += Math.sin(theta * freq * 2.3 + seed * (i + 1) * 4.7 + hash1(i) * 6.28) * amp;
-            amp *= 0.55; freq *= 2.05;
+            function hash1(n) {
+                const s = Math.sin(n * 12.9898 + seed * 78.233) * 43758.5453123;
+                return s - Math.floor(s)
+            }
+
+            function angleNoise(theta, octaves) {
+                let value = 0,
+                    amplitude = 1,
+                    frequency = 1;
+                for (let i = 0; i < octaves; i++) {
+                    value += Math.sin(theta * frequency * 2.3 + seed * (i + 1) * 4.7 + hash1(i) * Math.PI * 2) *
+                        amplitude;
+                    amplitude *= .5;
+                    frequency *= 2.05;
+                }
+                return value
+            }
+
+            function grooveNoise(theta) {
+                return Math.sin(theta * 9 + seed * 5.1) * .5 +
+                    Math.sin(theta * 17 + seed * 11.3) * .28 +
+                    Math.sin(theta * 31 + seed * 2.7) * .14
+            }
+
+            const profiles = {
+                mesa: { top: [.40, .52], cliff: [.16, .23], noise: [.19, .28], groove: [.055, .10], lobes: [3, 7],
+                    terrace: .045, bend: .09, skew: .12, crown: .055, notches: [2, 4], notchDepth: [.15, .27] },
+                butte: { top: [.20, .32], cliff: [.23, .34], noise: [.24, .34], groove: [.07, .13], lobes: [4, 8],
+                    terrace: .055, bend: .17, skew: .17, crown: .11, notches: [3, 5], notchDepth: [.18, .32] },
+                ridge: { top: [.28, .41], cliff: [.17, .25], noise: [.20, .30], groove: [.06, .11], lobes: [2, 5],
+                    terrace: .042, bend: .24, skew: .10, crown: .075, notches: [3, 6], notchDepth: [.14, .25] }
+            };
+            const profile = profiles[style] || profiles.mesa;
+            const plateauEdge = profile.top[0] + hash1(1) * (profile.top[1] - profile.top[0]);
+            const cliffWidth = profile.cliff[0] + hash1(2) * (profile.cliff[1] - profile.cliff[0]);
+            const cliffEnd = plateauEdge + cliffWidth;
+            const noiseAmp = profile.noise[0] + hash1(3) * (profile.noise[1] - profile.noise[0]);
+            const grooveAmp = profile.groove[0] + hash1(4) * (profile.groove[1] - profile.groove[0]);
+            const lobeCount = profile.lobes[0] + Math.floor(hash1(5) * (profile.lobes[1] - profile.lobes[0] + 1));
+            const bendPhase = hash1(6) * Math.PI * 2,
+                skewX = (hash1(7) - .5) * profile.skew,
+                skewZ = (hash1(8) - .5) * profile.skew,
+                tiltX = (hash1(9) - .5) * .075,
+                tiltZ = (hash1(10) - .5) * .075,
+                notchCount = profile.notches[0] + Math.floor(hash1(11) *
+                    (profile.notches[1] - profile.notches[0] + 1)),
+                notches = [];
+            for (let n = 0; n < notchCount; n++) {
+                notches.push({
+                    angle: hash1(20 + n * 4) * Math.PI * 2,
+                    width: .10 + hash1(21 + n * 4) * .20,
+                    depth: profile.notchDepth[0] + hash1(22 + n * 4) *
+                        (profile.notchDepth[1] - profile.notchDepth[0])
+                })
+            }
+
+            const geo = new THREE.PlaneGeometry(width, depth, segments, segments);
+            geo.rotateX(-Math.PI / 2);
+            const pos = geo.attributes.position;
+            const halfW = width / 2,
+                halfD = depth / 2;
+
+            for (let i = 0; i < pos.count; i++) {
+                const x = pos.getX(i),
+                    z = pos.getZ(i),
+                    nx = x / halfW,
+                    nz = z / halfD;
+
+                // Entorta o eixo da formação. Nas cristas, o desvio cresce ao longo do paredão,
+                // criando uma muralha sinuosa em vez de uma elipse regular.
+                let warpedX = nx + skewX * nz + Math.sin(nz * 3.15 + bendPhase) * profile.bend *
+                        (.28 + Math.min(1, Math.abs(nz)) * .72),
+                    warpedZ = nz + skewZ * nx + Math.sin(nx * 2.4 - bendPhase) * profile.bend * .28;
+                if (style === 'mesa') {
+                    warpedX += Math.sin(nz * 4.7 + bendPhase) * .035;
+                    warpedZ += Math.sin(nx * 3.9 - bendPhase) * .028
+                } else if (style === 'butte') {
+                    warpedX += (nz * nz - .3) * (hash1(13) - .5) * .20;
+                    warpedZ += (nx * nx - .3) * (hash1(14) - .5) * .16
+                }
+
+                const distance = Math.sqrt(warpedX * warpedX + warpedZ * warpedZ),
+                    theta = Math.atan2(warpedZ, warpedX),
+                    lobes = Math.sin(theta * lobeCount + seed * 3.3) * .072 +
+                        Math.sin(theta * (lobeCount + 3) - seed * 1.7) * .033;
+                let contour = 1 + angleNoise(theta, 5) * noiseAmp + lobes;
+
+                // Grandes mordidas de erosão formam reentrâncias reais na silhueta externa.
+                for (const notch of notches) {
+                    const angleDelta = Math.atan2(Math.sin(theta - notch.angle), Math.cos(theta - notch.angle)),
+                        bite = Math.exp(-(angleDelta * angleDelta) / (2 * notch.width * notch.width));
+                    contour -= bite * notch.depth * (.45 + Math.min(1, distance) * .55)
+                }
+                contour = Math.max(.43, contour);
+                const groove = grooveNoise(theta) * grooveAmp;
+                const radial = distance / contour;
+                let mask;
+
+                if (radial < plateauEdge) {
+                    const crownT = radial / Math.max(.01, plateauEdge),
+                        crownBreaks = angleNoise(theta + 1.37, 3) * profile.crown * Math.pow(crownT, 1.45),
+                        tilt = warpedX * tiltX + warpedZ * tiltZ;
+                    mask = 1 - crownT * .025 + crownBreaks + tilt
+                } else if (radial < cliffEnd) {
+                    const localT = (radial - plateauEdge) / cliffWidth;
+                    const smooth = localT * localT * (3 - 2 * localT);
+                    mask = .965 - smooth * (.79 + groove)
+                } else {
+                    const talusT = Math.min(1, (radial - cliffEnd) / .28);
+                    mask = Math.max(0, .175 - groove * .45) * (1 - talusT)
+                }
+
+                // As cristas recebem desfiladeiros/sadles transversais, quebrando o topo comprido
+                // em blocos de alturas diferentes sem separar a base do paredão.
+                if (style === 'ridge' && mask > .08) {
+                    const saddleA = Math.exp(-Math.pow((warpedZ - (hash1(41) - .5) * .70) / .14, 2)),
+                        saddleB = Math.exp(-Math.pow((warpedZ - (hash1(42) - .5) * 1.25) / .11, 2));
+                    mask *= 1 - Math.min(.42, saddleA * .30 + saddleB * .19) *
+                        Math.max(0, 1 - radial / Math.max(.01, cliffEnd))
+                }
+
+                // Um butte não fica com o cume perfeitamente central: um lado é mais erodido.
+                if (style === 'butte' && radial < cliffEnd) {
+                    const brokenCrown = Math.max(0, Math.sin(theta * 3 + bendPhase)) *
+                        Math.pow(Math.max(0, 1 - radial / cliffEnd), 2) * .075;
+                    mask -= brokenCrown
+                }
+
+                mask = Math.max(0, Math.min(1.045, mask));
+                let y = height * mask;
+                if (mask > .07) {
+                    const terraceStep = Math.max(3, height * profile.terrace);
+                    y = Math.round(y / terraceStep) * terraceStep
+                }
+                y += (random(x * 1.7, z * 1.7) - .5) * height * .035 * Math.min(1, mask + .12);
+                // Mantém o ápice real dentro do teto calculado para a jogabilidade.
+                pos.setY(i, Math.max(0, Math.min(height, y)))
+            }
+
+            // Guarda a grelha indexada antes de criar a geometria facetada de renderização.
+            const gridN = segments + 1,
+                heightGrid = new Float32Array(gridN * gridN),
+                cellW = width / segments,
+                cellD = depth / segments;
+            for (let i = 0; i < pos.count; i++) {
+                const vx = pos.getX(i),
+                    vz = pos.getZ(i),
+                    ix = Math.round((vx + halfW) / cellW),
+                    iz = Math.round((vz + halfD) / cellD);
+                if (ix >= 0 && ix < gridN && iz >= 0 && iz < gridN) heightGrid[iz * gridN + ix] = pos.getY(i)
+            }
+
+            // toNonIndexed() devolve uma nova geometria no Three.js r128.
+            const renderGeo = geo.toNonIndexed();
+            renderGeo.computeVertexNormals();
+            const renderPos = renderGeo.attributes.position,
+                colors = [],
+                baseColor = new THREE.Color(color),
+                darkBand = new THREE.Color(color).multiplyScalar(.68),
+                lightBand = new THREE.Color(color).lerp(new THREE.Color(0xd99a5b), .28);
+            for (let i = 0; i < renderPos.count; i++) {
+                const vertexH = renderPos.getY(i),
+                    bandIndex = Math.floor(vertexH / Math.max(4, height * .075)),
+                    bandColor = bandIndex % 3 === 0 ? darkBand : (bandIndex % 3 === 1 ? baseColor : lightBand),
+                    heightLight = .78 + Math.max(0, Math.min(1, vertexH / height)) * .25;
+                colors.push(Math.min(1, bandColor.r * heightLight), Math.min(1, bandColor.g * heightLight),
+                    Math.min(1, bandColor.b * heightLight))
+            }
+            renderGeo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+            geo.dispose();
+            const material = new THREE.MeshStandardMaterial({ vertexColors: true, flatShading: true, roughness: 1,
+                metalness: 0 });
+            const mesh = new THREE.Mesh(renderGeo, material);
+            mesh.castShadow = mesh.receiveShadow = true;
+            mesh.userData.heightGrid = heightGrid;
+            mesh.userData.gridSize = gridN;
+            mesh.userData.mWidth = width;
+            mesh.userData.mDepth = depth;
+            mesh.userData.canyonStyle = style;
+            return mesh
         }
-        return v;
-    }
-    // Ranhuras verticais de erosão: modulação persistente por ângulo (não por vértice) — cria
-    // sulcos/nervuras contínuas do topo à base da parede, o efeito de "ranhuras nas pontas" pedido.
-    function grooveNoise(theta) {
-        return Math.sin(theta * 9 + seed * 5.1) * 0.5 +
-               Math.sin(theta * 17 + seed * 11.3) * 0.28 +
-               Math.sin(theta * 31 + seed * 2.7) * 0.14;
-    }
 
-    // Parâmetros por instância — cada formação fica com um "corpo" diferente, não só rodado.
-    const plateauEdge = 0.52 + hash1(1) * 0.22;
-    const cliffEnd = plateauEdge + 0.16 + hash1(2) * 0.10;
-    const noiseAmp = 0.20 + hash1(3) * 0.14;
-    const grooveAmp = 0.05 + hash1(4) * 0.05;
-    const lobeCount = 2 + Math.floor(hash1(5) * 3);
+        // Esta função faltava no arquivo. Sem ela, o primeiro chunk dos Cânions lançava
+        // "ReferenceError: _spawnCanyonMountain is not defined" e interrompia o game loop.
+        function _spawnCanyonMountain(z, x, b, central = false) {
+            const rng = getRng(z);
+            const radiusRange = central ? b.mountCentralR : b.mountR;
+            const baseRadius = (radiusRange[0] + rng() * (radiusRange[1] - radiusRange[0])) *
+                OBSTACLE_MOUNTAIN_SCALE;
+            const styleRoll = rng();
+            const style = central ? (styleRoll < .62 ? 'butte' : (styleRoll < .84 ? 'mesa' : 'ridge')) :
+                (styleRoll < .46 ? 'ridge' : (styleRoll < .82 ? 'mesa' : 'butte'));
+            const styleData = {
+                // Multiplicadores em intervalo: mesmo formações do mesmo tipo não repetem proporção.
+                mesa: { width: [3.75, 4.65], depth: [3.25, 4.20], heightMin: 142, heightMax: 176,
+                    color: 0xb54a1d },
+                butte: { width: [2.65, 3.45], depth: [2.45, 3.35], heightMin: 152, heightMax: 178,
+                    color: 0xc25a25 },
+                ridge: { width: [2.20, 2.90], depth: [4.75, 6.10], heightMin: 128, heightMax: 168,
+                    color: 0x9f3d18 }
+            }[style];
+            let height = styleData.heightMin + rng() * (styleData.heightMax - styleData.heightMin);
+            if (central) height *= .92;
+            // O chão da formação está em y=-5; 178 resulta em ápice real de ~173,
+            // ainda abaixo do teto de voo de 180.
+            height = Math.min(178, height);
+            const sizeScale = central ? .68 : 1,
+                widthMultiplier = styleData.width[0] + rng() * (styleData.width[1] - styleData.width[0]),
+                depthMultiplier = styleData.depth[0] + rng() * (styleData.depth[1] - styleData.depth[0]);
+            let width = baseRadius * widthMultiplier * sizeScale,
+                depth = baseRadius * depthMultiplier * sizeScale,
+                rotation = central ? rng() * Math.PI : (rng() - .5) * (style === 'ridge' ? .07 : .045);
 
-    const geo = new THREE.PlaneGeometry(width, depth, segments, segments);
-    geo.rotateX(-Math.PI / 2);
-    const pos = geo.attributes.position;
-    const baseR = width * 0.5;
+            // As laterais podem ser enormes ao longo da rota, mas preservam um corredor central.
+            // O cálculo considera até a pequena rotação aplicada ao mesh.
+            if (!central) {
+                const maxHalfX = Math.max(92, Math.abs(x) - 70),
+                    depthContribution = Math.abs(Math.sin(rotation)) * depth * .5,
+                    maxLocalHalfWidth = Math.max(80, (maxHalfX - depthContribution) /
+                        Math.max(.25, Math.abs(Math.cos(rotation))));
+                width = Math.min(width, maxLocalHalfWidth * 2)
+            }
 
-    for (let i = 0; i < pos.count; i++) {
-        let x = pos.getX(i), z = pos.getZ(i);
-        let d = Math.sqrt(x * x + z * z);
-        let theta = Math.atan2(z, x);
-
-        let lobeShape = Math.sin(theta * lobeCount + seed * 3.3) * 0.12;
-        let contour = angleNoise(theta, 4) * noiseAmp + lobeShape;
-        let groove = grooveNoise(theta) * grooveAmp;
-
-        let rProfile = baseR * (0.62 + contour);
-        let t = d / Math.max(1, rProfile);
-
-        let mask;
-        if (t < plateauEdge) mask = 1;
-        else if (t < cliffEnd) {
-            let lt = (t - plateauEdge) / (cliffEnd - plateauEdge);
-            let s = lt * lt * (3 - 2 * lt);
-            mask = 1 - s * (0.88 + groove);
-        } else {
-            let lt = Math.min(1, (t - cliffEnd) / 0.3);
-            mask = Math.max(0, (0.12 - groove * 0.5)) * (1 - lt);
+            const seed = z * 7919 + x * 6271 + (central ? 54321 : 24680),
+                canyonMesh = createCanyonFormation({ width, depth, height,
+                    segments: 29 + Math.floor(rng() * 7), color: styleData.color, style, seed });
+            canyonMesh.position.set(x, -5, z);
+            canyonMesh.rotation.y = rotation;
+            scene.add(canyonMesh);
+            activeEntities.push({ type: 'mountain', shape: 'heightfield', biome: 'canions', canyonStyle: style,
+                mesh: canyonMesh, yBase: -5, yApex: height - 5, height,
+                radius: Math.sqrt(width * width + depth * depth) * .5,
+                heightGrid: canyonMesh.userData.heightGrid, gridSize: canyonMesh.userData.gridSize,
+                mWidth: canyonMesh.userData.mWidth, mDepth: canyonMesh.userData.mDepth });
+            spawnedMountains.push({ x, z, radius: Math.sqrt(width * width + depth * depth) * .5 })
         }
-
-        let y = height * Math.max(0, mask);
-        if (mask > 0.08) y = Math.round(y / (height * 0.05)) * (height * 0.05);
-        y += (random(x * 1.7, z * 1.7) - 0.5) * height * 0.03 * Math.min(1, mask + .15);
-        pos.setY(i, Math.max(0, y));
-    }
-
-    const gridN = segments + 1;
-    const heightGrid = new Float32Array(gridN * gridN);
-    const cellW = width / segments, cellD = depth / segments;
-    for (let i = 0; i < pos.count; i++) {
-        const vx = pos.getX(i), vz = pos.getZ(i), vy = pos.getY(i);
-        const ix = Math.round((vx + width / 2) / cellW), iz = Math.round((vz + depth / 2) / cellD);
-        if (ix >= 0 && ix < gridN && iz >= 0 && iz < gridN) heightGrid[iz * gridN + ix] = vy;
-    }
-    geo.computeVertexNormals();
-    geo.toNonIndexed();
-    const p = geo.attributes.position, normals = [];
-    for (let i = 0; i < p.count; i += 3) {
-        const a = new THREE.Vector3(p.getX(i), p.getY(i), p.getZ(i)),
-            b = new THREE.Vector3(p.getX(i + 1), p.getY(i + 1), p.getZ(i + 1)),
-            c = new THREE.Vector3(p.getX(i + 2), p.getY(i + 2), p.getZ(i + 2)),
-            n = new THREE.Vector3();
-        n.crossVectors(b.clone().sub(a), c.clone().sub(a)).normalize();
-        normals.push(n.x, n.y, n.z, n.x, n.y, n.z, n.x, n.y, n.z);
-    }
-    geo.setAttribute("normal", new THREE.Float32BufferAttribute(normals, 3));
-    const colors = [];
-    const baseColor = new THREE.Color(color);
-    const bandColor = new THREE.Color(color).multiplyScalar(0.72);
-    for (let i = 0; i < p.count; i++) {
-        const h = p.getY(i);
-        const band = Math.sin(h * 0.09) > 0.25 ? bandColor : baseColor;
-        const t = Math.max(0, Math.min(1, h / height));
-        const c = new THREE.Color(band.r * (0.75 + t * 0.25), band.g * (0.75 + t * 0.25), band.b * (0.78 + t * 0.28));
-        colors.push(c.r, c.g, c.b);
-    }
-    geo.setAttribute("color", new THREE.Float32BufferAttribute(colors, 3));
-    const mat = new THREE.MeshStandardMaterial({ vertexColors: true, flatShading: true, roughness: 1, metalness: 0 });
-    const mesh = new THREE.Mesh(geo, mat);
-    mesh.castShadow = mesh.receiveShadow = true;
-    mesh.userData.heightGrid = heightGrid;
-    mesh.userData.gridSize = gridN;
-    mesh.userData.mWidth = width;
-    mesh.userData.mDepth = depth;
-    return mesh;
-}
 
         // Demais funções de spawn
         function _spawnTree(z, x, id) {
@@ -2915,6 +4551,8 @@ function createCanyonFormation({ width = 220, depth = 220, height = 260, segment
         }
 
         function clearWorld() {
+            resetAlienEvent(false);
+            resetVolcanoEvent();
             activeEntities.forEach(e => scene.remove(e.mesh));
             activeEntities.length = 0;
             spawnedMountains.length = 0;
@@ -2950,11 +4588,16 @@ function createCanyonFormation({ width = 220, depth = 220, height = 260, segment
                     e.mesh.rotation.x = Math.sin(t * e.wobbleSpeedP + e.wobblePhaseP) * e.wobbleAmpP;
                     e.mesh.rotation.z = Math.sin(t * e.wobbleSpeedR + e.wobblePhaseR) * e.wobbleAmpR;
                 }
-                if (e.type === 'mountain' && e.mesh.position.z > airplane.position.z + 260) {
-                    let idx = spawnedMountains.findIndex(m => m.x === e.mesh.position.x && m.z === e.mesh.position.z);
-                    if (idx >= 0) spawnedMountains.splice(idx, 1);
-                }
-                if (e.mesh.position.z > airplane.position.z + 200) {
+                // Formações de cânion podem ter centenas de unidades de profundidade. Só recicla
+                // a entidade depois que a extremidade traseira inteira já saiu da área visível.
+                const mountainRearExtent = e.type === 'mountain' && e.mWidth && e.mDepth ?
+                    Math.abs(Math.sin(e.mesh.rotation.y)) * e.mWidth * .5 +
+                    Math.abs(Math.cos(e.mesh.rotation.y)) * e.mDepth * .5 : 0;
+                if (e.mesh.position.z > airplane.position.z + 200 + mountainRearExtent) {
+                    if (e.type === 'mountain') {
+                        let idx = spawnedMountains.findIndex(m => m.x === e.mesh.position.x && m.z === e.mesh.position.z);
+                        if (idx >= 0) spawnedMountains.splice(idx, 1)
+                    }
                     scene.remove(e.mesh);
                     if (e.mesh.geometry) e.mesh.geometry.dispose();
                     e.mesh.traverse(c => { if (c.isMesh && c.geometry) c.geometry.dispose(); });
@@ -3084,6 +4727,8 @@ function createCanyonFormation({ width = 220, depth = 220, height = 260, segment
             if (requestID) cancelAnimationFrame(requestID);
             requestID = null;
             gameActive = false;
+            resetAlienEvent(true);
+            resetVolcanoEvent();
             setEngineSound(false);
             safeSdkCall('gameplayStop');
             document.getElementById('gameHUD').classList.add('hidden');
@@ -3112,8 +4757,10 @@ function createCanyonFormation({ width = 220, depth = 220, height = 260, segment
             if (nb.id !== lastBiomeId) { lastBiomeId = nb.id;
                 currentBiome = nb;
                 showBiomeBanner(nb); }
+            updateAlienEvent(dt, dist);
             let maxSpd = getMaxSpeed(),
-                tgtSpd = Math.min(maxSpd, baseFlightSpeed + dist / 150);
+                tgtSpd = Math.min(maxSpd, baseFlightSpeed + dist / 150) *
+                    (alienEvent.active ? alienEvent.speedFactor : 1);
             if (!fuelLockActive && !fuelDepleted) { let cons = getFuelConsumptionRate();
                 fuel -= dt * cons; if (fuel <= 0) { fuel = 0;
                     fuelDepleted = true;
@@ -3127,7 +4774,7 @@ function createCanyonFormation({ width = 220, depth = 220, height = 260, segment
                 targetY = Math.max(5, targetY - dt * 18); if (Math.floor(fuelDepletedTimer) > 0 && Math.floor(
                     fuelDepletedTimer) % 3 === 0 && fuelDepletedTimer < 10) showFeedback(
                     '⚠️ Planando! Procure anéis de combustível!', false); } else { flightSpeed = tgtSpd; }
-            let agi = getAgilityMultiplier(),
+            let agi = getAgilityMultiplier() * (alienEvent.active ? alienEvent.controlFactor : 1),
                 effStrafe = strafeSpeed * agi;
             let goL = keyboard['arrowleft'] || keyboard['a'] || touchInputs.left,
                 goR = keyboard['arrowright'] || keyboard['d'] || touchInputs.right,
@@ -3155,8 +4802,11 @@ function createCanyonFormation({ width = 220, depth = 220, height = 260, segment
             airplane.position.x += dx * 5 * dt * agi;
             airplane.position.y += dy * 5 * dt * agi;
             airplane.position.z -= flightSpeed * dt;
+            updateVolcanoEvent(dt, dist);
             if (mpActive) mpPublishState();
-            airplane.rotation.set(pitchAngle, Math.PI, bankAngle, 'YZX');
+            const alienBankJitter = alienEvent.active ? Math.sin(alienEvent.totalTimer * 31) *
+                (.025 * alienEvent.skyBlend + .15 * alienEvent.interference) : 0;
+            airplane.rotation.set(pitchAngle, Math.PI, bankAngle + alienBankJitter, 'YZX');
             if (propellerHub) propellerHub.rotation.z += 48 * dt;
             updateEngineSound(flightSpeed);
             
@@ -3178,6 +4828,14 @@ function createCanyonFormation({ width = 220, depth = 220, height = 260, segment
                 }
             }
             let camPos = airplane.position.clone().add(new THREE.Vector3(0, 7, 30));
+            if (alienEvent.active && alienEvent.interference > .02) {
+                camPos.x += Math.sin(alienEvent.totalTimer * 39) * 2.7 * alienEvent.interference;
+                camPos.y += Math.cos(alienEvent.totalTimer * 33) * 1.65 * alienEvent.interference
+            }
+            if (volcanoEvent.active && volcanoEvent.impactShake > .01) {
+                camPos.x += (Math.random() - .5) * 7 * volcanoEvent.impactShake;
+                camPos.y += (Math.random() - .5) * 5 * volcanoEvent.impactShake
+            }
             let camAlpha = 1 - Math.pow(0.003, dt);
             camera.position.lerp(camPos, camAlpha);
             camera.lookAt(airplane.position.clone().add(new THREE.Vector3(0, 0, -40)));
@@ -3327,12 +4985,24 @@ function checkCollisions() {
             if (pY < 2.5) { if (typeof handleImpact === 'function' && handleImpact('Despenhaste-te no chão!')) return; }
             if (pX < -350 || pX > 350) { if (typeof handleImpact === 'function' && handleImpact('Saíste da rota de voo autorizada!')) return; }
 
+            // O vulcão é uma formação especial fora da lista comum de chunks. O teste usa o
+            // mesmo perfil de troncos de cone exibido na tela e mantém passagem pelos lados.
+            if (testVolcanoBodyCollision(wc)) {
+                if (typeof handleImpact === 'function' && handleImpact(t('volcanoCollision'))) return
+            }
+
             if (typeof activeEntities === 'undefined' || !activeEntities) return;
 
             // ----- VERIFICAÇÃO DE CADA ENTIDADE ATIVA -----
             for (let e of activeEntities) {
                 if (!e.mesh) continue;
-                if (e.mesh.position.z > pZ + 40 || e.mesh.position.z < pZ - 40) continue;
+                // Montanhas ocupam bem mais de 80 unidades no eixo Z. O limite fixo de 40 fazia
+                // a colisão ignorar a frente e o fundo das formações, principalmente nos Cânions.
+                const mountainHalfDiagonal = e.type === 'mountain' && e.mWidth && e.mDepth ?
+                    Math.sqrt(e.mWidth * e.mWidth + e.mDepth * e.mDepth) * .5 : 0;
+                const collisionZRange = e.type === 'mountain' ?
+                    Math.max(40, mountainHalfDiagonal, e.radius || 0) + hl : 40;
+                if (e.mesh.position.z > pZ + collisionZRange || e.mesh.position.z < pZ - collisionZRange) continue;
 
                 // ----- ANÉIS (RINGS / POWER RINGS) -----
                 if (e.type === 'ring' && !e.collected) {
@@ -3594,6 +5264,8 @@ function checkCollisions() {
             playCrashSound();
             safeSdkCall('gameplayStop');
             let runDist = Math.floor(Math.abs(airplane?.position.z || 0));
+            resetAlienEvent(true, runDist + 5500 + Math.random() * 2500);
+            resetVolcanoEvent(runDist + 10000 + Math.random() * 4500);
             let totalScore = score + runDist;
             let rings = ringsCollected;
             let saved = saveProgress(totalScore, runDist, rings, sessionNearMisses, currentBiome);
@@ -3611,6 +5283,7 @@ function checkCollisions() {
             let earned = Math.floor(runDist / 500) + rings * 2 + sessionNearMisses * 5;
             document.getElementById('coinsEarned').innerText = '+' + earned + ' moedas';
             document.getElementById('totalCoins').innerText = saved.coins;
+            updateGameOverRankCard(saved, lastRankUpdate);
         }
 
         function restartGame() {
@@ -3641,6 +5314,7 @@ function checkCollisions() {
                 safeHappytime(); }
             s.coins += Math.floor(rd / 500) + rr * 2 + rn * 5;
             if (re && !s.unlockedBiomes.includes(re.id)) s.unlockedBiomes.push(re.id);
+            recordRankScore(s, rs);
             s.runHistory.unshift({ score: rs, dist: rd, rings: rr, nearMisses: rn, biome: re?.name || 'Campos',
                 date: s.lastPlayed });
             if (s.runHistory.length > 10) s.runHistory.length = 10;
@@ -3937,6 +5611,7 @@ function checkCollisions() {
             let s = loadSave();
             document.getElementById('lobbyRecord').innerText = s.bestDistance + 'M';
             document.getElementById('lobbyCoins').innerText = s.coins;
+            updateLobbyRankCard(s);
             if (s.lastPlaneColor) planeColor = s.lastPlaneColor;
             let bg = document.getElementById('lobbyBgCanvas');
             bg.width = innerWidth;
@@ -4322,6 +5997,7 @@ function checkCollisions() {
                 submitScoreToCrazyGames(totalScore); } if (runDist > s.bestDistance) { s.bestDistance = runDist;
                 safeHappytime(); }
             s.coins += earned; if (isWinner) s.coins += 75;
+            recordRankScore(s, totalScore);
             s.runHistory.unshift({ score: totalScore, dist: runDist, rings: ringsCollected,
                 nearMisses: sessionNearMisses, biome: currentBiome?.name || 'Campos', date: s.lastPlayed,
                 mode: 'multiplayer', won: isWinner }); if (s.runHistory.length > 10) s.runHistory.length = 10;
