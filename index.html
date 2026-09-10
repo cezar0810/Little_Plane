@@ -1250,6 +1250,94 @@
         #mpRaceProgress { width: 0; height: 100%; border-radius: inherit; background: linear-gradient(90deg,#38bdf8,#fbbf24); box-shadow: 0 0 10px rgba(56,189,248,.45) }
         #mpOpponentGap { overflow: hidden; color: #94a3b8; font-size: .62rem; line-height: 1.1; text-align: center; text-overflow: ellipsis; white-space: nowrap }
 
+        /* ========== BATALHA AÉREA ONLINE ========== */
+        #battleModal,
+        #battleWaitingScreen,
+        #battleResultScreen {
+            position: absolute;
+            inset: 0;
+            z-index: 310;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+            padding: 18px;
+            color: #fff;
+            background: rgba(3,7,18,.88);
+            backdrop-filter: blur(14px);
+            font-family: 'Baloo 2',cursive
+        }
+        #battleWaitingScreen { z-index: 320; flex-direction: column; gap: 12px; text-align: center }
+        #battleResultScreen { z-index: 330 }
+        .battle-card {
+            box-sizing: border-box;
+            width: min(430px,calc(100vw - 30px));
+            padding: 25px;
+            border: 1px solid rgba(129,140,248,.5);
+            border-radius: 26px;
+            text-align: center;
+            background: linear-gradient(150deg,rgba(15,23,42,.98),rgba(30,27,75,.97));
+            box-shadow: 0 28px 90px rgba(0,0,0,.68),0 0 42px rgba(99,102,241,.2)
+        }
+        .battle-title { margin: 0; color: #c4b5fd; font-size: 2rem; line-height: 1; font-weight: 900 }
+        .battle-subtitle { margin: 7px 0 17px; color: #94a3b8; font-size: .76rem; line-height: 1.35; font-weight: 700 }
+        .battle-rank-lock { margin-bottom: 14px; padding: 10px 12px; border: 1px solid rgba(167,139,250,.2); border-radius: 14px; color: #ddd6fe; background: rgba(15,23,42,.48); font-size: .72rem; font-weight: 900 }
+        .battle-actions { display: grid; gap: 9px }
+        .battle-btn { width: 100%; padding: 12px 15px; border: 0; border-radius: 14px; color: #fff; background: linear-gradient(135deg,#4f46e5,#7c3aed); cursor: pointer; font-family: inherit; font-size: .9rem; font-weight: 900 }
+        .battle-btn.join { background: linear-gradient(135deg,#0891b2,#2563eb) }
+        .battle-btn.ghost { color: #94a3b8; background: rgba(255,255,255,.065); border: 1px solid rgba(255,255,255,.09) }
+        .battle-code { margin: 13px 0; padding: 8px 12px; border: 2px dashed #a78bfa; border-radius: 15px; color: #fde68a; background: rgba(2,6,23,.64); cursor: pointer; font-size: 2.5rem; letter-spacing: .18em; font-weight: 900; user-select: all }
+        .battle-input { box-sizing: border-box; width: 100%; margin-bottom: 10px; padding: 12px; border: 1px solid #475569; border-radius: 14px; outline: 0; color: #fff; background: #0f172a; font-family: inherit; font-size: 1.25rem; letter-spacing: .15em; text-align: center; text-transform: uppercase; font-weight: 900 }
+        .battle-input:focus { border-color: #a78bfa; box-shadow: 0 0 0 3px rgba(139,92,246,.15) }
+        #battleError { min-height: 18px; margin-top: 6px; color: #fda4af; font-size: .73rem; font-weight: 900 }
+
+        #battleHud { position: absolute; inset: 0; z-index: 80; display: none; pointer-events: none; color: #fff; font-family: 'Baloo 2',cursive }
+        #battleHud.show { display: block }
+        .battle-health { position: absolute; top: 16px; width: min(330px,35vw); padding: 10px 12px; border: 1px solid rgba(255,255,255,.14); border-radius: 15px; background: rgba(2,6,23,.82); box-shadow: 0 8px 28px rgba(0,0,0,.28); backdrop-filter: blur(9px) }
+        .battle-health.self { left: 16px }
+        .battle-health.enemy { right: 16px }
+        .battle-health-label { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 5px; color: #cbd5e1; font-size: .66rem; letter-spacing: .06em; font-weight: 900 }
+        .battle-health-track,.battle-heat-track { height: 10px; overflow: hidden; border-radius: 999px; background: rgba(255,255,255,.1) }
+        .battle-health-fill { width: 100%; height: 100%; border-radius: inherit; background: linear-gradient(90deg,#16a34a,#4ade80); transition: width .16s }
+        .battle-health.enemy .battle-health-fill { background: linear-gradient(90deg,#f97316,#ef4444) }
+        .battle-center-hud { position: absolute; top: 15px; left: 50%; min-width: 126px; padding: 8px 12px; transform: translateX(-50%); border: 1px solid rgba(196,181,253,.25); border-radius: 15px; text-align: center; background: rgba(15,23,42,.84); backdrop-filter: blur(8px) }
+        #battleTimer { display: block; color: #fde68a; font-size: 1.28rem; font-weight: 900 }
+        #battleStormStatus { display: block; color: #a5b4fc; font-size: .55rem; letter-spacing: .1em; font-weight: 900 }
+        .battle-bottom-hud { position: absolute; bottom: 17px; left: 50%; width: min(470px,calc(100vw - 28px)); transform: translateX(-50%); padding: 9px 12px; border: 1px solid rgba(255,255,255,.12); border-radius: 16px; background: rgba(2,6,23,.82); backdrop-filter: blur(9px) }
+        .battle-heat-line { display: flex; align-items: center; gap: 9px; color: #cbd5e1; font-size: .62rem; font-weight: 900 }
+        .battle-heat-track { height: 7px; flex: 1 }
+        #battleHeatFill { width: 0; height: 100%; border-radius: inherit; background: linear-gradient(90deg,#38bdf8,#f59e0b,#ef4444) }
+        .battle-control-hint { margin-top: 5px; color: #a5b4fc; font-size: .5rem; letter-spacing: .045em; text-align: center; font-weight: 900 }
+        #battleUpgradeList { display: flex; justify-content: center; flex-wrap: wrap; gap: 5px; margin-top: 7px }
+        .battle-upgrade-chip { padding: 3px 7px; border: 1px solid rgba(255,255,255,.1); border-radius: 999px; color: #94a3b8; background: rgba(255,255,255,.05); font-size: .55rem; font-weight: 900 }
+        .battle-upgrade-chip.active { color: #e0e7ff; border-color: rgba(129,140,248,.4); background: rgba(79,70,229,.24) }
+        body.battle-game { cursor: none }
+        #battleReticle { position: absolute; left: 50%; top: 50%; width: 34px; height: 34px; transform: translate(-50%,-50%); border: 2px solid rgba(255,255,255,.86); border-radius: 50%; box-shadow: 0 0 11px rgba(129,140,248,.5); will-change: left,top,transform,border-color }
+        #battleReticle.assist { border-color: #67e8f9; box-shadow: 0 0 16px rgba(34,211,238,.9),inset 0 0 9px rgba(34,211,238,.25) }
+        #battleReticle.confirmed { animation: battleHitConfirm .22s ease-out; border-color: #fef08a; box-shadow: 0 0 25px rgba(250,204,21,1),inset 0 0 12px rgba(255,255,255,.7) }
+        #battleReticle::before,#battleReticle::after { content: ''; position: absolute; left: 50%; top: 50%; background: rgba(255,255,255,.9); transform: translate(-50%,-50%) }
+        #battleReticle::before { width: 48px; height: 2px }
+        #battleReticle::after { width: 2px; height: 48px }
+        #battleLeadMarker { position: absolute; left: 50%; top: 50%; width: 12px; height: 12px; display: none; transform: translate(-50%,-50%) rotate(45deg); border: 2px solid #fbbf24; box-shadow: 0 0 10px rgba(251,191,36,.8) }
+        #battleWarning { position: absolute; left: 50%; top: 24%; display: none; transform: translateX(-50%); padding: 7px 13px; border: 1px solid rgba(253,224,71,.35); border-radius: 12px; color: #fff7ed; background: rgba(154,52,18,.78); font-size: .72rem; font-weight: 900 }
+        #battleDamageFlash { position: absolute; z-index: 0; inset: 0; opacity: 0; background: radial-gradient(circle at 50% 48%,rgba(127,29,29,.08) 20%,rgba(220,38,38,.52) 100%); mix-blend-mode: screen }
+        #battleDamageFlash.active { animation: battleDamageFlash .48s ease-out }
+        body.battle-game.battle-damage-shake > canvas { animation: battleDamageShake .36s cubic-bezier(.2,.8,.2,1) }
+        body.battle-game.battle-hit-shake > canvas { animation: battleHitShake .18s ease-out }
+        @keyframes battleDamageFlash { 0% { opacity: .82 } 45% { opacity: .42 } 100% { opacity: 0 } }
+        @keyframes battleDamageShake { 0%,100% { transform: translate3d(0,0,0) scale(1) } 15% { transform: translate3d(-9px,5px,0) scale(1.012) } 32% { transform: translate3d(8px,-6px,0) scale(1.012) } 52% { transform: translate3d(-6px,-3px,0) scale(1.009) } 72% { transform: translate3d(4px,4px,0) scale(1.006) } }
+        @keyframes battleHitShake { 0%,100% { transform: translate3d(0,0,0) } 30% { transform: translate3d(-3px,2px,0) } 65% { transform: translate3d(3px,-2px,0) } }
+        @keyframes battleHitConfirm { 0% { transform: translate(-50%,-50%) scale(.76) } 60% { transform: translate(-50%,-50%) scale(1.22) } 100% { transform: translate(-50%,-50%) scale(1) } }
+        .battle-result-rank { margin: 11px 0 14px; padding: 10px; border: 1px solid rgba(167,139,250,.25); border-radius: 14px; color: #ddd6fe; background: rgba(2,6,23,.45); font-size: .8rem; font-weight: 900 }
+        @media(max-width:700px) {
+            .battle-health { top: 10px; width: calc(50vw - 18px); padding: 7px }
+            .battle-health.self { left: 8px }
+            .battle-health.enemy { right: 8px }
+            .battle-center-hud { top: 66px }
+            .battle-health-label { font-size: .54rem }
+            .battle-bottom-hud { bottom: 8px }
+        }
+
         #reviveBtn {
             background: linear-gradient(135deg, #f59e0b, #d97706);
             color: #fff;
@@ -1569,7 +1657,7 @@
         .game-mode-title { margin: 1px 0 0; font-size: clamp(2rem,5vw,3rem); line-height: 1; font-weight: 900 }
         .game-mode-copy { margin-top: 6px; color: #94a3b8; font-size: .82rem; font-weight: 700 }
         .game-mode-close { width: 40px; height: 40px; flex: 0 0 auto; border: 1px solid rgba(255,255,255,.13); border-radius: 13px; background: rgba(255,255,255,.07); color: #cbd5e1; cursor: pointer; font-weight: 900 }
-        .game-mode-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 16px; margin-top: 18px }
+        .game-mode-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; margin-top: 18px }
 
         .game-mode-card {
             position: relative;
@@ -1592,6 +1680,7 @@
         .mode-normal .game-mode-preview { background: linear-gradient(#5db9ed 0 58%,#a6d96a 59% 73%,#3f7d38 74%) }
         .mode-music .game-mode-preview { background: radial-gradient(circle at 70% 30%,rgba(244,114,182,.8),transparent 25%),linear-gradient(145deg,#1e0a3d,#6d28d9 48%,#083344) }
         .mode-online .game-mode-preview { background: radial-gradient(circle at 50% 70%,rgba(249,115,22,.65),transparent 28%),linear-gradient(155deg,#172554,#2563eb 45%,#7c2d12) }
+        .mode-battle .game-mode-preview { background: radial-gradient(circle at 52% 76%,rgba(251,146,60,.5),transparent 22%),radial-gradient(circle at 22% 18%,rgba(168,85,247,.45),transparent 28%),linear-gradient(155deg,#090c18,#1e293b 42%,#312e81) }
         .game-mode-sun { position: absolute; z-index: 1; top: 13%; right: 13%; width: 48px; height: 48px; border-radius: 50%; background: #fde68a; box-shadow: 0 0 24px rgba(253,230,138,.72) }
         .game-mode-mountains { position: absolute; z-index: 1; left: -5%; right: -5%; bottom: 0; height: 54%; background: #456c48; clip-path: polygon(0 100%,0 76%,13% 32%,23% 69%,37% 8%,51% 72%,64% 27%,77% 65%,90% 18%,100% 67%,100% 100%) }
         .game-mode-rings { position: absolute; z-index: 2; inset: 0 }
@@ -1606,7 +1695,7 @@
         .game-mode-footer { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 15px; color: #64748b; font-size: .68rem; font-weight: 700 }
         .game-mode-controls { border: 1px solid rgba(255,255,255,.1); border-radius: 12px; padding: 8px 12px; color: #cbd5e1; background: rgba(255,255,255,.055); cursor: pointer; font-family: inherit; font-weight: 900 }
 
-        /* As capturas finais são carregadas diretamente de normal.png, musica.png e online.png. */
+        /* As capturas finais são carregadas diretamente dos PNGs de cada modo; o fundo CSS permanece como reserva. */
 
         /* ========== VOO NO RITMO ========== */
 
@@ -1821,7 +1910,6 @@
 
         @media(max-width:980px) and (min-width:721px) {
             .game-mode-grid { grid-template-columns: repeat(2,minmax(0,1fr)) }
-            .mode-online { grid-column: 1/-1; width: calc(50% - 8px); justify-self: center }
         }
 
         @media(max-width:720px) {
@@ -2019,6 +2107,18 @@
             .game-mode-card-desc { font-size: .64rem }
             .rank-modal-card { padding: 12px !important }
         }
+        #flightMoment { position:fixed;top:21%;left:50%;transform:translate(-50%,-12px);z-index:85;opacity:0;pointer-events:none;text-align:center;max-width:85vw;padding:14px 24px;border:1px solid #c1e1ee45;border-radius:18px;background:#101d2dd9;backdrop-filter:blur(12px);transition:opacity .6s,transform .6s;color:#e9f5ff }
+        #flightMoment.show {opacity:1;transform:translate(-50%,0)}
+        #flightMoment strong {display:block;font-size:16px;letter-spacing:.12em;color:#f3d49a}
+        #flightMoment span {display:block;font-size:14px;margin-top:4px}
+        .battle-control-hint {font-size:12px;letter-spacing:0}
+        .battle-health-label {font-size:12px}
+        @media(prefers-reduced-motion:reduce){#flightMoment{transition:none}}
+        .flight-icon {display:inline-block;width:1.05em;height:1.05em;vertical-align:-.15em;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 1px 1px #0003);flex-shrink:0}
+        .lobby-side-icon {color:#f5cf82}
+        .lobby-side-action:hover .lobby-side-icon {color:#fff0cc}
+        .game-mode-card {border-color:#b7cddd38;box-shadow:0 12px 26px #0003}
+        .game-mode-card:focus-visible,button:focus-visible{outline:3px solid #8bdff7;outline-offset:4px}
     </style>
 </head>
 
@@ -2026,8 +2126,8 @@
     <div id="splashScreen"></div>
     <div id="languageScreen" style="display:none">
         <div style="font-size:2rem;font-weight:900;text-shadow:0 0 20px #f59e0b;">🌍 Escolha o idioma / Choose language</div>
-        <button onclick="selectLanguage('pt')">🇧🇷 Português</button>
-        <button onclick="selectLanguage('en')">🇺🇸 English</button>
+        <button onclick="selectLanguage('pt')">BR Português</button>
+        <button onclick="selectLanguage('en')">US English</button>
     </div>
     <div id="nicknameScreen">
         <div style="font-size:1.8rem;font-weight:900" id="nickLabel">Digite seu nome</div>
@@ -2062,12 +2162,12 @@
             <span style="font-size:1.6rem">💰</span><span id="lobbyCoins" style="font-size:1.5rem;font-weight:900;color:#fcd34d">0</span>
             <div id="lobbyMuteBtn" class="mute-btn-lobby">🔊</div>
         </div>
-        <button id="lobbyRankCard" class="pilot-rank-card" onclick="openRankModal()" aria-label="Ver patentes do piloto">
+        <button id="lobbyRankCard" class="pilot-rank-card" onclick="openRankModal()" aria-label="Ver patente de batalha">
             <span class="pilot-rank-emblem"><span id="lobbyRankBadge" class="pilot-rank-badge">◇</span></span>
             <span class="pilot-rank-info">
-                <span class="pilot-rank-topline"><span id="lobbyRankLabel">PATENTE DO PILOTO</span><span id="lobbyRankMetric">CALIBRAÇÃO</span></span>
+                <span class="pilot-rank-topline"><span id="lobbyRankLabel">PATENTE DO PILOTO</span><span id="lobbyRankMetric">0 PB</span></span>
                 <span class="pilot-rank-name-row"><span id="lobbyRankName">Cadete</span><span id="lobbyRankTier">1/8</span></span>
-                <span class="pilot-rank-meta"><span id="lobbyRankSubtitle">0/3 voos avaliados</span><span id="lobbyRankNext">abrir detalhes ›</span></span>
+                <span class="pilot-rank-meta"><span id="lobbyRankSubtitle">0/3 batalhas de calibração</span><span id="lobbyRankNext">abrir detalhes ›</span></span>
                 <span class="pilot-rank-track"><span id="lobbyRankProgress" class="pilot-rank-fill"></span></span>
             </span>
         </button>
@@ -2103,14 +2203,14 @@
             <div id="rankModalCard" class="rank-modal-card text-white p-5">
                 <div class="rank-modal-hero">
                     <div class="pilot-rank-emblem"><div id="rankModalBadge" class="pilot-rank-badge">◇</div></div>
-                    <div class="min-w-0 flex-1"><div id="rankModalEyebrow" class="text-[10px] font-black tracking-[.15em] text-slate-400">SUA PATENTE</div><div id="rankModalName" class="text-2xl font-black leading-none">Cadete</div><div id="rankModalIndex" class="text-xs font-extrabold text-slate-400 mt-1">Calibração 0/3</div></div>
+                    <div class="min-w-0 flex-1"><div id="rankModalEyebrow" class="text-[10px] font-black tracking-[.15em] text-slate-400">SUA PATENTE</div><div id="rankModalName" class="text-2xl font-black leading-none">Cadete</div><div id="rankModalIndex" class="text-xs font-extrabold text-slate-400 mt-1">0 PB · 0 vitórias / 0 batalhas</div></div>
                     <button onclick="closeRankModal()" class="w-9 h-9 rounded-xl bg-white/10 text-slate-300 font-black" aria-label="Fechar">✕</button>
                 </div>
-                <div id="rankRuleText" class="rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-xs font-bold text-slate-300 mb-3">A melhor média de 3 partidas define a sua patente. Ela nunca diminui.</div>
+                <div id="rankRuleText" class="rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-xs font-bold text-slate-300 mb-3">A melhor média de 3 voos define a sua patente. A batalha tem progressão separada.</div>
                 <div class="rank-progress-summary">
                     <div class="rank-progress-heading"><span id="rankModalProgressTitle">PROGRESSO PARA ASPIRANTE</span><span id="rankModalPercent">0%</span></div>
                     <div class="pilot-rank-track"><div id="rankModalProgress" class="pilot-rank-fill"></div></div>
-                    <div id="rankModalProgressCopy">Complete 3 voos para calibrar sua patente.</div>
+                    <div id="rankModalProgressCopy">Complete 3 batalhas para calibrar sua patente.</div>
                 </div>
                 <div id="rankRecentRuns" class="rank-recent-runs"></div>
                 <div id="rankLadder" class="rank-ladder"></div>
@@ -2134,7 +2234,7 @@
                         <span class="game-mode-sun"></span><span class="game-mode-mountains"></span>
                         <img src="normal.png" alt="Prévia do modo normal" onerror="this.style.display='none'">
                     </span>
-                    <span class="game-mode-card-copy"><span class="game-mode-card-title">Voo Livre</span><span class="game-mode-card-desc">Biomas, eventos especiais, recordes, moedas e patentes.</span></span>
+                    <span class="game-mode-card-copy"><span class="game-mode-card-title">Voo Livre</span><span class="game-mode-card-desc">Biomas, eventos especiais, recordes, moedas e missões.</span></span>
                 </button>
                 <button class="game-mode-card mode-music" data-game-mode="music">
                     <span class="game-mode-preview">
@@ -2148,6 +2248,12 @@
                         <img src="online.png" alt="Prévia da corrida online" onerror="this.style.display='none'">
                     </span>
                     <span class="game-mode-card-copy"><span class="game-mode-card-title"><span class="game-mode-beta">BETA</span> Corrida Online</span><span class="game-mode-card-desc">Convide um amigo por código, pilote o mesmo biplano e dispute uma rota idêntica de 12 km.</span></span>
+                </button>
+                <button class="game-mode-card mode-battle" data-game-mode="battle">
+                    <span class="game-mode-preview">
+                        <img src="online.png" style="filter:saturate(.5) brightness(.7)" alt="Prévia da batalha aérea" onerror="this.style.display='none'">
+                    </span>
+                    <span class="game-mode-card-copy"><span class="game-mode-card-title"><span class="game-mode-beta">BETA</span> Batalha Aérea</span><span class="game-mode-card-desc">Caças iguais, arena de tempestade, melhorias por anéis e patente competitiva.</span></span>
                 </button>
             </div>
         </div>
@@ -2225,6 +2331,10 @@
         <div class="control-item"><span class="key-box">Espaço</span> → Barrel Roll (Flip)</div>
         <div class="control-item"><span class="key-box">F</span> → Farol: ligar / desligar</div>
         <div class="control-item"><span class="key-box">M</span> → Silenciar música</div>
+        <div class="control-item"><span class="key-box">Mouse</span> → Subir/descer e ajudar levemente a mira</div>
+        <div class="control-item"><span class="key-box">Clique</span> → Atirar exatamente na mira</div>
+        <div class="control-item"><span class="key-box">Espaço</span> → Barrel Roll na Batalha</div>
+        <div class="control-item"><span class="key-box">W/S · A/D</span> → Turbo/freio · fazer as curvas</div>
         <button onclick="closeControlsScreen()">✕ Fechar</button>
     </div>
     <div id="missionsScreen" aria-hidden="true">
@@ -2235,7 +2345,7 @@
             </div>
             <div class="missions-summary"><span id="missionsDailyCount">0 de 3 concluídas</span><span id="missionsResetText">Renovam à meia-noite</span></div>
             <div id="missionsList"></div>
-            <p class="missions-footnote">O progresso é salvo no dispositivo. Missões do Voo no Ritmo concedem moedas, mas continuam sem alterar pontuação, recordes ou patente.</p>
+            <p class="missions-footnote">O progresso é salvo no dispositivo. Missões concedem moedas, mas somente vitórias e derrotas na Batalha Aérea alteram a patente.</p>
         </div>
     </div>
     <div id="onlineModal">
@@ -2264,7 +2374,58 @@
             <div id="joinError" style="color:#ef4444;font-size:.85rem;margin-top:.5rem;display:none">Sala não encontrada!</div>
         </div>
     </div>
+    <div id="battleModal" aria-hidden="true">
+        <div class="battle-card" id="battleCardMain">
+            <h2 class="battle-title"><span class="game-mode-beta">BETA</span> Batalha Aérea</h2>
+            <p class="battle-subtitle">Duelo 1×1 em uma arena fechada. Os caças começam iguais; anéis raros mudam a estratégia durante a partida.</p>
+            <div id="battleRankLock" class="battle-rank-lock">PATENTE DE BATALHA · CADETE</div>
+            <div class="battle-actions">
+                <button class="battle-btn" onclick="battleCreateRoom()">⚔️ Criar batalha</button>
+                <button class="battle-btn join" onclick="battleOpenJoin()">🔑 Entrar por código</button>
+                <button class="battle-btn ghost" onclick="closeBattleModal()">✕ Voltar</button>
+            </div>
+        </div>
+        <div class="battle-card" id="battleCardCreate" style="display:none">
+            <h2 class="battle-title">Sala de combate</h2>
+            <p class="battle-subtitle">Envie o código a um amigo com patente próxima.</p>
+            <div id="battleRoomCode" class="battle-code" onclick="battleCopyCode()">------</div>
+            <div style="color:#94a3b8;font-size:.78rem;font-weight:800">Aguardando adversário<span class="waiting-dots"></span></div>
+            <div class="battle-actions" style="margin-top:14px"><button class="battle-btn ghost" onclick="battleCancelRoom()">✕ Cancelar sala</button></div>
+        </div>
+        <div class="battle-card" id="battleCardJoin" style="display:none">
+            <h2 class="battle-title">Entrar na batalha</h2>
+            <p class="battle-subtitle">A sala aceita jogadores com até uma patente de diferença.</p>
+            <input id="battleJoinCode" class="battle-input" maxlength="6" placeholder="A4F9K2" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')">
+            <div class="battle-actions"><button class="battle-btn join" onclick="battleConfirmJoin()">✓ Entrar</button><button class="battle-btn ghost" onclick="battleShowCard('main')">← Voltar</button></div>
+            <div id="battleError" role="alert"></div>
+        </div>
+    </div>
+    <div id="battleWaitingScreen">
+        <div style="font-size:3.4rem">⚔️</div>
+        <div style="color:#c4b5fd;font-size:1.65rem;font-weight:900">BATALHA <span id="battleWaitingCode">------</span></div>
+        <button class="battle-btn ghost" style="max-width:220px;order:5" onclick="battleGoToLobby()">Cancelar</button>
+        <div id="battleWaitingText" style="color:#94a3b8;font-size:.86rem;font-weight:800">Preparando tempestade compartilhada<span class="waiting-dots"></span></div>
+    </div>
+    <div id="battleResultScreen">
+        <div class="battle-card" id="battleResultCard">
+            <div id="battleResultEmoji" style="font-size:4rem">🏆</div>
+            <h2 id="battleResultTitle" class="battle-title">VITÓRIA!</h2>
+            <p id="battleResultReason" class="battle-subtitle">Caça adversário abatido.</p>
+            <div id="battleResultCoins" style="color:#fbbf24;font-size:1.2rem;font-weight:900">+300 moedas</div>
+            <div id="battleResultRank" class="battle-result-rank">+40 PB · Cadete</div>
+            <button class="battle-btn" onclick="battleGoToLobby()">🏠 Voltar ao lobby</button>
+        </div>
+    </div>
+    <div id="battleHud" aria-hidden="true">
+        <div id="battleDamageFlash" aria-hidden="true"></div>
+        <div class="battle-health self"><div class="battle-health-label"><span>SEU CAÇA</span><span id="battleOwnHealthText">240 / 240</span></div><div class="battle-health-track"><div id="battleOwnHealthFill" class="battle-health-fill"></div></div></div>
+        <div class="battle-center-hud"><span id="battleTimer">05:00</span><span id="battleStormStatus">TEMPESTADE ATIVA</span></div>
+        <div class="battle-health enemy"><div class="battle-health-label"><span>ADVERSÁRIO</span><span id="battleEnemyHealthText">240 / 240</span></div><div class="battle-health-track"><div id="battleEnemyHealthFill" class="battle-health-fill"></div></div></div>
+        <div id="battleReticle"></div><div id="battleLeadMarker"></div><div id="battleWarning">⚡ RAIO PRÓXIMO — DESVIE!</div>
+        <div class="battle-bottom-hud"><div class="battle-heat-line"><span>ARMAS</span><div class="battle-heat-track"><div id="battleHeatFill"></div></div><span id="battleHeatText">PRONTAS</span></div><div class="battle-control-hint">A/D CURVA · W TURBO · S FREIO · MOUSE MIRA/ALTITUDE · CLIQUE TIRO · ESPAÇO ROLL</div><div id="battleUpgradeList"></div></div>
+    </div>
     <div id="mpWaitingScreen">
+        <button class="online-btn online-btn-cancel" onclick="mpGoToLobby()">Cancelar</button>
         <div style="font-size:3rem">✈️</div>
         <div style="font-size:1.6rem;font-weight:900;color:#60a5fa">Sala: <span id="mpRoomCodeDisplay">------</span></div>
         <div style="font-size:1rem;color:#94a3b8;font-weight:700">A preparar a corrida<span class="waiting-dots"></span></div>
@@ -2345,6 +2506,7 @@
     <div id="alienEventBanner"><strong id="alienEventTitle">🛸 INTERFERÊNCIA ALIENÍGENA</strong><span id="alienEventStatus">Sinal desconhecido detectado</span></div>
     <div id="volcanoImpactFlash"></div>
     <div id="volcanoEventBanner"><strong id="volcanoEventTitle">🌋 ERUPÇÃO VULCÂNICA</strong><span id="volcanoEventStatus">Obstáculo no centro — passe pelas laterais</span></div>
+    <div id="flightMoment" role="status"><strong id="flightMomentTitle"></strong><span id="flightMomentCopy"></span></div>
     <div id="meteorEventOverlay"></div>
     <div id="meteorEventBanner"><strong id="meteorEventTitle">☄️ CHUVA DE METEOROS</strong><span id="meteorEventStatus">Rara tempestade cósmica detectada — procure os espaços seguros</span></div>
     <div id="actionFeedback">+</div>
@@ -2622,6 +2784,66 @@
             promotion.innerText = 'SESSÃO SEM PROGRESSÃO'
         }
 
+        const BATTLE_RANKS = [
+            { id: 'cadet', pt: 'Cadete', en: 'Cadet', min: 0, icon: '◇', color: '#94a3b8' },
+            { id: 'aspirant', pt: 'Aspirante', en: 'Aspirant', min: 180, icon: '◆', color: '#34d399' },
+            { id: 'lieutenant', pt: 'Tenente', en: 'Lieutenant', min: 420, icon: '◆◆', color: '#60a5fa' },
+            { id: 'captain', pt: 'Capitão', en: 'Captain', min: 720, icon: '✦', color: '#a78bfa' },
+            { id: 'major', pt: 'Major', en: 'Major', min: 1100, icon: '✦✦', color: '#fbbf24' },
+            { id: 'colonel', pt: 'Coronel', en: 'Colonel', min: 1550, icon: '★', color: '#fb923c' },
+            { id: 'brigadier', pt: 'Brigadeiro', en: 'Brigadier', min: 2050, icon: '★★', color: '#fb7185' },
+            { id: 'marshal', pt: 'Marechal do Ar', en: 'Air Marshal', min: 2700, icon: '♛', color: '#fde047' }
+        ];
+        function getBattleRank(index) {
+            const value = Math.max(0, Number(index) || 0);
+            let result = BATTLE_RANKS[0];
+            for (const rank of BATTLE_RANKS) {
+                if (value >= rank.min) result = rank;
+                else break
+            }
+            return result
+        }
+
+        function getBattleRankView(save) {
+            const scores = (Array.isArray(save?.battleRankHistory) ? save.battleRankHistory : []).slice(0, 10),
+                index = Math.max(0, Math.round(Number(save?.battleRankPoints) || 0)),
+                matches = Math.max(0, Math.floor(Number(save?.battleMatches) || 0)),
+                wins = Math.max(0, Math.floor(Number(save?.battleWins) || 0)),
+                calibrated = matches >= 3,
+                current = getBattleRank(index),
+                currentPosition = BATTLE_RANKS.findIndex(rank => rank.id === current.id),
+                next = BATTLE_RANKS[currentPosition + 1] || null;
+            let progress;
+            if (!next) progress = 1;
+            else progress = (index - current.min) / Math.max(1, next.min - current.min);
+            return { scores, index, matches, wins, calibrated, current, next,
+                progress: Math.max(0, Math.min(1, progress)) }
+        }
+
+        function recordBattleRankResult(save, isWinner, opponentPoints, isDraw = false) {
+            const before = getBattleRankView(save);
+            const currentPoints = before.index,
+                rivalPoints = Math.max(0, Number(opponentPoints) || 0),
+                expected = 1 / (1 + Math.pow(10, (rivalPoints - currentPoints) / 400));
+            let delta = 0;
+            if (!isDraw) delta = isWinner ? Math.max(35, Math.round(80 * (1 - expected))) :
+                -Math.max(12, Math.round(55 * expected));
+            else delta = Math.round(34 * (.5 - expected));
+            save.battleRankPoints = Math.max(0, currentPoints + delta);
+            // O delta exibido é o realmente aplicado. Em 0 PB, uma derrota nunca mostra
+            // valores negativos que não puderam ser descontados.
+            delta = save.battleRankPoints - currentPoints;
+            save.battleMatches = before.matches + 1;
+            save.battleWins = before.wins + (isWinner ? 1 : 0);
+            save.battleRankHistory = Array.isArray(save.battleRankHistory) ? save.battleRankHistory : [];
+            save.battleRankHistory.unshift(delta);
+            if (save.battleRankHistory.length > 10) save.battleRankHistory.length = 10;
+            const after = getBattleRankView(save), beforeTier = BATTLE_RANKS.findIndex(r => r.id === before.current.id),
+                afterTier = BATTLE_RANKS.findIndex(r => r.id === after.current.id), promoted = afterTier > beforeTier,
+                demoted = afterTier < beforeTier;
+            return { before, after, delta, promoted, demoted };
+        }
+
         function defaultSave() {
             return {
                 totalRuns: 0,
@@ -2638,9 +2860,13 @@
                 runHistory: [],
                 rankScores: [],
                 rankIndex: 0,
+                battleRankPoints: 0,
+                battleRankHistory: [],
+                battleMatches: 0,
+                battleWins: 0,
                 dailyMissions: null,
                 missionCompletedCount: 0,
-                version: 4,
+                version: 5,
                 lastPlayed: null,
                 language: 'pt',
                 nick: '',
@@ -2666,8 +2892,13 @@
                 merged.rankScores = cleanRankScores(merged.rankScores);
                 if (!Number.isFinite(Number(d.rankIndex))) merged.rankIndex = bestThreeRunAverage(merged.rankScores);
                 else merged.rankIndex = Math.max(0, Number(d.rankIndex) || 0);
-                merged.preferredGameMode = d.preferredGameMode === 'normal' || d.preferredGameMode === 'music' ?
+                merged.preferredGameMode = ['normal','music','online','battle'].includes(d.preferredGameMode) ?
                     d.preferredGameMode : null;
+                merged.battleRankPoints = Math.max(0, Math.round(Number(d.battleRankPoints) || 0));
+                merged.battleMatches = Math.max(0, Math.floor(Number(d.battleMatches) || 0));
+                merged.battleWins = Math.max(0, Math.min(merged.battleMatches, Math.floor(Number(d.battleWins) || 0)));
+                merged.battleRankHistory = (Array.isArray(d.battleRankHistory) ? d.battleRankHistory : [])
+                    .map(Number).filter(Number.isFinite).map(Math.round).slice(0,10);
                 if (!merged.dailyMissions || typeof merged.dailyMissions !== 'object') merged.dailyMissions = null;
                 merged.missionCompletedCount = Math.max(0, Number(merged.missionCompletedCount) || 0);
                 // Remove dados do antigo bônus de proximidade sem afetar corridas e patentes salvas.
@@ -2677,7 +2908,7 @@
                     delete migrated.nearMisses;
                     return migrated
                 });
-                merged.version = 4;
+                merged.version = 5;
                 return merged
             } catch (e) { console.warn('Erro load save:', e); return defaultSave() }
         }
@@ -3093,7 +3324,7 @@
 
         function getPreferredGameMode(save = loadSave()) {
             return save?.preferredGameMode === 'normal' || save?.preferredGameMode === 'music' ||
-                save?.preferredGameMode === 'online' ?
+                save?.preferredGameMode === 'online' || save?.preferredGameMode === 'battle' ?
                 save.preferredGameMode : null
         }
 
@@ -3101,6 +3332,7 @@
             const english = currentLanguage === 'en';
             if (mode === 'music') return english ? 'Rhythm Flight · Beta' : 'Voo no Ritmo · Beta';
             if (mode === 'online') return english ? 'Online Race · Beta' : 'Corrida Online · Beta';
+            if (mode === 'battle') return english ? 'Air Battle · Beta' : 'Batalha Aérea · Beta';
             if (mode === 'normal') return english ? 'Free Flight' : 'Voo Livre';
             return english ? 'Choose a mode' : 'Escolha um modo'
         }
@@ -3119,7 +3351,7 @@
         }
 
         function savePreferredGameMode(mode) {
-            if (mode !== 'normal' && mode !== 'music' && mode !== 'online') return;
+            if (mode !== 'normal' && mode !== 'music' && mode !== 'online' && mode !== 'battle') return;
             const save = loadSave();
             save.preferredGameMode = mode;
             writeSave(save);
@@ -3134,6 +3366,10 @@
                 selectedGameMode = 'online';
                 openOnlineModal()
             }
+            else if (mode === 'battle') {
+                selectedGameMode = 'battle';
+                openBattleModal()
+            }
             else startGame('normal')
         }
 
@@ -3146,6 +3382,9 @@
             } else if (preferred === 'online') {
                 selectedGameMode = 'online';
                 openOnlineModal()
+            } else if (preferred === 'battle') {
+                selectedGameMode = 'battle';
+                openBattleModal()
             } else startGame('normal')
         }
 
@@ -3720,6 +3959,8 @@
                 // O relógio do áudio continua correndo: silenciar não pode destruir a sincronização.
                 musicModeState.gain.gain.setTargetAtTime(musicEnabled ? .88 : 0,
                     musicModeState.context.currentTime, .015)
+            } else if (selectedGameMode === 'battle' && battleMusicGain && audioCtx) {
+                battleMusicGain.gain.setTargetAtTime(musicEnabled ? .12 : 0,audioCtx.currentTime,.08)
             } else if (musicAudio) {
                 if (musicEnabled && !isExternalMediaPlaying()) musicAudio.play().catch(() => {});
                 else musicAudio.pause()
@@ -4968,7 +5209,7 @@
         };
         const specialEventDirector = {
             activeType: null, lastType: null, nextDistance: 3200 + Math.random() * 1800,
-            weights: { alien: 58, volcano: 28, meteor: 14 }
+            weights: { alien: 34, volcano: 23, meteor: 13, thermal: 12, migration: 10, aurora: 8 }
         };
         const METEOR_SKY = {
             top: new THREE.Color(0x21033f), horizon: new THREE.Color(0xb45309), bottom: new THREE.Color(0x4c1d36),
@@ -5204,7 +5445,7 @@
             engineOsc = null,
             engineOsc2 = null,
             windGain = null,
-            birdGain = null;
+            birdGain = null, engineRunning = false, propellerPulse = null, propellerDepth = null;
 
         function initSynth() {
             try {
@@ -5233,6 +5474,13 @@
                 engineGain.connect(audioCtx.destination);
                 engineOsc.start();
                 engineOsc2.start();
+                propellerPulse = audioCtx.createOscillator();
+                propellerDepth = audioCtx.createGain();
+                propellerPulse.frequency.value = 22;
+                propellerDepth.gain.value = .10;
+                propellerPulse.connect(propellerDepth);
+                propellerDepth.connect(g1.gain);
+                propellerPulse.start();
                 windGain = audioCtx.createGain();
                 windGain.gain.value = 0;
                 let bufSize = audioCtx.sampleRate * 2;
@@ -5267,8 +5515,10 @@
         }
 
         function setEngineSound(on) {
+            engineRunning = on;
             if (!audioCtx) initSynth();
-            if (audioCtx.state === 'suspended') audioCtx.resume();
+            if (!audioCtx) return;
+            if (audioCtx.state === 'suspended') audioCtx.resume().catch(() => {});
             if (engineGain) engineGain.gain.setTargetAtTime(on ? .052 : 0, audioCtx.currentTime, .65);
             if (windGain) windGain.gain.setTargetAtTime(on ? .062 : 0, audioCtx.currentTime, .9);
             if (birdGain) { let f = currentBiome?.id === 'campos';
@@ -5280,7 +5530,12 @@
             const normalized = Math.max(0, Math.min(1, (s - 70) / 260)),
                 p = 41 + normalized * 15;
             engineOsc.frequency.setTargetAtTime(p, audioCtx.currentTime, .65);
-            if (engineOsc2) engineOsc2.frequency.setTargetAtTime(p * 2.01, audioCtx.currentTime, .65)
+            if (engineOsc2) engineOsc2.frequency.setTargetAtTime(p * 2.01, audioCtx.currentTime, .65);
+            if (propellerPulse) propellerPulse.frequency.setTargetAtTime(19 + normalized * 13, audioCtx.currentTime, .5);
+            if (windGain && engineRunning) {
+                const breeze = .5 + .5 * Math.sin(audioCtx.currentTime * .37);
+                windGain.gain.setTargetAtTime(.045 + normalized * .075 + breeze * .012, audioCtx.currentTime, .7)
+            }
         }
 
         function _tone(t, f0, f1, d, v = .07) {
@@ -5299,7 +5554,191 @@
 
         function playCollectSound() { _tone('sine', 520, 1040, .2) }
 
-        function playCrashSound() { _tone('sawtooth', 120, 20, .6, .12) }
+        function playCrashSound() { playAirNoise(.7, .22, 260, 0); _tone('sine', 75, 24, .5, .08) }
+
+        // Bounded, shared geometry: upper clouds and wind cost two draw calls.
+        const flightAtmosphere = { root: null, clouds: null, banks: [], wind: null, time: 0,
+            event: null, eventTime: 0, eventRoot: null, collected: false, chirpAt: 0 };
+
+        function disposeFlightGroup(root) {
+            if (!root) return;
+            root.parent?.remove(root);
+            const geometries = new Set(), materials = new Set();
+            root.traverse(part => {
+                if (part.geometry) geometries.add(part.geometry);
+                if (part.material) (Array.isArray(part.material) ? part.material : [part.material]).forEach(m => materials.add(m))
+            });
+            geometries.forEach(g => g.dispose());
+            materials.forEach(m => { if (m !== M.cloud) m.dispose() })
+        }
+
+        function resetFlightAtmosphere() {
+            disposeFlightGroup(flightAtmosphere.root);
+            disposeFlightGroup(flightAtmosphere.eventRoot);
+            Object.assign(flightAtmosphere, { root: null, clouds: null, banks: [], wind: null,
+                event: null, eventRoot: null, time: 0, eventTime: 0, collected: false });
+            document.getElementById('flightMoment')?.classList.remove('show')
+        }
+
+        function initFlightAtmosphere() {
+            const a = flightAtmosphere;
+            if (a.root || !scene || !airplane) return;
+            a.root = new THREE.Group();
+            a.clouds = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1,1), M.cloud, 72);
+            a.clouds.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+            a.clouds.frustumCulled = false;
+            a.root.add(a.clouds);
+            for (let i=0;i<18;i++) a.banks.push({ x: (i%3-1)*470 + Math.random()*180-90,
+                y: 305 + Math.random()*105, z: airplane.position.z + 180-Math.floor(i/3)*330,
+                phase: Math.random()*6.28, size: 35+Math.random()*20 });
+            const positions = new Float32Array(48*6), geometry = new THREE.BufferGeometry();
+            geometry.setAttribute('position',new THREE.BufferAttribute(positions,3));
+            a.wind = new THREE.LineSegments(geometry, new THREE.LineBasicMaterial({ color:0xd8efff,
+                transparent:true, opacity:.12, depthWrite:false }));
+            a.wind.frustumCulled = false;
+            a.root.add(a.wind);
+            scene.add(a.root)
+        }
+
+        function startScenicEvent(type) {
+            if (mpActive || selectedGameMode === 'music' || !scene || !airplane || flightAtmosphere.event) return;
+            if (type === 'aurora' && getAircraftNightFactor() < .45) type = 'migration';
+            const a = flightAtmosphere;
+            a.event = type; a.eventTime = 0; a.collected = false; a.chirpAt=0;
+            specialEventDirector.activeType = type;
+            specialEventDirector.lastType = type;
+            a.eventRoot = new THREE.Group();
+            a.eventRoot.position.z = airplane.position.z - (type === 'thermal' ? 620 : 800);
+            const en = currentLanguage === 'en';
+            let title, copy;
+            if (type === 'thermal') {
+                title = en ? 'THERMAL CURRENT' : 'CORRENTE TÉRMICA';
+                copy = en ? 'Cross the golden spiral to recover fuel' : 'Atravesse a espiral dourada para recuperar combustível';
+                const geo = new THREE.BufferGeometry(), points = [];
+                for(let i=0;i<160;i++) {
+                    const angle = i*.28, radius = 29 + Math.sin(i*.1)*5;
+                    points.push(Math.cos(angle)*radius,18+i*.9,Math.sin(angle)*radius)
+                }
+                geo.setAttribute('position',new THREE.Float32BufferAttribute(points,3));
+                const spiral = new THREE.Points(geo,new THREE.PointsMaterial({color:0xffd38a,size:2.5,
+                    transparent:true,opacity:.85,depthWrite:false}));
+                a.eventRoot.add(spiral)
+            } else if (type === 'migration') {
+                title = en ? 'MIGRATION ROUTE' : 'ROTA MIGRATÓRIA';
+                copy = en ? 'A flock shares the sky with you' : 'Uma revoada compartilha o céu com você';
+                const geometry = new THREE.BufferGeometry();
+                geometry.setAttribute('position',new THREE.Float32BufferAttribute([0,0,0,-6,1,-2,-2,0,-1,0,0,0,2,0,-1,6,1,-2],3));
+                geometry.computeVertexNormals();
+                const mat = new THREE.MeshStandardMaterial({color:0xced9db,roughness:1,side:THREE.DoubleSide,flatShading:true});
+                for(let i=0;i<15;i++) {
+                    const bird = new THREE.Mesh(geometry,mat), side = i%2 ? -1 : 1;
+                    bird.position.set(side*Math.ceil(i/2)*16,205 + (i%3)*3,-Math.ceil(i/2)*15);
+                    bird.userData.baseY = bird.position.y;
+                    a.eventRoot.add(bird)
+                }
+            } else {
+                title = en ? 'AURORA' : 'AURORA BOREAL';
+                copy = en ? 'A quiet moment beneath the lights' : 'Um momento de calmaria sob as luzes';
+                for(let ribbon=0;ribbon<3;ribbon++) {
+                    const vertices=[], colors=[], palette = new THREE.Color([0x52e6b2,0x58c7df,0xa88feb][ribbon]);
+                    for(let i=0;i<46;i++) {
+                        const x=(i-23)*40, y=380+Math.sin(i*.25+ribbon)*35;
+                        vertices.push(x,y,-ribbon*160,x,y+80+Math.sin(i*.4)*30,-ribbon*160);
+                        colors.push(palette.r*.15,palette.g*.15,palette.b*.15,palette.r,palette.g,palette.b)
+                    }
+                    const indices=[];
+                    for(let i=0;i<45;i++) indices.push(i*2,i*2+1,i*2+2,i*2+1,i*2+3,i*2+2);
+                    const geo=new THREE.BufferGeometry();
+                    geo.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));
+                    geo.setAttribute('color',new THREE.Float32BufferAttribute(colors,3)); geo.setIndex(indices);
+                    a.eventRoot.add(new THREE.Mesh(geo,new THREE.MeshBasicMaterial({vertexColors:true,transparent:true,
+                        opacity:.4,side:THREE.DoubleSide,depthWrite:false,blending:THREE.AdditiveBlending})))
+                }
+            }
+            scene.add(a.eventRoot);
+            document.getElementById('flightMomentTitle').textContent = title;
+            document.getElementById('flightMomentCopy').textContent = copy;
+            document.getElementById('flightMoment').classList.add('show')
+        }
+
+        function updateFlightAtmosphere(dt, distance) {
+            initFlightAtmosphere();
+            const a = flightAtmosphere;
+            if (!a.root) return;
+            a.time += dt;
+            const dummy = new THREE.Object3D();
+            a.banks.forEach((bank,i) => {
+                if (bank.z > airplane.position.z+360) bank.z -= 1980;
+                for(let j=0;j<4;j++) {
+                    dummy.position.set(bank.x+(j-1.5)*bank.size*.65+Math.sin(a.time*.08+bank.phase)*22,
+                        bank.y+Math.sin(j*2.5)*8,bank.z+Math.cos(j*2)*12);
+                    dummy.scale.set(bank.size,bank.size*.28,bank.size*.65);
+                    dummy.rotation.set(0,bank.phase,0); dummy.updateMatrix();
+                    a.clouds.setMatrixAt(i*4+j,dummy.matrix)
+                }
+            });
+            a.clouds.instanceMatrix.needsUpdate = true;
+            const points = a.wind.geometry.attributes.position.array;
+            for(let i=0;i<48;i++) {
+                const z = airplane.position.z-240+((a.time*65+i*29)%340),
+                    x = airplane.position.x+Math.sin(i*12.7)*115,
+                    y = airplane.position.y+Math.cos(i*4.7)*58;
+                points.set([x,y,z,x+4,y+.3,z+8],i*6)
+            }
+            a.wind.geometry.attributes.position.needsUpdate=true;
+            a.wind.material.opacity = selectedGameMode === 'music' ? .04 : .09 + Math.min(.07,flightSpeed/4000);
+            if (!a.eventRoot) return;
+            a.eventTime += dt;
+            if (a.eventTime > 6) document.getElementById('flightMoment').classList.remove('show');
+            if (a.event === 'thermal') {
+                a.eventRoot.rotation.y += dt*.6;
+                if (!a.collected && Math.abs(airplane.position.z-a.eventRoot.position.z)<35 &&
+                    Math.abs(airplane.position.x)<34 && airplane.position.y>18 && airplane.position.y<166) {
+                    a.collected=true; fuel=Math.min(100,fuel+25); targetY=Math.min(175,targetY+12);
+                    if(fuel>0) {fuelDepleted=false;fuelDepletedTimer=0}
+                    showFeedback(currentLanguage==='en'?'Thermal current · +25 fuel':'Corrente térmica · +25 combustível',true);
+                    playCollectSound()
+                }
+            } else if (a.event === 'migration') {
+                a.eventRoot.position.z -= dt*65;
+                a.eventRoot.position.x = Math.sin(a.eventTime*.12)*120;
+                a.eventRoot.children.forEach((bird,i)=>{
+                    bird.scale.y=.35+Math.abs(Math.sin(a.time*4+i*.7));
+                    bird.position.y=bird.userData.baseY+Math.sin(a.time*1.2+i)*2
+                });
+                if(a.eventTime>a.chirpAt && engineRunning && a.eventTime<8) {
+                    a.chirpAt=a.eventTime+2.4;
+                    _tone('sine',1250,1800,.13,.006)
+                }
+            } else {
+                a.eventRoot.position.z = airplane.position.z-900;
+                a.eventRoot.children.forEach((ribbon,i)=>{
+                    ribbon.material.opacity=Math.min(1,a.eventTime/3,(18-a.eventTime)/3)*(.22+Math.sin(a.time*.6+i)*.08);
+                    ribbon.position.y=Math.sin(a.time*.3+i)*14
+                })
+            }
+            if(a.eventTime>18 || (a.event !== 'aurora' && a.eventRoot.position.z>airplane.position.z+260)) {
+                const type=a.event; disposeFlightGroup(a.eventRoot); a.eventRoot=null; a.event=null;
+                scheduleNextSpecialEvent(type,distance,true)
+            }
+        }
+
+        function playAirNoise(duration, volume, cutoff, pan = 0) {
+            if(!audioCtx || audioCtx.state !== 'running') return;
+            const buffer=audioCtx.createBuffer(1,Math.ceil(audioCtx.sampleRate*duration),audioCtx.sampleRate),
+                data=buffer.getChannelData(0);
+            for(let i=0;i<data.length;i++) data[i]=(Math.random()*2-1)*Math.pow(1-i/data.length,2);
+            const src=audioCtx.createBufferSource(),filter=audioCtx.createBiquadFilter(),gain=audioCtx.createGain();
+            src.buffer=buffer; filter.type='lowpass'; filter.frequency.value=cutoff;
+            gain.gain.setValueAtTime(volume,audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+duration);
+            src.connect(filter);filter.connect(gain);
+            const stereo=audioCtx.createStereoPanner?.();
+            if(stereo){stereo.pan.value=Math.max(-1,Math.min(1,pan));gain.connect(stereo);stereo.connect(audioCtx.destination)}
+            else gain.connect(audioCtx.destination);
+            src.onended=()=>{src.disconnect();filter.disconnect();gain.disconnect();stereo?.disconnect()};
+            src.start();src.stop(audioCtx.currentTime+duration)
+        }
 
         // ==================== EVENTO ESPECIAL: INTERFERÊNCIA ALIENÍGENA ====================
         const ALIEN_EVENT_CONFIG = {
@@ -5334,14 +5773,14 @@
         function resetSpecialEventDirector(distance = 0) {
             specialEventDirector.activeType = null;
             specialEventDirector.lastType = null;
-            specialEventDirector.nextDistance = distance + 3200 + Math.random() * 1900
+            specialEventDirector.nextDistance = distance + 2200 + Math.random() * 1300
         }
 
         function scheduleNextSpecialEvent(type, distance, completed = true) {
             if (specialEventDirector.activeType === type) specialEventDirector.activeType = null;
             specialEventDirector.lastType = type || specialEventDirector.lastType;
             // Entre 28 e 43 segundos de voo no começo de uma partida: há respiro, sem longos vazios.
-            specialEventDirector.nextDistance = distance + (completed ? 4300 : 3600) + Math.random() * 2200;
+            specialEventDirector.nextDistance = distance + (completed ? 3000 : 2600) + Math.random() * 1600;
             if (completed) {
                 advanceMissionProgress('event_survive', 1);
                 if (type === 'volcano') advanceMissionProgress('volcano_survive', 1)
@@ -5349,7 +5788,7 @@
         }
 
         function chooseNextSpecialEvent() {
-            const choices = ['alien','volcano','meteor'].filter(type => type !== specialEventDirector.lastType),
+            const choices = ['alien','volcano','meteor','thermal','migration','aurora'].filter(type => type !== specialEventDirector.lastType),
                 total = choices.reduce((sum, type) => sum + specialEventDirector.weights[type], 0);
             let roll = Math.random() * total;
             for (const type of choices) {
@@ -5366,7 +5805,8 @@
             const type = chooseNextSpecialEvent();
             if (type === 'alien') startAlienEvent();
             else if (type === 'volcano') startVolcanoEvent();
-            else startMeteorEvent();
+            else if (type === 'meteor') startMeteorEvent();
+            else startScenicEvent(type);
             if (!specialEventDirector.activeType)
                 specialEventDirector.nextDistance = distance + 900
         }
@@ -6212,16 +6652,11 @@
                     transparent: true, opacity: .48 + intensity * .16, blending: THREE.AdditiveBlending,
                     depthWrite: false, side: THREE.DoubleSide }),
                 rock = new THREE.Mesh(assets.rock, rockMaterial), trail = new THREE.Mesh(assets.trail, trailMaterial),
-                flightTime = 2.45 + Math.random() * 1.05,
-                start = new THREE.Vector3((Math.random() - .5) * 390, 220 + Math.random() * 110,
-                    airplane.position.z - 280 - Math.random() * 430),
-                target = new THREE.Vector3(airplane.position.x + (Math.random() - .5) * (150 - intensity * 35),
-                    Math.max(18, airplane.position.y + (Math.random() - .5) * 75),
-                    airplane.position.z - flightSpeed * flightTime),
-                gravity = -24 - intensity * 11,
-                velocity = new THREE.Vector3((target.x - start.x) / flightTime,
-                    (target.y - start.y - .5 * gravity * flightTime * flightTime) / flightTime,
-                    (target.z - start.z) / flightTime),
+                start = new THREE.Vector3((Math.random() - .5) * 560, 310 + Math.random() * 160,
+                    airplane.position.z - 240 - Math.random() * 680),
+                gravity = -38 - intensity * 12,
+                velocity = new THREE.Vector3(12 + Math.random() * 16, -62 - Math.random() * 34,
+                    -10 + Math.random() * 20),
                 trailDirection = velocity.clone().normalize().multiplyScalar(-1);
             rock.scale.setScalar(radius);
             rock.castShadow = true;
@@ -6338,6 +6773,10 @@
                 meteor.life += dt;
                 meteor.velocity.y += meteor.gravity * dt;
                 meteor.group.position.addScaledVector(meteor.velocity, dt);
+                // The tail follows the changing ballistic velocity, never the camera.
+                const tailDirection = meteor.velocity.clone().normalize().negate();
+                meteor.trail.quaternion.setFromUnitVectors(getMeteorAssets().up, tailDirection);
+                meteor.trail.position.copy(tailDirection).multiplyScalar(meteor.trail.scale.y * .48);
                 meteor.rock.rotation.x += meteor.spinX * dt;
                 meteor.rock.rotation.y += meteor.spinY * dt;
                 meteor.trailMaterial.opacity = (.34 + intensity * .2) * Math.max(.2, 1 - meteor.life / 7);
@@ -6380,11 +6819,11 @@ const DAY_NIGHT_PHASES = [
     { name: 'Madrugada', time: 0.10, timeLabel: '02:24', icon: '🌙',
         skyTop: new THREE.Color(0x020617), skyHorizon: new THREE.Color(0x0f172a), skyBottom: new THREE.Color(0x020617),
         sunColor: new THREE.Color(0xef4444), sunEmissiveColor: new THREE.Color(0x991b1b), sunIntensity: 0.05, sunSize: 0.995, sunGlow: 32.0,
-        ambientColor: new THREE.Color(0x1e1b4b), ambientIntensity: 0.18,
-        hemiSkyColor: new THREE.Color(0x0f172a), hemiGroundColor: new THREE.Color(0x020617), hemiIntensity: 0.18,
+        ambientColor: new THREE.Color(0x91a8cf), ambientIntensity: 0.52,
+        hemiSkyColor: new THREE.Color(0x8eadd8), hemiGroundColor: new THREE.Color(0x34445b), hemiIntensity: 0.48,
         fogColor: new THREE.Color(0x090d16), fogNear: 350, fogFar: 1100,
-        cloudColor: new THREE.Color(0x1e293b), cloudOpacity: 0.25,
-        starsOpacity: 1.0, moonOpacity: 1.0, moonColor: new THREE.Color(0x93c5fd), moonIntensity: 0.35, exposure: 0.68 },
+        cloudColor: new THREE.Color(0x879ab7), cloudOpacity: 0.25,
+        starsOpacity: 1.0, moonOpacity: 1.0, moonColor: new THREE.Color(0x93c5fd), moonIntensity: 0.62, exposure: 0.96 },
     { name: 'Amanhecer', time: 0.24, timeLabel: '05:45', icon: '🌅',
         skyTop: new THREE.Color(0x31105e), skyHorizon: new THREE.Color(0xfdba74), skyBottom: new THREE.Color(0x9a3412),
         sunColor: new THREE.Color(0xff8c40), sunEmissiveColor: new THREE.Color(0xf97316), sunIntensity: 0.65, sunSize: 0.993, sunGlow: 20.0,
@@ -6428,19 +6867,19 @@ const DAY_NIGHT_PHASES = [
     { name: 'Anoitecer', time: 0.85, timeLabel: '20:24', icon: '🌆',
         skyTop: new THREE.Color(0x1e1b4b), skyHorizon: new THREE.Color(0x7c2d12), skyBottom: new THREE.Color(0x0f172a),
         sunColor: new THREE.Color(0xc2410c), sunEmissiveColor: new THREE.Color(0x7f1d1d), sunIntensity: 0.2, sunSize: 0.995, sunGlow: 28.0,
-        ambientColor: new THREE.Color(0x312e81), ambientIntensity: 0.25,
-        hemiSkyColor: new THREE.Color(0x4338ca), hemiGroundColor: new THREE.Color(0x1e1b4b), hemiIntensity: 0.28,
+        ambientColor: new THREE.Color(0x9aa7cc), ambientIntensity: 0.48,
+        hemiSkyColor: new THREE.Color(0x8894ce), hemiGroundColor: new THREE.Color(0x39445f), hemiIntensity: 0.48,
         fogColor: new THREE.Color(0x312e81), fogNear: 400, fogFar: 1200,
         cloudColor: new THREE.Color(0x475569), cloudOpacity: 0.45,
-        starsOpacity: 0.75, moonOpacity: 0.85, moonColor: new THREE.Color(0xa5f3fc), moonIntensity: 0.28, exposure: 0.78 },
+        starsOpacity: 0.75, moonOpacity: 0.85, moonColor: new THREE.Color(0xa5f3fc), moonIntensity: 0.48, exposure: 0.96 },
     { name: 'Noite', time: 0.94, timeLabel: '22:30', icon: '🌙',
         skyTop: new THREE.Color(0x020617), skyHorizon: new THREE.Color(0x0f172a), skyBottom: new THREE.Color(0x020617),
         sunColor: new THREE.Color(0x1e293b), sunEmissiveColor: new THREE.Color(0x0f172a), sunIntensity: 0.05, sunSize: 0.996, sunGlow: 35.0,
-        ambientColor: new THREE.Color(0x1e1b4b), ambientIntensity: 0.18,
-        hemiSkyColor: new THREE.Color(0x1e1b4b), hemiGroundColor: new THREE.Color(0x020617), hemiIntensity: 0.2,
+        ambientColor: new THREE.Color(0x91a8cf), ambientIntensity: 0.52,
+        hemiSkyColor: new THREE.Color(0x8eadd8), hemiGroundColor: new THREE.Color(0x34445b), hemiIntensity: 0.48,
         fogColor: new THREE.Color(0x0b1120), fogNear: 350, fogFar: 1100,
-        cloudColor: new THREE.Color(0x1e293b), cloudOpacity: 0.3,
-        starsOpacity: 1.0, moonOpacity: 1.0, moonColor: new THREE.Color(0x93c5fd), moonIntensity: 0.35, exposure: 0.68 }
+        cloudColor: new THREE.Color(0x879ab7), cloudOpacity: 0.3,
+        starsOpacity: 1.0, moonOpacity: 1.0, moonColor: new THREE.Color(0x93c5fd), moonIntensity: 0.62, exposure: 0.96 }
 ];
 
 const DAY_NIGHT_SKY_VERTEX_SHADER = `
@@ -6644,6 +7083,8 @@ const moonPos = new THREE.Vector3(0, moonY, moonZ);
         this.moonMaterial.opacity = this.interpolatedState.moonOpacity;
         this.moonHaloMaterial.opacity = this.interpolatedState.moonOpacity * 0.4;
         this.moonLight.intensity = this.interpolatedState.moonIntensity;
+        this.moonLight.target.position.copy(center);
+        this.moonLight.target.updateMatrixWorld();
 
         const skyUniforms = this.skyMaterial.uniforms;
         skyUniforms.uTopColor.value.copy(this.interpolatedState.skyTop);
@@ -6878,19 +7319,11 @@ dayNightManager = new DayNightManager(scene, camera, renderer, sunLight, ambient
                 const iz = Math.round((vz + depth / 2) / cellD);
                 if (ix >= 0 && ix < gridN && iz >= 0 && iz < gridN) heightGrid[iz * gridN + ix] = vy;
             }
-            geo.computeVertexNormals();
-            geo.toNonIndexed();
-            const p = geo.attributes.position,
-                normals = [];
-            for (let i = 0; i < p.count; i += 3) {
-                const a = new THREE.Vector3(p.getX(i), p.getY(i), p.getZ(i)),
-                    b = new THREE.Vector3(p.getX(i + 1), p.getY(i + 1), p.getZ(i + 1)),
-                    c = new THREE.Vector3(p.getX(i + 2), p.getY(i + 2), p.getZ(i + 2)),
-                    n = new THREE.Vector3();
-                n.crossVectors(b.clone().sub(a), c.clone().sub(a)).normalize();
-                normals.push(n.x, n.y, n.z, n.x, n.y, n.z, n.x, n.y, n.z)
-            }
-            geo.setAttribute("normal", new THREE.Float32BufferAttribute(normals, 3));
+            // toNonIndexed() devolve outra geometria. Usar o retorno é essencial para que
+            // cada triângulo receba normais completas, sem faces ausentes ou transparentes.
+            const renderGeo = geo.toNonIndexed();
+            renderGeo.computeVertexNormals();
+            const p = renderGeo.attributes.position;
             const colors = [];
             const baseColor = new THREE.Color(color);
             for (let i = 0; i < p.count; i++) {
@@ -6903,10 +7336,11 @@ dayNightManager = new DayNightManager(scene, camera, renderer, sunLight, ambient
                     c.setRGB(Math.min(1, r + t * 0.15), Math.min(1, g + t * 0.15), Math.min(1, b + t * 0.18)) }
                 colors.push(c.r, c.g, c.b)
             }
-            geo.setAttribute("color", new THREE.Float32BufferAttribute(colors, 3));
+            renderGeo.setAttribute("color", new THREE.Float32BufferAttribute(colors, 3));
+            geo.dispose();
             const mat = new THREE.MeshStandardMaterial({ vertexColors: true, flatShading: true, roughness: 1,
-                metalness: 0 });
-            const mesh = new THREE.Mesh(geo, mat);
+                metalness: 0, side: THREE.DoubleSide });
+            const mesh = new THREE.Mesh(renderGeo, mat);
             mesh.castShadow = mesh.receiveShadow = true;
             // Dados reais da geração procedural, expostos para a colisão reutilizar (mesma grade usada no mesh).
             mesh.userData.heightGrid = heightGrid;
@@ -7131,7 +7565,7 @@ function _obstacleMountainDims(b, central, rng) {
             renderGeo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
             geo.dispose();
             const material = new THREE.MeshStandardMaterial({ vertexColors: true, flatShading: true, roughness: 1,
-                metalness: 0 });
+                metalness: 0, side: THREE.DoubleSide });
             const mesh = new THREE.Mesh(renderGeo, material);
             mesh.castShadow = mesh.receiveShadow = true;
             mesh.userData.heightGrid = heightGrid;
@@ -7392,8 +7826,8 @@ function _obstacleMountainDims(b, central, rng) {
             const rng = getRng(z);
             let g = new THREE.Group(),
                 n = 3 + Math.floor(rng() * 5);
-            for (let j = 0; j < n; j++) { let p = new THREE.Mesh(new THREE.BoxGeometry(22 + rng() * 28, 10 + rng() * 14,
-                    18 + rng() * 20), M.cloud);
+            for (let j = 0; j < n; j++) { let p = new THREE.Mesh(new THREE.SphereGeometry(18 + rng() * 18, 7, 5), M.cloud);
+                p.scale.set(1.4, .45, .8);
                 p.position.set((j - n / 2) * 18 + (rng() - .5) * 8, (rng() - .5) * 10, (rng() - .5) * 12);
                 g.add(p) }
             g.position.set(x, 90 + rng() * 150, z);
@@ -7787,6 +8221,7 @@ function _obstacleMountainDims(b, central, rng) {
         }
 
         function clearWorld() {
+            resetFlightAtmosphere();
             resetAlienEvent(false);
             resetVolcanoEvent();
             resetMeteorEvent(false);
@@ -7895,7 +8330,7 @@ function _obstacleMountainDims(b, central, rng) {
         window.addEventListener('keydown', e => {
             keyboard[e.key.toLowerCase()] = true;
             if (e.key.toLowerCase() === 'p' && gameActive && !isPaused && !resumeCountdownActive && !
-                isGeneratingWorld && !mpActive) {
+                isGeneratingWorld && !mpActive && !battleActive) {
                 e.preventDefault();
                 togglePause();
             }
@@ -8015,6 +8450,11 @@ function _obstacleMountainDims(b, central, rng) {
             requestID = requestAnimationFrame(gameLoop);
             let rawDt = clock.getDelta();
             if (mpActive) {
+                if (rawDt > .5) {
+                    competitiveAdvanceElapsed(rawDt);
+                    if (renderer && scene && camera) renderer.render(scene,camera);
+                    return
+                }
                 // A física online avança em passos fixos. FPS alto só desenha mais quadros;
                 // não percorre mais distância nem recebe mais oportunidades de colisão.
                 mpFixedAccumulator += Math.min(Math.max(rawDt || 0, 0), .25);
@@ -8112,6 +8552,7 @@ function _obstacleMountainDims(b, central, rng) {
             if (mpActive && mpTryFinish(Math.abs(airplane.position.z))) return;
             updateVolcanoEvent(dt, dist);
             updateMeteorEvent(dt, dist);
+            updateFlightAtmosphere(dt, dist);
             updateMultiplayerLandmarks();
             if (mpActive) mpPublishState();
             const alienBankJitter = alienEvent.active ? Math.sin(alienEvent.totalTimer * 31) *
@@ -9143,6 +9584,41 @@ function checkCollisions() {
             s.lastPlaneColor = c;
             writeSave(s); }
 
+        const ONLINE_PROTOCOL = 3;
+        let mpSession = 0, mpReadyTimer = null, mpStarted = false, mpMatchId = '', mpJoining = false;
+        let battleSession = 0, battleStarted = false, battlePeersStarted = false, battleMatchId = '', battleJoining = false;
+        let battleWaitTimer = null;
+        function matchHasStarted(room, now) {
+            return !!(room && room.protocol === ONLINE_PROTOCOL && Number.isFinite(room.startAt) && room.startAt > 0 &&
+                now >= room.startAt && room.players?.player1?.ready === true && room.players?.player2?.ready === true &&
+                room.players.player1.started === true && room.players.player2.started === true);
+        }
+        function validMatchResult(room, result, now, battle = false) {
+            if (!matchHasStarted(room,now) || !result || result.matchId !== room.matchId ||
+                result.startAt !== room.startAt || !['player1','player2','draw'].includes(result.winner)) return false;
+            const elapsed = now - room.startAt;
+            if (battle) {
+                if (!['destroyed','lightning','time','disconnect','inactivity'].includes(result.reason)) return false;
+                if (result.reason === 'time') {
+                    const p1=room.players.player1.health,p2=room.players.player2.health;
+                    return elapsed>=BATTLE_DURATION_MS && Number.isFinite(p1) && Number.isFinite(p2) &&
+                        result.winner===(Math.abs(p1-p2)<.1?'draw':p1>p2?'player1':'player2')
+                }
+                if (result.winner === 'draw' || elapsed < 1800) return false;
+                const loser = result.winner === 'player1' ? 'player2' : 'player1';
+                if (['destroyed','lightning'].includes(result.reason))
+                    return Number.isFinite(room.players[loser].health) && room.players[loser].health <= 0;
+                return room.players[loser].connected === false ||
+                    (result.reason === 'inactivity' && Number.isFinite(room.players[loser].timestamp) &&
+                     now - room.players[loser].timestamp > 20000);
+            }
+            if (result.winner === 'draw' || !['finish','crash','inactivity'].includes(result.reason) ||
+                !Number.isFinite(result.raceTimeMs) || result.raceTimeMs < 1500 || elapsed < 1500) return false;
+            if (result.reason === 'finish') return result.distance >= MP_RACE_DISTANCE &&
+                result.raceTimeMs >= MP_RACE_DISTANCE / 480 * 1000;
+            return true;
+        }
+
         const MP_RACE_DISTANCE = 12000,
             MP_FIXED_DT = 1 / 60,
             MP_MAX_SUBSTEPS = 20,
@@ -9162,7 +9638,7 @@ function checkCollisions() {
             mpMyRef = null,
             mpEnemyRef = null;
         let remoteAirplane = null,
-            remoteTarget = { x: 8, y: 45, z: 0, rx: 0, ry: Math.PI, rz: 0 };
+            remoteTarget = { x: 8, y: 45, z: 0, rx: 0, ry: Math.PI, rz: 0, speed: 150, timestamp: 0 };
         let mpLastSend = 0,
             mpFixedAccumulator = 0,
             mpServerOffset = 0,
@@ -9191,14 +9667,18 @@ function checkCollisions() {
                 6; i++) code += chars[Math.floor(Math.random() * chars.length)]; return code; }
 
         async function openCreateRoom() {
+            if (mpRoomRef || mpPreparing) return;
+            mpSession++; mpStarted = false; mpRaceEnded = false; mpRaceStartAt = 0;
             playClickSound();
             showOnlineCard('create');
             mpRoomCode = generateRoomCode();
-            mpMatchSeed = mpRoomCode + '-race-v2';
+            mpMatchSeed = mpRoomCode + '-race-v3';
+            mpMatchId = mpRoomCode + '-' + Date.now();
             mpPlayerId = 'player1';
             document.getElementById('displayRoomCode').innerText = mpRoomCode;
             mpRoomRef = db.ref('rooms/' + mpRoomCode);
-            await mpRoomRef.set({ status: 'waiting', matchSeed: mpMatchSeed, raceDistance: MP_RACE_DISTANCE,
+            try {
+            await mpRoomRef.set({ protocol: ONLINE_PROTOCOL, matchId: mpMatchId, startAt: 0, status: 'waiting', matchSeed: mpMatchSeed, raceDistance: MP_RACE_DISTANCE,
                 result: null, countdown: -1, players: { player1: { connected: true, ready: false,
                         x: -12, y: 45, z: 0, rotX: 0, rotY: Math.PI, rotZ: 0, speed: 150, timestamp: Date
                         .now() } } });
@@ -9209,12 +9689,16 @@ function checkCollisions() {
                     closeOnlineModal();
                     mpStartCountdown(); } });
             mpListeners.push({ ref: mpRoomRef.child('players/player2/connected'), event: 'value', cb: p2Listener });
+            } catch(error) {
+                mpCleanupListeners();mpRoomRef=null;mpRoomCode='';mpPreparing=false;
+                showOnlineCard('main');showFeedback('Não foi possível criar a sala. Verifique a conexão.',false)
+            }
         }
 
         function copyRoomCode() { navigator.clipboard?.writeText(mpRoomCode).catch(() => {});
             showFeedback('📋 Código copiado!', true); }
 
-        async function cancelRoom() { playClickSound(); if (mpRoomRef) await mpRoomRef.remove().catch(() => {});
+        async function cancelRoom() { playClickSound(); mpCleanupListeners(); if (mpRoomRef) { await mpRoomRef.onDisconnect().cancel().catch(()=>{}); await mpRoomRef.remove().catch(() => {}) }
             mpRoomRef = null;
             mpRoomCode = '';
             mpCleanupListeners();
@@ -9230,23 +9714,41 @@ function checkCollisions() {
             let code = document.getElementById('joinCodeInput').value.trim().toUpperCase();
             if (code.length !== 6) { document.getElementById('joinError').style.display = 'block';
                 document.getElementById('joinError').innerText = 'Código inválido (6 caracteres)'; return; }
-            let roomSnap = await db.ref('rooms/' + code).get();
-            if (!roomSnap.exists() || roomSnap.val().status !== 'waiting') { document.getElementById('joinError')
-                    .style.display = 'block';
-                document.getElementById('joinError').innerText = 'Sala não encontrada ou já em uso!'; return; }
-            mpRoomCode = code;
-            mpMatchSeed = roomSnap.val().matchSeed || (code + '-race-v2');
-            mpPlayerId = 'player2';
-            mpRoomRef = db.ref('rooms/' + mpRoomCode);
-            await mpRoomRef.child('players/player2').set({ connected: true, ready: false, x: 12, y: 45, z: 0,
-                rotX: 0, rotY: Math.PI, rotZ: 0, speed: 150, timestamp: Date.now() });
-            mpRoomRef.child('players/player2').onDisconnect().update({ connected: false });
+            if (mpJoining || mpPreparing || mpRoomRef) return;
+            mpJoining = true;
+            try {
+                const ref = db.ref('rooms/' + code);
+                await ref.get();
+                const joined = await ref.transaction(room => {
+                    if (!room || room.protocol !== ONLINE_PROTOCOL || room.status !== 'waiting' ||
+                        room.players?.player2 || room.players?.player1?.connected !== true) return;
+                    room.players.player2 = { connected: true, ready: false, started: false, x:12,y:45,z:0,
+                        rotX:0,rotY:Math.PI,rotZ:0,speed:150,timestamp:Date.now() };
+                    return room
+                },undefined,false);
+                if (!joined.committed) {
+                    document.getElementById('joinError').style.display='block';
+                    document.getElementById('joinError').innerText='Sala indisponível. Peça um novo código na versão atual.';
+                    return
+                }
+                const room = joined.snapshot.val();
+                mpSession++; mpStarted=false; mpRaceEnded=false; mpRaceStartAt=0;
+                mpRoomCode=code; mpMatchSeed=room.matchSeed; mpMatchId=room.matchId;
+                mpPlayerId='player2'; mpRoomRef=ref;
+                await ref.child('players/player2').onDisconnect().update({connected:false})
+            } catch(error) {
+                document.getElementById('joinError').style.display='block';
+                document.getElementById('joinError').innerText='Não foi possível entrar. Verifique a conexão.';
+                return
+            } finally { mpJoining=false }
             await updateCrazyGamesRoom();
             closeOnlineModal();
             mpStartCountdown();
         }
 
         async function mpStartCountdown() {
+            if (mpPreparing || !mpRoomRef) return;
+            const session = mpSession;
             selectedGameMode = 'online';
             stopMusicModePlayback(true);
             document.body.classList.remove('music-game');
@@ -9258,6 +9760,7 @@ function checkCollisions() {
                 mpServerOffset = 0;
                 console.warn('Não foi possível calibrar o relógio da corrida:', error)
             }
+            if (session !== mpSession || !mpRoomRef) return;
             document.getElementById('mpWaitingScreen').style.display = 'flex';
             document.getElementById('mpRoomCodeDisplay').innerText = mpRoomCode;
             if (lobbyActive) stopLobby();
@@ -9270,12 +9773,14 @@ function checkCollisions() {
             rebuildWorld(() => {
                 document.getElementById('loadingOverlay').style.display = 'none';
                 safeSdkCall('sdkGameLoadingStop');
+                if (session !== mpSession || !mpRoomRef) return;
                 mpInitGame();
                 mpPreparing = false
             });
         }
 
         function mpInitGame() {
+            const session = mpSession, roomRef = mpRoomRef;
             let sv = loadSave();
             if (sv.lastPlaneColor) planeColor = sv.lastPlaneColor;
             score = 0;
@@ -9318,19 +9823,24 @@ function checkCollisions() {
             let enemyId = mpPlayerId === 'player1' ? 'player2' : 'player1';
             mpEnemyRef = mpRoomRef.child('players/' + enemyId);
             mpMyRef = mpRoomRef.child('players/' + mpPlayerId);
+            const roomGoneCb=roomRef.on('value',snap=>{if(session===mpSession && !snap.val() && !mpRaceEnded)mpShowDisconnect()});
+            mpListeners.push({ref:roomRef,event:'value',cb:roomGoneCb});
             const disconnectCb = mpEnemyRef.child('connected').on('value', (snap) => { if (snap.val() === false && !
                     mpRaceEnded) { mpShowDisconnect(); } });
             mpListeners.push({ ref: mpEnemyRef.child('connected'), event: 'value', cb: disconnectCb });
             const finishCb = mpRoomRef.child('result').on('value', (snap) => {
                 const result = snap.val();
-                if (!result || mpRaceEnded) return;
+                if (!result || mpRaceEnded || session !== mpSession || result.matchId !== mpMatchId) return;
                 // Pequena janela de adjudicação: uma chegada enviada depois, mas com tempo de
                 // simulação menor, ainda substitui o primeiro pacote recebido pelo Firebase.
                 if (mpResultFinalizeTimer) clearTimeout(mpResultFinalizeTimer);
                 mpResultFinalizeTimer = setTimeout(async () => {
                     if (mpRaceEnded || !mpRoomRef) return;
-                    const finalSnapshot = await mpRoomRef.child('result').get(), finalResult = finalSnapshot.val();
-                    if (finalResult) mpEndRace(finalResult.winner === mpPlayerId, finalResult.reason || 'finish')
+                    try {
+                        const snapshot=await roomRef.get(),room=snapshot.val(),finalResult=room?.result;
+                        if(session === mpSession && mpStarted && validMatchResult(room,finalResult,Date.now()+mpServerOffset))
+                            mpEndRace(finalResult.winner === mpPlayerId,finalResult.reason)
+                    } catch(error) { mpShowDisconnect() }
                 }, 750)
             });
             mpListeners.push({ ref: mpRoomRef.child('result'), event: 'value', cb: finishCb });
@@ -9340,7 +9850,9 @@ function checkCollisions() {
                 if (Number.isFinite(d.z)) remoteTarget.z = d.z;
                 if (Number.isFinite(d.rotX)) remoteTarget.rx = d.rotX;
                 if (Number.isFinite(d.rotY)) remoteTarget.ry = d.rotY;
-                if (Number.isFinite(d.rotZ)) remoteTarget.rz = d.rotZ; });
+                if (Number.isFinite(d.rotZ)) remoteTarget.rz = d.rotZ;
+                if (Number.isFinite(d.speed)) remoteTarget.speed = d.speed;
+                if (Number.isFinite(d.timestamp)) remoteTarget.timestamp = d.timestamp; });
             mpListeners.push({ ref: mpEnemyRef, event: 'value', cb: posCb });
             if (mpPlayerId === 'player1') { mpWaitBothReady(); }
             const countdownCb = mpRoomRef.child('countdown').on('value', (snap) => { let v = snap.val(); if (v === null ||
@@ -9353,45 +9865,54 @@ function checkCollisions() {
                 _startScheduled = true;
                 mpRaceStartAt = Number(startAt);
                 waitUntil(mpRaceStartAt - mpServerOffset, () => { document.getElementById('mpCountdownOverlay').style.display = 'none';
-                    document.getElementById('mpWaitingScreen').style.display = 'none'; if (!mpRaceEnded && !
-                        gameActive) mpBeginRace(); }); });
+                    document.getElementById('mpWaitingScreen').style.display = 'none'; if (session === mpSession && mpRoomRef === roomRef && !mpRaceEnded && !gameActive) mpBeginRace(); },()=>session===mpSession && mpRoomRef===roomRef); });
             mpListeners.push({ ref: mpRoomRef.child('startAt'), event: 'value', cb: startCb });
             mpMyRef.update({ connected: true, ready: true, x: ownStartX, y: 45, z: 0, speed: baseFlightSpeed,
-                timestamp: Date.now() }).catch(console.warn)
+                timestamp: Date.now() + mpServerOffset }).catch(console.warn)
         }
 
-        function waitUntil(targetTime, callback) {
-            function check() { if (Date.now() >= targetTime) callback();
+        function waitUntil(targetTime, callback, valid = () => true) {
+            function check() { if(!valid()) return; if (Date.now() >= targetTime) callback();
                 else requestAnimationFrame(check); }
             requestAnimationFrame(check);
         }
 
         async function mpWaitBothReady() {
-            let tries = 0;
-            const checkInterval = setInterval(async () => {
-                tries++;
-                const snap = await mpRoomRef.child('players').get(), players = snap.val() || {},
-                    bothReady = players.player1?.connected && players.player1?.ready &&
-                        players.player2?.connected && players.player2?.ready;
-                if (bothReady) {
-                    clearInterval(checkInterval);
-                    mpRunCountdown()
-                } else if (tries > 120) {
-                    clearInterval(checkInterval);
-                    mpShowDisconnect()
-                }
-            }, 500)
+            const session=mpSession,ref=mpRoomRef;
+            let tries=0,busy=false;
+            clearInterval(mpReadyTimer);
+            mpReadyTimer=setInterval(async()=>{
+                if(session!==mpSession || ref!==mpRoomRef || mpRaceEnded){clearInterval(mpReadyTimer);return}
+                if(busy) return; busy=true;
+                try {
+                    const snapshot=await ref.get(),room=snapshot.val();
+                    if(session!==mpSession) return;
+                    if(!room){mpShowDisconnect();return}
+                    if(room.players?.player1?.ready && room.players?.player2?.ready &&
+                        room.players.player1.connected && room.players.player2.connected){
+                        clearInterval(mpReadyTimer);mpReadyTimer=null;await mpRunCountdown()
+                    } else if(++tries>120) mpShowDisconnect()
+                } catch(error){mpShowDisconnect()} finally{busy=false}
+            },500)
         }
 
         async function mpRunCountdown() {
-            const serverNow = Date.now() + mpServerOffset,
-                startAt = serverNow + 3800;
-            await mpRoomRef.update({ status: 'racing', countdown: 3, startAt });
-            for (let i = 2; i >= 0; i--) {
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                if (!mpRoomRef || mpRaceEnded) return;
-                await mpRoomRef.child('countdown').set(i)
-            }
+            const session=mpSession,ref=mpRoomRef,startAt=Date.now()+mpServerOffset+3800;
+            if(!ref) return;
+            try {
+                const result=await ref.transaction(room=>{
+                    if(!room || room.matchId!==mpMatchId || room.status!=='waiting' || room.result ||
+                        !room.players?.player1?.ready || !room.players?.player2?.ready ||
+                        !room.players.player1.connected || !room.players.player2.connected) return;
+                    return {...room,status:'racing',countdown:3,startAt}
+                },undefined,false);
+                if(!result.committed) return;
+                for(let i=2;i>=0;i--){
+                    await new Promise(resolve=>setTimeout(resolve,1000));
+                    if(session!==mpSession || ref!==mpRoomRef || mpRaceEnded) return;
+                    await ref.child('countdown').set(i)
+                }
+            } catch(error){if(session===mpSession)mpShowDisconnect()}
         }
 
         function mpShowCountdown(val) { document.getElementById('mpWaitingScreen').style.display = 'none';
@@ -9399,7 +9920,18 @@ function checkCollisions() {
             overlay.style.display = 'flex';
             document.getElementById('mpCountdownNum').innerText = val; }
 
-        function mpBeginRace() { mpRaceEnded = false;
+        async function mpBeginRace() {
+            const session=mpSession,ref=mpRoomRef;
+            if(!ref || mpStarted || mpRaceEnded || !mpRaceStartAt || Date.now()+mpServerOffset<mpRaceStartAt) return;
+            try {
+                const snapshot=await ref.get(),room=snapshot.val();
+                if(session!==mpSession || room?.matchId!==mpMatchId || room.result ||
+                    !room.players?.player1?.ready || !room.players?.player2?.ready ||
+                    !room.players.player1.connected || !room.players.player2.connected) return;
+                await mpMyRef.update({started:true,timestamp:Date.now()+mpServerOffset});
+                if(session!==mpSession) return
+            } catch(error){mpShowDisconnect();return}
+            mpStarted=true; mpRaceEnded = false;
             mpFixedAccumulator = 0;
             mpRaceSimulationTime = 0;
             document.getElementById('gameHUD').classList.remove('hidden');
@@ -9499,7 +10031,7 @@ function checkCollisions() {
             if (!mpActive) return;
             const clamped = Math.min(MP_RACE_DISTANCE, Math.max(0, distance)),
                 remaining = Math.max(0, Math.ceil(MP_RACE_DISTANCE - clamped)),
-                enemyDistance = Math.max(0, Math.abs(Number(remoteTarget.z) || 0)),
+                enemyDistance = Math.max(0, Math.abs(Number(remoteAirplane?.position.z ?? remoteTarget.z) || 0)),
                 gap = Math.round(clamped - enemyDistance),
                 progress = document.getElementById('mpRaceProgress'),
                 remainingLabel = document.getElementById('mpRaceRemaining'),
@@ -9520,16 +10052,22 @@ function checkCollisions() {
             remoteAirplane.position.set(enemyStartX, 45, 0);
             remoteAirplane.name = 'remotePlane';
             scene.add(remoteAirplane);
-            remoteTarget = { x: enemyStartX, y: 45, z: 0, rx: 0, ry: Math.PI, rz: 0 }; }
+            remoteTarget = { x: enemyStartX, y: 45, z: 0, rx: 0, ry: Math.PI, rz: 0,
+                speed: baseFlightSpeed, timestamp: Date.now() + mpServerOffset }; }
 
         function mpUpdateRemotePlane(dt) { if (!remoteAirplane) return;
-            let lf = Math.min(1, 20 * dt);
+            let lf = Math.min(1, 20 * dt),
+                packetAge = remoteTarget.timestamp ? Math.max(0,(Date.now() + mpServerOffset - remoteTarget.timestamp) /
+                    1000) : 0,
+                predictedZ = remoteTarget.z - (Number(remoteTarget.speed) || baseFlightSpeed) * Math.min(8,packetAge);
             remoteAirplane.position.x += (remoteTarget.x - remoteAirplane.position.x) * lf;
             remoteAirplane.position.y += (remoteTarget.y - remoteAirplane.position.y) * lf;
-            remoteAirplane.position.z += (remoteTarget.z - remoteAirplane.position.z) * lf;
+            remoteAirplane.position.z += (predictedZ - remoteAirplane.position.z) * lf;
             remoteAirplane.rotation.x += (remoteTarget.rx - remoteAirplane.rotation.x) * lf;
             remoteAirplane.rotation.y += (remoteTarget.ry - remoteAirplane.rotation.y) * lf;
-            remoteAirplane.rotation.z += (remoteTarget.rz - remoteAirplane.rotation.z) * lf; }
+            remoteAirplane.rotation.z += (remoteTarget.rz - remoteAirplane.rotation.z) * lf;
+            if (packetAge > 8 && mpActive && !mpRaceEnded && !mpResultSubmitted)
+                mpCommitResult(mpPlayerId,'inactivity') }
 
         function mpPublishState() { if (!mpMyRef || !airplane) return;
             let now = Date.now(); if (now - mpLastSend < MP_SEND_INTERVAL) return;
@@ -9537,7 +10075,8 @@ function checkCollisions() {
             mpMyRef.update({ x: parseFloat(airplane.position.x.toFixed(2)), y: parseFloat(airplane.position.y.toFixed(
                     2)), z: parseFloat(airplane.position.z.toFixed(2)), rotX: parseFloat(airplane.rotation.x
                     .toFixed(3)), rotY: parseFloat(airplane.rotation.y.toFixed(3)), rotZ: parseFloat(airplane
-                    .rotation.z.toFixed(3)), speed: parseFloat(flightSpeed.toFixed(2)), timestamp: now }); }
+                    .rotation.z.toFixed(3)), speed: parseFloat(flightSpeed.toFixed(2)),
+                    timestamp: now + mpServerOffset }); }
 
         function mpSaveProgress(isWinner, reason) {
             const earned = isWinner ? MP_REWARDS.winner :
@@ -9561,20 +10100,21 @@ function checkCollisions() {
         }
 
         async function mpCommitResult(winnerId, reason) {
-            if (mpResultSubmitted || mpRaceEnded || !mpRoomRef) return false;
+            if (!mpStarted || mpRaceSimulationTime < 1.5 || mpResultSubmitted || mpRaceEnded || !mpRoomRef) return false;
             mpResultSubmitted = true;
             const resultRef = mpRoomRef.child('result'),
-                proposedResult = { winner: winnerId, reason,
+                proposedResult = { matchId: mpMatchId, startAt: mpRaceStartAt, winner: winnerId, reason,
                     distance: Math.min(MP_RACE_DISTANCE, Math.floor(Math.abs(airplane?.position.z || 0))),
                     raceTimeMs: Math.round(mpRaceSimulationTime * 1000),
                     finishedAt: Math.round(mpRaceStartAt + mpRaceSimulationTime * 1000) };
             try {
-                await resultRef.transaction(current => {
-                    if (!current) return proposedResult;
-                    const currentTime = Number(current.raceTimeMs);
-                    return !Number.isFinite(currentTime) || proposedResult.raceTimeMs < currentTime ?
-                        proposedResult : current
-                });
+                const committed=await mpRoomRef.transaction(room=>{
+                    if(!validMatchResult(room,proposedResult,Date.now()+mpServerOffset)) return;
+                    const current=room.result;
+                    if(current && Number(current.raceTimeMs)<=proposedResult.raceTimeMs) return;
+                    room.result=proposedResult; return room
+                },undefined,false);
+                if(!committed.committed && !committed.snapshot.val()?.result){mpShowDisconnect();return false}
                 return true
             } catch (error) {
                 console.warn('Falha ao registrar resultado da corrida:', error);
@@ -9591,7 +10131,7 @@ function checkCollisions() {
         }
 
         function mpHandleLocalCrash() {
-            if (mpRaceEnded || mpResultSubmitted) return;
+            if (!mpStarted || mpRaceSimulationTime < 1.5 || mpRaceEnded || mpResultSubmitted) return;
             mpStopLocalSimulation(true);
             const winnerId = mpPlayerId === 'player1' ? 'player2' : 'player1';
             mpCommitResult(winnerId, 'crash')
@@ -9600,17 +10140,21 @@ function checkCollisions() {
         function mpEndRace(isWinner, reason = 'finish') { if (mpRaceEnded) return;
             mpRaceEnded = true;
             mpActive = false;
+            competitiveStopBackground();
             mpStopLocalSimulation(false);
             const earned = mpSaveProgress(isWinner, reason),
-                finishedByLine = reason === 'finish';
+                finishedByLine = reason === 'finish',
+                technical = reason === 'inactivity' || reason === 'disconnect';
             let card = document.getElementById('mpResultCard');
             let rs = document.getElementById('mpResultScreen');
             card.className = 'mp-result-card ' + (isWinner ? 'win' : 'lose');
-            document.getElementById('mpResultEmoji').innerText = isWinner ? '🏆' : (finishedByLine ? '🏁' : '💥');
+            document.getElementById('mpResultEmoji').innerText = isWinner ? '🏆' : (technical ? '⏱️' : (finishedByLine ? '🏁' : '💥'));
             document.getElementById('mpResultTitle').style.color = isWinner ? '#fbbf24' : '#ef4444';
             document.getElementById('mpResultTitle').innerText = isWinner ? 'VITÓRIA!' : 'DERROTA';
             document.getElementById('mpResultCoins').innerText = '+' + earned + ' 💰 moedas';
-            document.getElementById('mpResultTime').innerText = isWinner ?
+            document.getElementById('mpResultTime').innerText = technical ?
+                (isWinner ? 'O adversário ficou mais de 8 segundos sem atualizar a partida.' :
+                    'A partida ficou mais de 8 segundos sem receber atualizações do seu avião.') : isWinner ?
                 (finishedByLine ? 'Você cruzou a linha de chegada primeiro!' : 'O seu adversário bateu durante a corrida.') :
                 (finishedByLine ? 'O seu adversário cruzou a linha primeiro.' : 'Você bateu; o seu adversário venceu.');
             document.getElementById('gameHUD').classList.add('hidden');
@@ -9624,6 +10168,7 @@ function checkCollisions() {
         function mpShowDisconnect() { if (mpRaceEnded) return;
             mpRaceEnded = true;
             mpActive = false;
+            competitiveStopBackground();
             gameActive = false; if (requestID) { cancelAnimationFrame(requestID);
                 requestID = null; }
             setEngineSound(false);
@@ -9639,12 +10184,13 @@ function checkCollisions() {
                 remoteAirplane = null; } }
 
         function mpGoToLobby() { mpActive = false;
+            competitiveStopBackground();
             mpPreparing = false;
             mpRaceEnded = false;
             mpResultSubmitted = false;
             gameActive = false; if (requestID) { cancelAnimationFrame(requestID);
                 requestID = null; }
-            setEngineSound(false); if (mpPlayerId === 'player1' && mpRoomRef) mpRoomRef.remove().catch(() => {}); else if (
+            setEngineSound(false); if (mpPlayerId === 'player1' && mpRoomRef) {mpRoomRef.onDisconnect().cancel().catch(()=>{});mpRoomRef.remove().catch(() => {})} else if (
                 mpMyRef) mpMyRef.update({ connected: false }).catch(() => {});
             removeCrazyGamesRoom();
             mpCleanupListeners();
@@ -9674,9 +10220,1575 @@ function checkCollisions() {
             initLobby(); }
 
         function mpCleanupListeners() {
+            mpSession++; mpStarted=false;
+            clearInterval(mpReadyTimer);mpReadyTimer=null;
             if (mpResultFinalizeTimer) { clearTimeout(mpResultFinalizeTimer); mpResultFinalizeTimer = null }
             mpListeners.forEach(l => { try { l.ref.off(l.event, l.cb) } catch (e) {} });
             mpListeners = []
+        }
+
+        // ==================== BATALHA AÉREA ONLINE ====================
+        // A física local roda em passos fixos de 60 Hz; a rede transmite apenas estados e
+        // eventos compartilhados. Desse modo, FPS alto não aumenta velocidade, cadência ou dano.
+        const BATTLE_FIXED_DT = 1 / 60,
+            BATTLE_MAX_SUBSTEPS = 20,
+            BATTLE_SEND_INTERVAL = 1000 / 25,
+            BATTLE_DURATION_MS = 5 * 60 * 1000,
+            BATTLE_BULLET_SPEED = 680,
+            BATTLE_HIT_RADIUS = 12,
+            BATTLE_BASE_HEALTH = 240,
+            BATTLE_ARENA_RADIUS = 920,
+            BATTLE_START_OFFSET = 430,
+            BATTLE_REWARDS = { winner: 320, draw: 210, loser: 140 },
+            BATTLE_UPGRADE_TYPES = ['weapon','armor','engine','agility','cooling'];
+        let battleActive = false,
+            battlePreparing = false,
+            battleEnded = false,
+            battleResultProcessed = false,
+            battleResultSubmitting = false,
+            battleRoomCode = '',
+            battlePlayerId = '',
+            battleRoomRef = null,
+            battleMyRef = null,
+            battleEnemyRef = null,
+            battleServerOffset = 0,
+            battleStartAt = 0,
+            battleEndAt = 0,
+            battleAccumulator = 0,
+            battleLastFrame = 0,
+            battleLastSend = 0,
+            battleRoomSeed = 1,
+            battleOwnHealth = BATTLE_BASE_HEALTH,
+            battleOwnMaxHealth = BATTLE_BASE_HEALTH,
+            battleEnemyHealth = BATTLE_BASE_HEALTH,
+            battleEnemyMaxHealth = BATTLE_BASE_HEALTH,
+            battleEnemyRankPoints = 0,
+            battleSpeed = 112,
+            battleYaw = 0,
+            battlePitch = 0,
+            battleRoll = 0,
+            battleHeat = 0,
+            battleOverheated = false,
+            battleLastShotAt = 0,
+            battleBoundaryCooldown = 0,
+            battleMouseX = 0,
+            battleMouseY = 0,
+            battleCursorX = innerWidth * .5,
+            battleCursorY = innerHeight * .5,
+            battleAimNdcX = 0,
+            battleAimNdcY = 0,
+            battleAimAssistStrength = 0,
+            battleAimAssistPoint = null,
+            battleRaycaster = null,
+            battleFiring = false,
+            battleDamageEffectTimer = null,
+            battleHitEffectTimer = null,
+            battleBarrelRollActive = false,
+            battleBarrelRollProgress = 0,
+            battleBarrelRollAngle = 0,
+            battleBarrelRollDirection = 1,
+            battleSpaceWasDown = false,
+            battleWorldRoot = null,
+            battleRain = null,
+            battleRainPositions = null,
+            battleEnvironmentSnapshot = null,
+            battleRemotePlane = null,
+            battleNextLightningAt = 0,
+            battleNextRingAt = 0;
+        let battleRemoteTarget = { x: BATTLE_START_OFFSET, y: 90, z: 0, rx: 0, ry: -Math.PI / 2, rz: 0 };
+        let battlePoseHistory = [];
+        let battleListeners = [], battleBullets = [], battleLightning = new Map(), battleRings = new Map(),
+            battleSeenShots = new Set(), battleAppliedRings = new Set();
+        let battleUpgrades = { weapon: 0, armor: 0, engine: 0, agility: 0, cooling: 0 };
+        let battleMusicGain = null, battleMusicTimer = null, battleMusicNextPhraseAt = 0,
+            battleMusicNoiseBuffer = null, battleMusicNodes = new Set();
+
+        // Trilha marcial procedural: metais graves e percussão distante em andamento lento.
+        // É original, discreta e criada pelo Web Audio, portanto não depende de arquivos externos.
+        function battleTrackMusicNode(node) {
+            battleMusicNodes.add(node);
+            node.addEventListener('ended',() => battleMusicNodes.delete(node),{ once: true })
+        }
+
+        function battleScheduleWarVoice(frequency,when,duration = 1.75) {
+            if (!audioCtx || !battleMusicGain) return;
+            const filter = audioCtx.createBiquadFilter(), envelope = audioCtx.createGain(),
+                root = audioCtx.createOscillator(), fifth = audioCtx.createOscillator();
+            filter.type = 'lowpass'; filter.frequency.value = 480; filter.Q.value = .7;
+            root.type = 'triangle'; root.frequency.value = frequency;
+            fifth.type = 'sine'; fifth.frequency.value = frequency * 1.5;
+            const end = when + duration;
+            envelope.gain.setValueAtTime(.0001,when);
+            envelope.gain.exponentialRampToValueAtTime(.038,when + .22);
+            envelope.gain.setTargetAtTime(.026,when + .38,.32);
+            envelope.gain.exponentialRampToValueAtTime(.0001,end);
+            root.connect(filter); fifth.connect(filter); filter.connect(envelope); envelope.connect(battleMusicGain);
+            root.start(when); fifth.start(when); root.stop(end + .03); fifth.stop(end + .03);
+            battleTrackMusicNode(root); battleTrackMusicNode(fifth)
+        }
+
+        function battleScheduleDistantDrum(when,accent = 1) {
+            if (!audioCtx || !battleMusicGain) return;
+            if (!battleMusicNoiseBuffer) {
+                const length = Math.floor(audioCtx.sampleRate * .22);
+                battleMusicNoiseBuffer = audioCtx.createBuffer(1,length,audioCtx.sampleRate);
+                const channel = battleMusicNoiseBuffer.getChannelData(0);
+                for (let i = 0; i < length; i++) channel[i] = (Math.random() * 2 - 1) * (1 - i / length)
+            }
+            const drum = audioCtx.createOscillator(), drumGain = audioCtx.createGain(),
+                noise = audioCtx.createBufferSource(), noiseFilter = audioCtx.createBiquadFilter(),
+                noiseGain = audioCtx.createGain();
+            drum.type = 'sine'; drum.frequency.setValueAtTime(78,when); drum.frequency.exponentialRampToValueAtTime(42,when + .24);
+            drumGain.gain.setValueAtTime(.025 * accent,when); drumGain.gain.exponentialRampToValueAtTime(.0001,when + .32);
+            noise.buffer = battleMusicNoiseBuffer; noiseFilter.type = 'lowpass'; noiseFilter.frequency.value = 720;
+            noiseGain.gain.setValueAtTime(.010 * accent,when); noiseGain.gain.exponentialRampToValueAtTime(.0001,when + .18);
+            drum.connect(drumGain); drumGain.connect(battleMusicGain);
+            noise.connect(noiseFilter); noiseFilter.connect(noiseGain); noiseGain.connect(battleMusicGain);
+            drum.start(when); noise.start(when); drum.stop(when + .34); noise.stop(when + .23);
+            battleTrackMusicNode(drum); battleTrackMusicNode(noise)
+        }
+
+        function battleScheduleWarPhrase(when) {
+            // Ré menor, com frases longas para transmitir tensão sem cansar.
+            [73.42,65.41,58.27,55].forEach((note,index) => battleScheduleWarVoice(note,when + index * 2));
+            for (let beat = 0; beat < 4; beat++) battleScheduleDistantDrum(when + beat * 2,beat % 2 ? .68 : 1)
+        }
+
+        function battleMusicPump() {
+            if (!battleActive || battleEnded || !audioCtx || !battleMusicGain) return;
+            while (battleMusicNextPhraseAt < audioCtx.currentTime + 3.5) {
+                battleScheduleWarPhrase(battleMusicNextPhraseAt);
+                battleMusicNextPhraseAt += 8
+            }
+            battleMusicTimer = setTimeout(battleMusicPump,1200)
+        }
+
+        function battleStartMusic() {
+            if (!audioCtx) initSynth();
+            if (!audioCtx) return;
+            battleStopMusic();
+            battleMusicGain = audioCtx.createGain();
+            battleMusicGain.gain.value = 0;
+            battleMusicGain.connect(audioCtx.destination);
+            battleMusicGain.gain.setTargetAtTime(musicEnabled ? .12 : 0,audioCtx.currentTime,.22);
+            battleMusicNextPhraseAt = audioCtx.currentTime + .08;
+            battleMusicPump()
+        }
+
+        function battleStopMusic() {
+            clearTimeout(battleMusicTimer); battleMusicTimer = null;
+            battleMusicNodes.forEach(node => { try { node.stop() } catch (error) {} });
+            battleMusicNodes.clear();
+            if (battleMusicGain && audioCtx) {
+                const oldGain = battleMusicGain;
+                oldGain.gain.cancelScheduledValues(audioCtx.currentTime);
+                oldGain.gain.setTargetAtTime(0,audioCtx.currentTime,.05);
+                setTimeout(() => { try { oldGain.disconnect() } catch (error) {} },350)
+            }
+            battleMusicGain = null; battleMusicNextPhraseAt = 0
+        }
+
+        function battleRankPosition(points) {
+            const rank = getBattleRank(points);
+            return BATTLE_RANKS.findIndex(item => item.id === rank.id)
+        }
+
+        function openBattleModal() {
+            playClickSound();
+            battleShowCard('main');
+            const view = getBattleRankView(loadSave()), lock = document.getElementById('battleRankLock');
+            if (lock) lock.innerText = `PATENTE DE BATALHA · ${getPilotRankName(view.current).toUpperCase()} · ${view.index} PB`;
+            const modal = document.getElementById('battleModal');
+            modal.style.display = 'flex';
+            modal.setAttribute('aria-hidden','false')
+        }
+
+        function closeBattleModal() {
+            const modal = document.getElementById('battleModal');
+            modal.style.display = 'none';
+            modal.setAttribute('aria-hidden','true')
+        }
+
+        function battleShowCard(which) {
+            ['Main','Create','Join'].forEach(name => {
+                const element = document.getElementById('battleCard' + name);
+                if (element) element.style.display = name.toLowerCase() === which ? 'block' : 'none'
+            });
+            const error = document.getElementById('battleError');
+            if (error) error.innerText = ''
+        }
+
+        function battleOpenJoin() {
+            battleShowCard('join');
+            const input = document.getElementById('battleJoinCode');
+            if (input) { input.value = ''; input.focus() }
+        }
+
+        function battleCopyCode() {
+            navigator.clipboard?.writeText(battleRoomCode).catch(() => {});
+            showFeedback('📋 Código da batalha copiado!', true)
+        }
+
+        async function battleCreateRoom() {
+            if (battlePreparing || battleRoomRef) return;
+            battleRoomCode = generateRoomCode();
+            battleMatchId=battleRoomCode+'-'+Date.now();
+            battleStartAt=0; battleStarted=false; battleEnded=false;
+            battlePlayerId = 'player1';
+            battleRoomSeed = Math.abs(Array.from(battleRoomCode).reduce((sum, char) => (sum * 31 + char.charCodeAt(0)) | 0, 17));
+            const rank = getBattleRankView(loadSave());
+            battleRoomRef = db.ref('battleRooms/' + battleRoomCode);
+            battleShowCard('create');
+            document.getElementById('battleRoomCode').innerText = battleRoomCode;
+            try {
+                await battleRoomRef.set({ protocol:ONLINE_PROTOCOL,matchId:battleMatchId,mode: 'battle', status: 'waiting', seed: battleRoomSeed,
+                    createdAt: firebase.database.ServerValue.TIMESTAMP, startAt: 0, endAt: 0, result: null,
+                    players: { player1: { connected: true, ready: false, health: BATTLE_BASE_HEALTH,
+                        maxHealth: BATTLE_BASE_HEALTH, rankPoints: rank.index, rankTier: battleRankPosition(rank.index),
+                        nick: playerNick || 'Jogador 1' } } });
+                battleRoomRef.onDisconnect().remove();
+                const playerTwoRef = battleRoomRef.child('players/player2/connected');
+                const callback = playerTwoRef.on('value', snapshot => {
+                    if (snapshot.val() === true && !battlePreparing) battlePrepareMatch()
+                });
+                battleListeners.push({ ref: playerTwoRef, event: 'value', cb: callback })
+            } catch (error) {
+                console.warn('Falha ao criar batalha:', error);
+                battleRoomRef = null;
+                battleShowCard('main');
+                showFeedback('Não foi possível criar a batalha.', false)
+            }
+        }
+
+        async function battleCancelRoom() {
+            battleCleanupListeners();
+            if (battleRoomRef && battlePlayerId === 'player1') {await battleRoomRef.onDisconnect().cancel().catch(()=>{}); await battleRoomRef.remove().catch(() => {})}
+            battleRoomRef = null;
+            battleRoomCode = '';
+            battlePreparing = false;
+            closeBattleModal()
+        }
+
+        async function battleConfirmJoin() {
+            if (battlePreparing || battleJoining || battleRoomRef) return;
+            const input = document.getElementById('battleJoinCode'), errorBox = document.getElementById('battleError'),
+                code = (input?.value || '').trim().toUpperCase();
+            if (code.length !== 6) { errorBox.innerText = 'Digite um código válido de 6 caracteres.'; return }
+            battleJoining = true;
+            try {
+                const ref = db.ref('battleRooms/' + code), snapshot = await ref.get(), room = snapshot.val();
+                if (!room || room.protocol !== ONLINE_PROTOCOL || room.status !== 'waiting' || room.players?.player2) {
+                    errorBox.innerText = 'Sala não encontrada ou já ocupada.'; return
+                }
+                const localRank = getBattleRankView(loadSave()), hostPoints = Number(room.players?.player1?.rankPoints) || 0,
+                    tierGap = Math.abs(battleRankPosition(localRank.index) - battleRankPosition(hostPoints));
+                if (tierGap > 1) {
+                    errorBox.innerText = `Patentes muito distantes. Esta sala aceita somente ${getPilotRankName(getBattleRank(hostPoints))} ou uma divisão próxima.`;
+                    return
+                }
+                const playerRef = ref.child('players/player2');
+                const joined = await ref.transaction(current => {
+                    if(!current || current.matchId!==room.matchId || current.protocol!==ONLINE_PROTOCOL ||
+                        current.status!=='waiting' || current.players?.player2 || !current.players?.player1?.connected) return;
+                    current.players.player2={connected:true,ready:false,started:false,health:BATTLE_BASE_HEALTH,
+                        maxHealth:BATTLE_BASE_HEALTH,rankPoints:localRank.index,
+                        rankTier:battleRankPosition(localRank.index),nick:playerNick || 'Jogador 2'};
+                    return current
+                },undefined,false);
+                if (!joined.committed) { errorBox.innerText = 'Outro jogador entrou antes de você.'; return }
+                battleMatchId=room.matchId;
+                battleRoomCode = code;
+                battlePlayerId = 'player2';
+                battleRoomSeed = Number(room.seed) || 1;
+                battleRoomRef = ref;
+                playerRef.onDisconnect().update({ connected: false });
+                await battlePrepareMatch()
+            } catch (error) {
+                console.warn('Falha ao entrar na batalha:', error);
+                errorBox.innerText = 'Não foi possível entrar. Verifique a conexão.'
+            } finally { battleJoining=false }
+        }
+
+        async function battlePrepareMatch() {
+            if (battlePreparing || !battleRoomRef) return;
+            battlePreparing = true;
+            const session=++battleSession;
+            battleStarted=false; battlePeersStarted=false; battleStartAt=0; battleEndAt=0; battleEnded=false;
+            battleResultProcessed=false; battleResultSubmitting=false;
+            clearTimeout(battleWaitTimer);
+            battleWaitTimer=setTimeout(()=>{if(session===battleSession && !battleStarted) battleAbortMatch('O adversário não ficou pronto. Crie uma nova sala.')},65000);
+            selectedGameMode = 'battle';
+            stopMusicModePlayback(true);
+            if (musicAudio) musicAudio.pause();
+            document.body.classList.remove('music-game');
+            closeBattleModal();
+            document.getElementById('battleWaitingScreen').style.display = 'flex';
+            document.getElementById('battleWaitingCode').innerText = battleRoomCode;
+            document.getElementById('battleWaitingText').innerHTML = 'Preparando tempestade compartilhada<span class="waiting-dots"></span>';
+            if (lobbyActive) stopLobby();
+            document.getElementById('lobbyScreen').style.display = 'none';
+            hideBannerAd();
+            try {
+                const offset = await db.ref('.info/serverTimeOffset').get();
+                battleServerOffset = Number(offset.val()) || 0
+            } catch (error) { battleServerOffset = 0 }
+            if(session!==battleSession || !battleRoomRef) return;
+            try {
+            battleBuildWorld();
+            battleBindRoom();
+            const ownStart = battlePlayerId === 'player1' ? { x: -BATTLE_START_OFFSET, y: 90, z: 0, yaw: Math.PI / 2 } :
+                { x: BATTLE_START_OFFSET, y: 90, z: 0, yaw: -Math.PI / 2 };
+            battleMyRef = battleRoomRef.child('players/' + battlePlayerId);
+            battleEnemyRef = battleRoomRef.child('players/' + (battlePlayerId === 'player1' ? 'player2' : 'player1'));
+            if (battlePlayerId === 'player1') {
+                await battleRoomRef.onDisconnect().cancel().catch(() => {});
+                battleMyRef.child('connected').onDisconnect().set(false)
+            }
+            await battleMyRef.update({ connected: true, ready: true, health: BATTLE_BASE_HEALTH,
+                maxHealth: BATTLE_BASE_HEALTH, x: ownStart.x, y: ownStart.y, z: ownStart.z,
+                rx: 0, ry: ownStart.yaw, rz: 0, timestamp: Date.now() + battleServerOffset });
+            if (battlePlayerId === 'player1') battleTryStartRoom()
+            } catch(error) {
+                if(session===battleSession)battleAbortMatch('Não foi possível preparar a batalha. Verifique a conexão.')
+            }
+        }
+
+        function battleBind(ref, event, callback) {
+            const session=battleSession, guarded=(snapshot)=>{if(session===battleSession)callback(snapshot)};
+            ref.on(event, guarded);
+            battleListeners.push({ ref, event, cb: guarded })
+        }
+
+        function battleBindRoom() {
+            const enemyId = battlePlayerId === 'player1' ? 'player2' : 'player1';
+            battleMyRef = battleRoomRef.child('players/' + battlePlayerId);
+            battleEnemyRef = battleRoomRef.child('players/' + enemyId);
+            battleBind(battleEnemyRef, 'value', snapshot => {
+                const state = snapshot.val();
+                if (!state) return;
+                ['x','y','z','rx','ry','rz','vx','vy','vz','speed','timestamp'].forEach(key => {
+                    if (Number.isFinite(state[key])) battleRemoteTarget[key] = state[key]
+                });
+                if(Number.isFinite(state.health)) battleEnemyHealth = Math.max(0,state.health);
+                battleEnemyMaxHealth = Math.max(BATTLE_BASE_HEALTH, Number(state.maxHealth) || BATTLE_BASE_HEALTH);
+                battleEnemyRankPoints = Math.max(0, Number(state.rankPoints) || 0);
+                battleUpdateHud()
+            });
+            battleBind(battleEnemyRef.child('connected'), 'value', snapshot => {
+                if (snapshot.val() === false && !battleEnded) {
+                    if(battleStarted) battleCommitResult(battlePlayerId,'disconnect');
+                    else if(battlePreparing) battleAbortMatch('O adversário saiu antes da partida.')
+                }
+            });
+            battleBind(battleMyRef.child('health'), 'value', snapshot => {
+                if (snapshot.val() === null) return;
+                battleOwnHealth = Math.max(0, Number(snapshot.val()) || 0);
+                battleUpdateHud();
+                if (battleStarted && battleOwnHealth <= 0 && !battleEnded) battleCommitResult(enemyId,'destroyed')
+            });
+            battleBind(battleRoomRef.child('shots'), 'child_added', snapshot => battleReceiveShot(snapshot.key,snapshot.val()));
+            battleBind(battleRoomRef.child('hitFeedback/' + battlePlayerId), 'child_added', snapshot =>
+                battleReceiveHitConfirmation(snapshot.val()));
+            battleBind(battleRoomRef.child('lightning'), 'child_added', snapshot => battleReceiveLightning(snapshot.key,snapshot.val()));
+            battleBind(battleRoomRef.child('rings'), 'child_added', snapshot => battleReceiveRing(snapshot.key,snapshot.val()));
+            battleBind(battleRoomRef.child('rings'), 'child_changed', snapshot => battleUpdateRingClaim(snapshot.key,snapshot.val()));
+            const session=battleSession, ref=battleRoomRef;
+            battleBind(ref, 'value', snapshot => {
+                const room=snapshot.val(),result=room?.result;
+                battlePeersStarted=matchHasStarted(room,Date.now()+battleServerOffset);
+                if(!room && (battlePreparing || battleActive)){battleAbortMatch('A sala foi encerrada.');return}
+                if(battleStarted && !battleResultProcessed && validMatchResult(room,result,Date.now()+battleServerOffset,true))
+                    battleEndMatch(result)
+            });
+            battleBind(battleRoomRef.child('startAt'), 'value', snapshot => {
+                const startAt = Number(snapshot.val()) || 0;
+                if (!startAt || battleStartAt) return;
+                battleStartAt = startAt;
+                battleEndAt = startAt + BATTLE_DURATION_MS;
+                // Duration belongs to this round and is never inherited from an old room.
+                battleCountdownTo(startAt)
+            })
+        }
+
+        function battleTryStartRoom() {
+            const ref=battleRoomRef,session=battleSession;
+            let scheduling=false;
+            battleBind(ref.child('players'),'value',snapshot=>{
+                const players=snapshot.val() || {};
+                if(scheduling || battleStartAt || !players.player1?.ready || !players.player2?.ready ||
+                    !players.player1.connected || !players.player2.connected) return;
+                scheduling=true;
+                const startAt=Date.now()+battleServerOffset+3800;
+                ref.transaction(room=>{
+                    if(session!==battleSession || !room || room.matchId!==battleMatchId || room.status!=='waiting' ||
+                        room.result || !room.players?.player1?.ready || !room.players?.player2?.ready ||
+                        !room.players.player1.connected || !room.players.player2.connected) return;
+                    return {...room,status:'battling',startAt,endAt:startAt+BATTLE_DURATION_MS}
+                },undefined,false).catch(()=>battleAbortMatch('A conexão falhou durante a preparação.'))
+            })
+        }
+
+        function battleCountdownTo(startAt) {
+            const label = document.getElementById('battleWaitingText'),session=battleSession;
+            const tick = () => {
+                if (session!==battleSession || !battlePreparing || battleEnded || battleActive) return;
+                const remaining = startAt - (Date.now() + battleServerOffset);
+                if (remaining <= 0) { battleBegin(); return }
+                label.innerText = `Combate começa em ${Math.max(1,Math.ceil(remaining / 1000))}`;
+                requestAnimationFrame(tick)
+            };
+            tick()
+        }
+
+        function battleRandom(salt = 0) {
+            const value = Math.sin((battleRoomSeed + salt * 1013.17) * 12.9898) * 43758.5453;
+            return value - Math.floor(value)
+        }
+
+        function battleSnapshotEnvironment() {
+            battleEnvironmentSnapshot = {
+                background: scene.background?.clone?.() || null,
+                fogColor: scene.fog?.color.clone(), fogNear: scene.fog?.near, fogFar: scene.fog?.far,
+                ambientColor: ambientLight?.color.clone(), ambientIntensity: ambientLight?.intensity,
+                sunColor: sunLight?.color.clone(), sunIntensity: sunLight?.intensity,
+                hemiSky: hemiLight?.color.clone(), hemiGround: hemiLight?.groundColor.clone(),
+                hemiIntensity: hemiLight?.intensity, exposure: renderer?.toneMappingExposure
+            }
+        }
+
+        function battleApplyStormEnvironment() {
+            scene.background = new THREE.Color(0x11162a);
+            if (scene.fog) { scene.fog.color.setHex(0x242946); scene.fog.near = 330; scene.fog.far = 1700 }
+            if (ambientLight) { ambientLight.color.setHex(0x7380a8); ambientLight.intensity = .48 }
+            if (sunLight) { sunLight.color.setHex(0xb7c5ff); sunLight.intensity = .55; sunLight.position.set(-220,360,160) }
+            if (hemiLight) { hemiLight.color.setHex(0x6476aa); hemiLight.groundColor.setHex(0x18231f); hemiLight.intensity = .58 }
+            if (renderer) renderer.toneMappingExposure = .82
+        }
+
+        function battleRestoreEnvironment() {
+            const state = battleEnvironmentSnapshot;
+            if (!state) return;
+            scene.background = state.background;
+            if (scene.fog && state.fogColor) { scene.fog.color.copy(state.fogColor); scene.fog.near = state.fogNear; scene.fog.far = state.fogFar }
+            if (ambientLight && state.ambientColor) { ambientLight.color.copy(state.ambientColor); ambientLight.intensity = state.ambientIntensity }
+            if (sunLight && state.sunColor) { sunLight.color.copy(state.sunColor); sunLight.intensity = state.sunIntensity }
+            if (hemiLight && state.hemiSky) { hemiLight.color.copy(state.hemiSky); hemiLight.groundColor.copy(state.hemiGround); hemiLight.intensity = state.hemiIntensity }
+            if (renderer) renderer.toneMappingExposure = state.exposure ?? 1;
+            battleEnvironmentSnapshot = null
+        }
+
+        function battleGroundPlacement(salt,minRadius = 120,maxRadius = BATTLE_ARENA_RADIUS - 70) {
+            for (let attempt = 0; attempt < 12; attempt++) {
+                const key = salt + attempt * 137,
+                    angle = battleRandom(key) * Math.PI * 2,
+                    radius = minRadius + Math.sqrt(battleRandom(key + 51)) * (maxRadius - minRadius),
+                    x = Math.cos(angle) * radius,
+                    z = Math.sin(angle) * radius,
+                    clearFromPlayerOne = Math.hypot(x + BATTLE_START_OFFSET,z) > 145,
+                    clearFromPlayerTwo = Math.hypot(x - BATTLE_START_OFFSET,z) > 145;
+                if (clearFromPlayerOne && clearFromPlayerTwo) return { x,z,angle }
+            }
+            return { x: 0,z: minRadius,angle: 0 }
+        }
+
+        function battleCreateTrees() {
+            const count = 128,
+                trunkGeometry = new THREE.CylinderGeometry(.75,1.25,7,5),
+                lowerGeometry = new THREE.ConeGeometry(5.5,11,6),
+                upperGeometry = new THREE.ConeGeometry(4.1,9,6),
+                trunkMaterial = new THREE.MeshStandardMaterial({ color: 0x4a2d1c,roughness: 1,flatShading: true }),
+                lowerMaterial = new THREE.MeshStandardMaterial({ color: 0x244c38,roughness: 1,flatShading: true }),
+                upperMaterial = new THREE.MeshStandardMaterial({ color: 0x356b49,roughness: 1,flatShading: true }),
+                trunks = new THREE.InstancedMesh(trunkGeometry,trunkMaterial,count),
+                lowerCrowns = new THREE.InstancedMesh(lowerGeometry,lowerMaterial,count),
+                upperCrowns = new THREE.InstancedMesh(upperGeometry,upperMaterial,count),
+                dummy = new THREE.Object3D();
+            for (let i = 0; i < count; i++) {
+                const point = battleGroundPlacement(5100 + i * 17,205,BATTLE_ARENA_RADIUS - 85),
+                    scale = .72 + battleRandom(5300 + i) * .55,
+                    tilt = (battleRandom(5500 + i) - .5) * .08;
+                dummy.position.set(point.x,3.5 * scale,point.z);
+                dummy.rotation.set(tilt,battleRandom(5700 + i) * Math.PI * 2,-tilt);
+                dummy.scale.set(scale,scale,scale); dummy.updateMatrix(); trunks.setMatrixAt(i,dummy.matrix);
+                dummy.position.y = 10.2 * scale; dummy.rotation.y += .4; dummy.updateMatrix();
+                lowerCrowns.setMatrixAt(i,dummy.matrix);
+                dummy.position.y = 16.2 * scale; dummy.scale.set(scale * .82,scale * .82,scale * .82);
+                dummy.rotation.y -= .8; dummy.updateMatrix(); upperCrowns.setMatrixAt(i,dummy.matrix)
+            }
+            [trunks,lowerCrowns,upperCrowns].forEach(mesh => {
+                mesh.castShadow = true; mesh.receiveShadow = true; mesh.instanceMatrix.needsUpdate = true;
+                battleWorldRoot.add(mesh)
+            })
+        }
+
+        function battleCreateCraters() {
+            const count = 30,
+                floorGeometry = new THREE.CircleGeometry(1,20),
+                rimGeometry = new THREE.TorusGeometry(.82,.18,5,20),
+                floorMaterial = new THREE.MeshStandardMaterial({ color: 0x171c1b,roughness: 1,flatShading: true }),
+                rimMaterial = new THREE.MeshStandardMaterial({ color: 0x4b3b2a,roughness: 1,flatShading: true }),
+                floors = new THREE.InstancedMesh(floorGeometry,floorMaterial,count),
+                rims = new THREE.InstancedMesh(rimGeometry,rimMaterial,count),
+                dummy = new THREE.Object3D();
+            for (let i = 0; i < count; i++) {
+                const point = battleGroundPlacement(6100 + i * 29,85,BATTLE_ARENA_RADIUS - 100),
+                    radius = 7 + battleRandom(6400 + i) * 15;
+                dummy.position.set(point.x,.04,point.z); dummy.rotation.set(-Math.PI / 2,0,battleRandom(6600 + i));
+                dummy.scale.set(radius,radius,1); dummy.updateMatrix(); floors.setMatrixAt(i,dummy.matrix);
+                dummy.position.y = .32; dummy.scale.set(radius,radius,.65); dummy.updateMatrix(); rims.setMatrixAt(i,dummy.matrix)
+            }
+            floors.instanceMatrix.needsUpdate = rims.instanceMatrix.needsUpdate = true;
+            battleWorldRoot.add(floors,rims)
+        }
+
+        function battleCreateTrenches() {
+            const soil = new THREE.MeshStandardMaterial({ color: 0x3a2d20,roughness: 1,flatShading: true }),
+                trench = new THREE.MeshStandardMaterial({ color: 0x111715,roughness: 1,flatShading: true }),
+                timber = new THREE.MeshStandardMaterial({ color: 0x60432b,roughness: 1,flatShading: true });
+            for (let network = 0; network < 8; network++) {
+                const point = battleGroundPlacement(7100 + network * 83,220,BATTLE_ARENA_RADIUS - 170);
+                let x = point.x,z = point.z,heading = point.angle + Math.PI * .5;
+                for (let segment = 0; segment < 4; segment++) {
+                    const length = 42 + battleRandom(7300 + network * 19 + segment) * 24,
+                        section = new THREE.Group(), floor = new THREE.Mesh(new THREE.BoxGeometry(8,.28,length),trench),
+                        leftBerm = new THREE.Mesh(new THREE.BoxGeometry(2.5,1.4,length),soil),
+                        rightBerm = leftBerm.clone();
+                    floor.position.y = .02; leftBerm.position.set(-5.1,.7,0); rightBerm.position.set(5.1,.7,0);
+                    section.add(floor,leftBerm,rightBerm);
+                    for (let beam = -1; beam <= 1; beam++) {
+                        const crossbeam = new THREE.Mesh(new THREE.BoxGeometry(9.5,.42,1),timber);
+                        crossbeam.position.set(0,.28,beam * length * .28); section.add(crossbeam)
+                    }
+                    section.position.set(x,0,z); section.rotation.y = heading; battleWorldRoot.add(section);
+                    x += Math.sin(heading) * length * .78; z += Math.cos(heading) * length * .78;
+                    heading += (segment % 2 ? -1 : 1) * (.28 + battleRandom(7600 + network * 13 + segment) * .24)
+                }
+            }
+        }
+
+        function battleCreateBrokenTanks() {
+            const armor = new THREE.MeshStandardMaterial({ color: 0x3d4634,roughness: .95,metalness: .12,flatShading: true }),
+                burnt = new THREE.MeshStandardMaterial({ color: 0x171a18,roughness: 1,metalness: .2,flatShading: true }),
+                rust = new THREE.MeshStandardMaterial({ color: 0x6b3824,roughness: 1,flatShading: true });
+            for (let i = 0; i < 12; i++) {
+                const point = battleGroundPlacement(8100 + i * 71,170,BATTLE_ARENA_RADIUS - 145),
+                    tank = new THREE.Group(), scale = .76 + battleRandom(8300 + i) * .38,
+                    chassis = new THREE.Mesh(new THREE.BoxGeometry(11,2.4,18),i % 3 === 0 ? rust : armor),
+                    leftTrack = new THREE.Mesh(new THREE.BoxGeometry(3.1,2.2,19),burnt),
+                    rightTrack = leftTrack.clone(), turret = new THREE.Mesh(new THREE.CylinderGeometry(4.4,5,2.2,7),armor),
+                    barrel = new THREE.Mesh(new THREE.CylinderGeometry(.45,.7,10,6),burnt);
+                chassis.position.y = 2.6; leftTrack.position.set(-6,1.6,0); rightTrack.position.set(6,1.4,0);
+                turret.position.set((battleRandom(8500 + i) - .5) * 3,4.8,(battleRandom(8600 + i) - .5) * 3);
+                turret.rotation.z = (battleRandom(8700 + i) - .5) * .3;
+                barrel.rotation.x = Math.PI / 2; barrel.position.set(turret.position.x,5.1,turret.position.z + 7);
+                barrel.rotation.z = (battleRandom(8800 + i) - .5) * .28;
+                tank.add(chassis,leftTrack,rightTrack,turret,barrel);
+                if (i % 4 === 0) {
+                    const detachedPanel = new THREE.Mesh(new THREE.BoxGeometry(5,.45,7),rust);
+                    detachedPanel.position.set(8,.7,5); detachedPanel.rotation.set(.2,.5,.55); tank.add(detachedPanel)
+                }
+                tank.position.set(point.x,.1,point.z); tank.rotation.set((battleRandom(8900 + i) - .5) * .06,
+                    battleRandom(9000 + i) * Math.PI * 2,(battleRandom(9100 + i) - .5) * .08);
+                tank.scale.setScalar(scale); battleWorldRoot.add(tank)
+            }
+        }
+
+        function battleCreateGroundDetails() {
+            battleCreateTrees();
+            battleCreateCraters();
+            battleCreateTrenches();
+            battleCreateBrokenTanks()
+        }
+
+        function battleBuildWorld() {
+            clearWorld();
+            battleSnapshotEnvironment();
+            battleApplyStormEnvironment();
+            battleWorldRoot = new THREE.Group();
+            battleWorldRoot.name = 'battleArena';
+            scene.add(battleWorldRoot);
+            const arenaMaterial = new THREE.MeshStandardMaterial({ color: 0x2f4936, roughness: 1, flatShading: true }),
+                arena = new THREE.Mesh(new THREE.CircleGeometry(1120,72), arenaMaterial);
+            arena.rotation.x = -Math.PI / 2;
+            arena.position.y = -.5;
+            arena.receiveShadow = true;
+            battleWorldRoot.add(arena);
+            ground = arena;
+            for (let i = 0; i < 42; i++) {
+                const angle = i / 42 * Math.PI * 2,
+                    radius = 1040 + battleRandom(i + 20) * 58,
+                    width = 175 + battleRandom(i + 70) * 105,
+                    height = 185 + battleRandom(i + 130) * 160,
+                    mountain = createLowPolyMountain({ width, depth: width * (.82 + battleRandom(i + 180) * .35),
+                        height, segments: 10, color: i % 3 === 0 ? 0x374151 : 0x46515b, snow: false,
+                        seed: battleRoomSeed + i * 97 });
+                mountain.position.set(Math.cos(angle) * radius,-4,Math.sin(angle) * radius);
+                mountain.rotation.y = -angle + battleRandom(i + 220) * .5;
+                battleWorldRoot.add(mountain)
+            }
+            const cloudMaterial = new THREE.MeshLambertMaterial({ color: 0x343957, transparent: true, opacity: .62,
+                depthWrite: false });
+            for (let i = 0; i < 24; i++) {
+                const cloud = new THREE.Group(), angle = battleRandom(i + 300) * Math.PI * 2,
+                    radius = Math.sqrt(battleRandom(i + 340)) * 980;
+                for (let p = 0; p < 5; p++) {
+                    const puff = new THREE.Mesh(new THREE.SphereGeometry(20 + battleRandom(i * 7 + p + 390) * 28,7,5),cloudMaterial);
+                    puff.position.set((p - 2) * 28,battleRandom(i * 9 + p + 440) * 12,(battleRandom(i * 11 + p + 490) - .5) * 28);
+                    puff.scale.y = .42;
+                    cloud.add(puff)
+                }
+                cloud.position.set(Math.cos(angle) * radius,225 + battleRandom(i + 550) * 42,Math.sin(angle) * radius);
+                battleWorldRoot.add(cloud)
+            }
+            battleCreateGroundDetails();
+            battleCreateRain();
+            battleSpawnFighters();
+            battleUpgrades = { weapon: 0, armor: 0, engine: 0, agility: 0, cooling: 0 };
+            battlePoseHistory.length=0;
+            battleOwnHealth = battleOwnMaxHealth = BATTLE_BASE_HEALTH;
+            battleEnemyHealth = battleEnemyMaxHealth = BATTLE_BASE_HEALTH;
+            battleHeat = 0;
+            battleOverheated = false;
+            battleUpdateUpgradeHud();
+            battleUpdateHud()
+        }
+
+        function battleCreateRain() {
+            const count = 1250;
+            battleRainPositions = new Float32Array(count * 6);
+            for (let i = 0; i < count; i++) battleResetRainDrop(i,true);
+            const geometry = new THREE.BufferGeometry();
+            geometry.setAttribute('position',new THREE.BufferAttribute(battleRainPositions,3));
+            const material = new THREE.LineBasicMaterial({ color: 0x9cc8ff, transparent: true, opacity: .55,
+                depthWrite: false });
+            battleRain = new THREE.LineSegments(geometry,material);
+            battleRain.frustumCulled = false;
+            battleWorldRoot.add(battleRain)
+        }
+
+        function battleResetRainDrop(index, initial = false) {
+            const base = index * 6, salt = index + (initial ? 700 : Math.floor((Date.now() + battleServerOffset) / 1800));
+            const angle = battleRandom(salt) * Math.PI * 2,
+                radius = Math.sqrt(battleRandom(salt + 900)) * 1080,
+                x = Math.cos(angle) * radius, z = Math.sin(angle) * radius,
+                y = initial ? battleRandom(salt + 1800) * 330 : 295 + battleRandom(salt + 1800) * 45,
+                length = 8 + battleRandom(salt + 2700) * 9;
+            battleRainPositions[base] = x;
+            battleRainPositions[base + 1] = y;
+            battleRainPositions[base + 2] = z;
+            battleRainPositions[base + 3] = x + 2.5;
+            battleRainPositions[base + 4] = y - length;
+            battleRainPositions[base + 5] = z + 1.2
+        }
+
+        function battleUpdateRain(dt) {
+            if (!battleRainPositions || !battleRain) return;
+            for (let i = 0; i < battleRainPositions.length; i += 6) {
+                battleRainPositions[i] += 28 * dt; battleRainPositions[i + 3] += 28 * dt;
+                battleRainPositions[i + 1] -= 185 * dt; battleRainPositions[i + 4] -= 185 * dt;
+                if (battleRainPositions[i + 1] < 0) battleResetRainDrop(i / 6)
+            }
+            battleRain.geometry.attributes.position.needsUpdate = true
+        }
+
+        function battleSpawnFighters() {
+            const ownStart = battlePlayerId === 'player1' ? { x: -BATTLE_START_OFFSET, yaw: Math.PI / 2, color: '#ef4444' } :
+                { x: BATTLE_START_OFFSET, yaw: -Math.PI / 2, color: '#3b82f6' },
+                enemyStart = battlePlayerId === 'player1' ? { x: BATTLE_START_OFFSET, yaw: -Math.PI / 2, color: '#3b82f6' } :
+                { x: -BATTLE_START_OFFSET, yaw: Math.PI / 2, color: '#ef4444' },
+                fighter = getPlaneById('f22');
+            const savedColor = planeColor;
+            planeColor = ownStart.color;
+            spawnAirplane('f22');
+            planeColor = savedColor;
+            airplane.position.set(ownStart.x,90,0);
+            airplane.rotation.set(0,ownStart.yaw,0,'YXZ');
+            battleYaw = ownStart.yaw; battlePitch = 0; battleRoll = 0;
+            if (battleRemotePlane) scene.remove(battleRemotePlane);
+            battleRemotePlane = new THREE.Group();
+            fighter.buildFn(enemyStart.color,battleRemotePlane);
+            battleRemotePlane.position.set(enemyStart.x,90,0);
+            battleRemotePlane.rotation.set(0,enemyStart.yaw,0,'YXZ');
+            scene.add(battleRemotePlane);
+            battleRemoteTarget = { x: enemyStart.x, y: 90, z: 0, rx: 0, ry: enemyStart.yaw, rz: 0,
+                vx: 0, vy: 0, vz: 0, speed: 112, timestamp: Date.now() + battleServerOffset }
+        }
+
+        function setupBattleControls() {
+            if (document.body.dataset.battleControls === '1') return;
+            document.body.dataset.battleControls = '1';
+            window.addEventListener('pointermove', event => {
+                battleCursorX = Math.max(0,Math.min(innerWidth,event.clientX));
+                battleCursorY = Math.max(0,Math.min(innerHeight,event.clientY));
+                battleMouseX = Math.max(-1,Math.min(1,(event.clientX / innerWidth - .5) * 2));
+                // Valor positivo significa cursor acima do centro: o caça sobe, sem eixo invertido.
+                battleMouseY = Math.max(-1,Math.min(1,(.5 - event.clientY / innerHeight) * 2))
+            });
+            window.addEventListener('pointerdown', event => { if (event.button === 0 && battleActive) battleFiring = true });
+            window.addEventListener('pointerup', event => { if (event.button === 0) battleFiring = false });
+            window.addEventListener('blur',() => { battleFiring = false })
+        }
+
+        async function battleBegin() {
+            const session=battleSession,ref=battleRoomRef;
+            if (battleActive || battleEnded || !battlePreparing || !ref || !battleStartAt || Date.now()+battleServerOffset<battleStartAt) return;
+            try{
+                const snapshot=await ref.get(),room=snapshot.val();
+                if(session!==battleSession || room?.matchId!==battleMatchId || room.result ||
+                    !room.players?.player1?.ready || !room.players?.player2?.ready ||
+                    !room.players.player1.connected || !room.players.player2.connected) return;
+                await battleMyRef.update({started:true,timestamp:Date.now()+battleServerOffset});
+                if(session!==battleSession) return
+            }catch(error){battleAbortMatch('Não foi possível iniciar a batalha.');return}
+            battleStarted=true; clearTimeout(battleWaitTimer);
+            battlePreparing = false;
+            battleActive = true;
+            battleEnded = false;
+            battleResultProcessed = false;
+            battleResultSubmitting = false;
+            gameActive = true;
+            battleAccumulator = 0;
+            battleLastFrame = performance.now();
+            battleMouseX = 0;
+            battleMouseY = 0;
+            battleCursorX = innerWidth * .5;
+            battleCursorY = innerHeight * .5;
+            battleAimNdcX = battleAimNdcY = 0;
+            battleAimAssistStrength = 0;
+            battleAimAssistPoint = null;
+            clearTimeout(battleDamageEffectTimer); clearTimeout(battleHitEffectTimer);
+            battleDamageEffectTimer = battleHitEffectTimer = null;
+            document.body.classList.remove('battle-damage-shake','battle-hit-shake');
+            document.getElementById('battleDamageFlash')?.classList.remove('active');
+            document.getElementById('battleReticle')?.classList.remove('confirmed');
+            battleBarrelRollActive = false;
+            battleBarrelRollProgress = battleBarrelRollAngle = 0;
+            battleSpaceWasDown = false;
+            battleSpeed = 112;
+            battleNextLightningAt = battleStartAt + 5500;
+            battleNextRingAt = battleStartAt + 18000;
+            document.getElementById('battleWaitingScreen').style.display = 'none';
+            document.getElementById('battleHud').classList.add('show');
+            document.body.classList.add('battle-game');
+            document.getElementById('gameHUD').classList.add('hidden');
+            battleUpdateCamera();
+            setEngineSound(true);
+            battleStartMusic();
+            safeSdkCall('gameplayStart');
+            requestID = requestAnimationFrame(battleGameLoop)
+        }
+
+        function battleGameLoop(now) {
+            if (!battleActive || battleEnded) return;
+            requestID = requestAnimationFrame(battleGameLoop);
+            const rawFrameDt = Math.max(0,(now - battleLastFrame) / 1000);
+            battleLastFrame = now;
+            if (rawFrameDt > .5) {
+                competitiveAdvanceElapsed(rawFrameDt);
+                battleUpdateCamera(.016);
+                if (renderer && scene && camera) renderer.render(scene,camera);
+                return
+            }
+            let frameDt = Math.min(.25,rawFrameDt);
+            battleAccumulator += frameDt;
+            let steps = 0;
+            while (battleAccumulator + 1e-8 >= BATTLE_FIXED_DT && steps < BATTLE_MAX_SUBSTEPS) {
+                battleSimulate(BATTLE_FIXED_DT);
+                battleAccumulator -= BATTLE_FIXED_DT;
+                steps++
+            }
+            if (steps >= BATTLE_MAX_SUBSTEPS) battleAccumulator = Math.min(battleAccumulator,BATTLE_FIXED_DT);
+            battleUpdateCamera(frameDt);
+            if (renderer && scene && camera) renderer.render(scene,camera)
+        }
+
+        function battleSimulate(dt) {
+            if (!battleActive || battleEnded || battleResultSubmitting) return;
+            const previousPlanePosition = airplane.position.clone();
+            const turnMultiplier = 1 + battleUpgrades.agility * .1,
+                maxSpeed = 168 * (1 + battleUpgrades.engine * .08),
+                minSpeed = 74,
+                accelerating = keyboard['w'] || keyboard['arrowup'],
+                braking = keyboard['s'] || keyboard['arrowdown'],
+                // O eixo visual do caça usa sinal oposto ao teclado: A curva para a esquerda
+                // e D para a direita, acompanhando a expectativa do jogador.
+                turnInput = (keyboard['a'] || keyboard['arrowleft'] ? 1 : 0) -
+                    (keyboard['d'] || keyboard['arrowright'] ? 1 : 0),
+                targetSpeed = accelerating ? maxSpeed : (braking ? minSpeed : 112),
+                speedResponse = accelerating ? 3.5 : (braking ? 3.4 : .58),
+                mouseSideAssist = Math.sign(battleMouseX) * Math.max(0,Math.abs(battleMouseX) - .16) / .84,
+                mouseVertical = Math.sign(battleMouseY) * Math.max(0,Math.abs(battleMouseY) - .06) / .94,
+                targetPitch = -mouseVertical * .68;
+            battleSpeed += (targetSpeed - battleSpeed) * Math.min(1,speedResponse * dt);
+            battleSpeed = Math.max(minSpeed,Math.min(maxSpeed,battleSpeed));
+            // A/D fazem a curva; o mouse horizontal oferece só uma correção leve de mira.
+            battleYaw += (turnInput * 1.22 - mouseSideAssist * .48) * turnMultiplier * dt;
+            battlePitch += (targetPitch - battlePitch) * Math.min(1,3.1 * turnMultiplier * dt);
+            battlePitch = Math.max(-.78,Math.min(.78,battlePitch));
+            const targetRoll = -turnInput * 1.04 - mouseSideAssist * .12;
+            battleRoll += (targetRoll - battleRoll) * Math.min(1,4.2 * dt);
+            const spaceDown = Boolean(keyboard[' ']);
+            if (spaceDown && !battleSpaceWasDown && !battleBarrelRollActive) {
+                battleBarrelRollActive = true;
+                battleBarrelRollProgress = 0;
+                battleBarrelRollDirection = turnInput > 0 || (!turnInput && battleMouseX > 0) ? -1 : 1;
+                _tone('sine',360,720,.22,.035)
+            }
+            battleSpaceWasDown = spaceDown;
+            if (battleBarrelRollActive) {
+                battleBarrelRollProgress += dt / .72;
+                battleBarrelRollAngle = battleBarrelRollDirection * Math.PI * 2 * Math.min(1,battleBarrelRollProgress);
+                if (battleBarrelRollProgress >= 1) {
+                    battleBarrelRollActive = false;
+                    battleBarrelRollProgress = battleBarrelRollAngle = 0
+                }
+            }
+            airplane.rotation.set(battlePitch,battleYaw,battleRoll + battleBarrelRollAngle,'YXZ');
+            const direction = new THREE.Vector3(0,0,1).applyQuaternion(airplane.quaternion).normalize();
+            airplane.position.addScaledVector(direction,battleSpeed * dt);
+            if (airplane.position.y < 29) {
+                airplane.position.y = 29;
+                battlePitch = Math.min(battlePitch,-.08);
+                if (battleBoundaryCooldown <= 0) { battleBoundaryCooldown = 1.2; battleApplyDamage(8,'ground') }
+            }
+            if (airplane.position.y > 285) { airplane.position.y = 285; battlePitch = Math.max(battlePitch,.08) }
+            const radial = Math.hypot(airplane.position.x,airplane.position.z);
+            if (radial > BATTLE_ARENA_RADIUS) {
+                const inward = new THREE.Vector3(-airplane.position.x,0,-airplane.position.z).normalize();
+                airplane.position.addScaledVector(inward,(radial - BATTLE_ARENA_RADIUS) * .2 + 1.5);
+                battleYaw = Math.atan2(inward.x,inward.z);
+                if (battleBoundaryCooldown <= 0) { battleBoundaryCooldown = 1.4; battleApplyDamage(6,'boundary') }
+            }
+            battleBoundaryCooldown = Math.max(0,battleBoundaryCooldown - dt);
+            battleHeat = Math.max(0,battleHeat - (22 + battleUpgrades.cooling * 4) * dt);
+            if (battleOverheated && battleHeat < 42) battleOverheated = false;
+            if (battleFiring && !battleOverheated) { battleUpdateAimAssist(); battleFire() }
+            if (battleHeat >= 100) battleOverheated = true;
+            battleUpdateRain(dt);
+            battleUpdateRemote(dt);
+            battlePoseHistory.push({time:Date.now()+battleServerOffset,position:airplane.position.clone()});
+            while(battlePoseHistory.length>40)battlePoseHistory.shift();
+            battleUpdateBullets(dt, previousPlanePosition);
+            battleUpdateLightning(dt);
+            battleUpdateRings(dt);
+            battlePublishState(direction);
+            if (battlePlayerId === 'player1') battleHostDirector();
+            battleUpdateHud();
+            updateEngineSound(battleSpeed);
+            const serverNow = Date.now() + battleServerOffset;
+            if (battlePlayerId === 'player1' && battleEndAt && serverNow >= battleEndAt && !battleEnded) battleResolveTimeout()
+        }
+
+        function battlePublishState(direction) {
+            const now = Date.now();
+            if (!battleMyRef || now - battleLastSend < BATTLE_SEND_INTERVAL) return;
+            battleLastSend = now;
+            battleMyRef.update({ x: +airplane.position.x.toFixed(2), y: +airplane.position.y.toFixed(2),
+                z: +airplane.position.z.toFixed(2), rx: +battlePitch.toFixed(3), ry: +battleYaw.toFixed(3),
+                rz: +(battleRoll + battleBarrelRollAngle).toFixed(3), vx: +(direction.x * battleSpeed).toFixed(2),
+                vy: +(direction.y * battleSpeed).toFixed(2), vz: +(direction.z * battleSpeed).toFixed(2),
+                speed: +battleSpeed.toFixed(2), upgrades: battleUpgrades, timestamp: now + battleServerOffset }).catch(() => {})
+        }
+
+        function battleUpdateRemote(dt) {
+            if (!battleRemotePlane) return;
+            const alpha = 1 - Math.pow(.002,dt),
+                packetAge = battleRemoteTarget.timestamp ? Math.max(0,(Date.now() + battleServerOffset -
+                    battleRemoteTarget.timestamp) / 1000) : 0,
+                extrapolation = Math.min(.22,packetAge),
+                predicted = new THREE.Vector3(battleRemoteTarget.x,battleRemoteTarget.y,battleRemoteTarget.z)
+                    .add(new THREE.Vector3(battleRemoteTarget.vx || 0,battleRemoteTarget.vy || 0,
+                        battleRemoteTarget.vz || 0).multiplyScalar(extrapolation));
+            const radial = Math.hypot(predicted.x,predicted.z);
+            if (radial > BATTLE_ARENA_RADIUS) {
+                predicted.x *= BATTLE_ARENA_RADIUS / radial;
+                predicted.z *= BATTLE_ARENA_RADIUS / radial
+            }
+            predicted.y = Math.max(29,Math.min(285,predicted.y));
+            battleRemotePlane.position.lerp(predicted,alpha);
+            ['x','y','z'].forEach(axis => {
+                const key = axis === 'x' ? 'rx' : axis === 'y' ? 'ry' : 'rz';
+                let difference = battleRemoteTarget[key] - battleRemotePlane.rotation[axis];
+                if (axis === 'y') difference = Math.atan2(Math.sin(difference),Math.cos(difference));
+                battleRemotePlane.rotation[axis] += difference * alpha
+            });
+            // A delayed render packet is not proof that the opponent lost.
+        }
+
+        function battleUpdateCamera(dt = 1/60) {
+            if (!airplane) return;
+            const desired = new THREE.Vector3(0,9,-34).applyQuaternion(airplane.quaternion).add(airplane.position),
+                look = new THREE.Vector3(0,1,70).applyQuaternion(airplane.quaternion).add(airplane.position);
+            camera.position.lerp(desired,1 - Math.exp(-10 * dt));
+            camera.updateMatrixWorld(true);
+            camera.up.set(0,1,0);
+            camera.lookAt(look);
+            camera.updateMatrixWorld(true);
+            battleUpdateAimAssist();
+            battleUpdateLeadMarker()
+        }
+
+        function battleUpdateAimAssist() {
+            const reticle = document.getElementById('battleReticle');
+            if (!reticle) return;
+            let aimX = battleCursorX, aimY = battleCursorY, strength = 0;
+            battleAimAssistPoint = null;
+            if (battleRemotePlane && camera) {
+                const target = battleInterceptPoint(airplane.position), projected = target.clone().project(camera);
+                if (projected.z >= -1 && projected.z <= 1 && Math.abs(projected.x) <= 1.08 && Math.abs(projected.y) <= 1.08) {
+                    const targetX = (projected.x * .5 + .5) * innerWidth,
+                        targetY = (-projected.y * .5 + .5) * innerHeight,
+                        distance = Math.hypot(targetX - battleCursorX,targetY - battleCursorY),
+                        baseRadius = Math.max(100,Math.min(155,innerWidth * .10)),
+                        // Uma pequena histerese conserva o encaixe enquanto o jogador acompanha
+                        // o alvo, mas a assistência ainda solta assim que ele afasta a mira.
+                        assistRadius = baseRadius * (battleAimAssistStrength > .025 ? 1.18 : 1);
+                    if (distance < assistRadius) {
+                        const proximity = 1 - distance / assistRadius;
+                        strength = .90 * Math.pow(proximity,.8);
+                        aimX += (targetX - aimX) * strength;
+                        aimY += (targetY - aimY) * strength;
+                        battleAimAssistPoint = target
+                    }
+                }
+            }
+            battleAimAssistStrength = strength;
+            battleAimNdcX = Math.max(-1,Math.min(1,aimX / innerWidth * 2 - 1));
+            battleAimNdcY = Math.max(-1,Math.min(1,1 - aimY / innerHeight * 2));
+            reticle.style.left = `${aimX}px`;
+            reticle.style.top = `${aimY}px`;
+            reticle.classList.toggle('assist',strength > .025)
+        }
+
+        function battleGetAimDirection(origin) {
+            battleRaycaster ||= new THREE.Raycaster();
+            battleRaycaster.setFromCamera(new THREE.Vector2(battleAimNdcX,battleAimNdcY),camera);
+            // Converte o raio da câmera em um ponto distante e parte da posição real
+            // da arma. Assim o projétil cruza exatamente a mira, sem erro de paralaxe.
+            const distance = battleRemotePlane ? Math.max(35, origin.distanceTo(battleRemotePlane.position)) : 1500,
+                cursorPoint = battleRaycaster.ray.origin.clone().addScaledVector(battleRaycaster.ray.direction, distance),
+                cursorDirection = cursorPoint.sub(origin).normalize();
+            if (battleAimAssistPoint && battleAimAssistStrength > .025) {
+                const assistedDirection = battleAimAssistPoint.clone().sub(origin).normalize();
+                cursorDirection.lerp(assistedDirection, battleAimAssistStrength).normalize()
+            }
+            return cursorDirection
+        }
+
+        function battleInterceptPoint(origin) {
+            if (!battleRemotePlane) return origin.clone();
+            const target = battleRemotePlane.position.clone(),
+                velocity = new THREE.Vector3(battleRemoteTarget.vx || 0,battleRemoteTarget.vy || 0,battleRemoteTarget.vz || 0),
+                delta = target.clone().sub(origin),
+                a = velocity.lengthSq() - BATTLE_BULLET_SPEED * BATTLE_BULLET_SPEED,
+                b = 2 * delta.dot(velocity), c = delta.lengthSq(), discriminant = b*b - 4*a*c;
+            let travel = Math.sqrt(c) / BATTLE_BULLET_SPEED;
+            if (discriminant >= 0 && Math.abs(a) > .001) {
+                const roots = [(-b - Math.sqrt(discriminant))/(2*a),(-b + Math.sqrt(discriminant))/(2*a)].filter(t => t > 0);
+                if (roots.length) travel = Math.min(...roots)
+            }
+            return target.addScaledVector(velocity, Math.min(3, travel))
+        }
+
+        function battleUpdateLeadMarker() {
+            const marker = document.getElementById('battleLeadMarker');
+            if (!marker || !battleRemotePlane || !camera) return;
+            const projected = battleInterceptPoint(airplane.position).project(camera);
+            if (projected.z < -1 || projected.z > 1 || Math.abs(projected.x) > 1.15 || Math.abs(projected.y) > 1.15) {
+                marker.style.display = 'none'; return
+            }
+            marker.style.display = 'block';
+            marker.style.left = `${(projected.x * .5 + .5) * innerWidth}px`;
+            marker.style.top = `${(-projected.y * .5 + .5) * innerHeight}px`
+        }
+
+        function battleUpdateHud() {
+            const ownPercent = Math.max(0,Math.min(100,battleOwnHealth / battleOwnMaxHealth * 100)),
+                enemyPercent = Math.max(0,Math.min(100,battleEnemyHealth / battleEnemyMaxHealth * 100));
+            document.getElementById('battleOwnHealthFill').style.width = ownPercent + '%';
+            document.getElementById('battleEnemyHealthFill').style.width = enemyPercent + '%';
+            document.getElementById('battleOwnHealthText').innerText = `${Math.ceil(battleOwnHealth)} / ${battleOwnMaxHealth}`;
+            document.getElementById('battleEnemyHealthText').innerText = `${Math.ceil(battleEnemyHealth)} / ${battleEnemyMaxHealth}`;
+            document.getElementById('battleHeatFill').style.width = Math.min(100,battleHeat) + '%';
+            document.getElementById('battleHeatText').innerText = battleOverheated ? 'SUPERAQUECIDA' :
+                battleHeat > 70 ? 'QUENTE' : 'PRONTAS';
+            const remaining = Math.max(0,(battleEndAt - (Date.now() + battleServerOffset)) / 1000),
+                minutes = Math.floor(remaining / 60), seconds = Math.floor(remaining % 60);
+            document.getElementById('battleTimer').innerText = `${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;
+            document.getElementById('battleStormStatus').innerText = keyboard['w'] || keyboard['arrowup'] ?
+                `TURBO ATIVO · ${Math.round(battleSpeed)}` : `TEMPESTADE · ${Math.round(battleSpeed)}`
+        }
+
+        function battleUpdateUpgradeHud() {
+            const names = { weapon: '🔫 ARMAS', armor: '🛡️ BLINDAGEM', engine: '🔥 MOTOR', agility: '🪽 MANOBRA',
+                cooling: '❄️ RESFRIAR' };
+            document.getElementById('battleUpgradeList').innerHTML = BATTLE_UPGRADE_TYPES.map(type =>
+                `<span class="battle-upgrade-chip ${battleUpgrades[type] ? 'active' : ''}">${names[type]} ${battleUpgrades[type]}/3</span>`).join('')
+        }
+
+        function battleFire() {
+            const now = Date.now() + battleServerOffset,
+                fireInterval = 1000 / (6.5 + battleUpgrades.cooling * .35);
+            if (now - battleLastShotAt < fireInterval || battleHeat >= 100) return;
+            battleLastShotAt = now;
+            battleHeat = Math.min(105,battleHeat + Math.max(5.8,8 - battleUpgrades.cooling * .45));
+            const forward = new THREE.Vector3(0,0,1).applyQuaternion(airplane.quaternion).normalize(),
+                origin = airplane.position.clone().addScaledVector(forward,10),
+                direction = battleGetAimDirection(origin),
+                shotRef = battleRoomRef.child('shots').push(),
+                payload = { matchId:battleMatchId,shooter: battlePlayerId, x: +origin.x.toFixed(2), y: +origin.y.toFixed(2),
+                    z: +origin.z.toFixed(2), dx: +direction.x.toFixed(4), dy: +direction.y.toFixed(4),
+                    dz: +direction.z.toFixed(4), speed: BATTLE_BULLET_SPEED, damage: +(6 + battleUpgrades.weapon * 1.25).toFixed(2),
+                    firedAt: now };
+            battleSeenShots.add(shotRef.key);
+            battleSpawnBullet(shotRef.key,payload,false,0);
+            shotRef.set(payload).catch(() => {});
+            setTimeout(() => { if (battleRoomRef && battlePlayerId === payload.shooter) shotRef.remove().catch(() => {}) },3500);
+            playAirNoise(.09, .08, 1800, 0); _tone('triangle',100,55,.06,.025)
+        }
+
+        function battleReceiveShot(id,data) {
+            if (!battleStarted || !data || data.matchId!==battleMatchId || data.firedAt<battleStartAt ||
+                Date.now()+battleServerOffset-data.firedAt>1000 || battleSeenShots.has(id)) return;
+            battleSeenShots.add(id);
+            if (!['x','y','z','dx','dy','dz','firedAt','damage'].every(key=>Number.isFinite(data[key])) ||
+                Math.hypot(data.dx,data.dy,data.dz)<.5 || data.damage<0 || data.damage>15) return;
+            const age = Math.max(0,Math.min(.65,(Date.now() + battleServerOffset - data.firedAt) / 1000));
+            battleSpawnBullet(id,data,data.shooter !== battlePlayerId,age)
+        }
+
+        function battleSpawnBullet(id,data,isEnemy,age) {
+            const direction = new THREE.Vector3(data.dx,data.dy,data.dz).normalize(),
+                speed = Math.max(200,Number(data.speed) || BATTLE_BULLET_SPEED),
+                material = new THREE.MeshBasicMaterial({ color: isEnemy ? 0xff5a45 : 0x7dd3fc }),
+                mesh = new THREE.Mesh(new THREE.CylinderGeometry(.32,.32,5,5),material);
+            mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),direction);
+            mesh.position.set(Number(data.x) || 0,Number(data.y) || 0,Number(data.z) || 0).addScaledVector(direction,speed * age);
+            // Replay recent unrendered travel against the defender's actual pose history.
+            let caughtUpHit=false;
+            if(isEnemy && age>0 && age<=.25){
+                const origin=new THREE.Vector3(data.x,data.y,data.z);
+                for(let i=1;i<battlePoseHistory.length;i++){
+                    const prev=battlePoseHistory[i-1],next=battlePoseHistory[i];
+                    if(next.time<data.firedAt || prev.time<data.firedAt)continue;
+                    const before=origin.clone().addScaledVector(direction,speed*(prev.time-data.firedAt)/1000).sub(prev.position),
+                        after=origin.clone().addScaledVector(direction,speed*(next.time-data.firedAt)/1000).sub(next.position);
+                    if(battleSegmentDistance(new THREE.Vector3(),before,after)<BATTLE_HIT_RADIUS){caughtUpHit=true;break}
+                }
+            }
+            if(caughtUpHit){
+                battleApplyDamage(Math.max(1,Number(data.damage)||6),'shot');battleNotifyShooterHit(String(data.shooter));
+                mesh.geometry.dispose();material.dispose();return
+            }
+            battleWorldRoot?.add(mesh);
+            battleBullets.push({ id, mesh, direction, speed, damage: Math.max(1,Number(data.damage) || 6),
+                shooter: String(data.shooter || ''), age, enemy: isEnemy, hit: false })
+        }
+
+        function battleSegmentDistance(point,a,b) {
+            const ab = b.clone().sub(a), denominator = ab.lengthSq();
+            if (!denominator) return point.distanceTo(a);
+            const t = Math.max(0,Math.min(1,point.clone().sub(a).dot(ab) / denominator));
+            return point.distanceTo(a.addScaledVector(ab,t))
+        }
+
+        function battleRemoveBullet(index) {
+            const bullet = battleBullets[index];
+            if (bullet?.mesh) { battleWorldRoot?.remove(bullet.mesh); bullet.mesh.geometry?.dispose(); bullet.mesh.material?.dispose() }
+            battleBullets.splice(index,1)
+        }
+
+        function battleUpdateBullets(dt, previousPlanePosition = airplane.position) {
+            for (let i = battleBullets.length - 1; i >= 0; i--) {
+                const bullet = battleBullets[i], before = bullet.mesh.position.clone();
+                bullet.mesh.position.addScaledVector(bullet.direction,bullet.speed * dt);
+                bullet.age += dt;
+                if (bullet.enemy && !bullet.hit && battleSegmentDistance(new THREE.Vector3(),before.sub(previousPlanePosition),bullet.mesh.position.clone().sub(airplane.position)) < BATTLE_HIT_RADIUS) {
+                    bullet.hit = true;
+                    battleApplyDamage(bullet.damage,'shot');
+                    battleNotifyShooterHit(bullet.shooter);
+                    battleRemoveBullet(i);
+                    continue
+                }
+                if (bullet.age > 3 || Math.hypot(bullet.mesh.position.x,bullet.mesh.position.z) > BATTLE_ARENA_RADIUS + 190) battleRemoveBullet(i)
+            }
+        }
+
+        function battleRestartVisualEffect(className,duration,isDamage = false) {
+            const body = document.body, timer = isDamage ? battleDamageEffectTimer : battleHitEffectTimer;
+            if (timer) clearTimeout(timer);
+            body.classList.remove(className);
+            void body.offsetWidth;
+            body.classList.add(className);
+            const nextTimer = setTimeout(() => body.classList.remove(className),duration);
+            if (isDamage) battleDamageEffectTimer = nextTimer;
+            else battleHitEffectTimer = nextTimer
+        }
+
+        function battleTriggerDamageFeedback(source) {
+            if (source !== 'shot' && source !== 'lightning') return;
+            battleRestartVisualEffect('battle-damage-shake',source === 'shot' ? 390 : 300,true);
+            if (source === 'shot') {
+                const flash = document.getElementById('battleDamageFlash');
+                if (flash) {
+                    flash.classList.remove('active');
+                    void flash.offsetWidth;
+                    flash.classList.add('active')
+                }
+                try { navigator.vibrate?.([48,24,72]) } catch (error) {}
+            } else {
+                try { navigator.vibrate?.([35,30,35]) } catch (error) {}
+            }
+        }
+
+        function battleNotifyShooterHit(shooter) {
+            if (!battleRoomRef || !shooter || shooter === battlePlayerId) return;
+            const ref = battleRoomRef.child('hitFeedback/' + shooter).push(),
+                payload = { target: battlePlayerId, at: Date.now() + battleServerOffset };
+            ref.set(payload).catch(() => {});
+            setTimeout(() => ref.remove().catch(() => {}),1800)
+        }
+
+        function battleReceiveHitConfirmation(data) {
+            const age = Math.abs(Date.now() + battleServerOffset - Number(data?.at || 0));
+            if (!battleActive || battleEnded || !data || data.target === battlePlayerId || age > 1800) return;
+            battleRestartVisualEffect('battle-hit-shake',210,false);
+            const reticle = document.getElementById('battleReticle');
+            if (reticle) {
+                reticle.classList.remove('confirmed');
+                void reticle.offsetWidth;
+                reticle.classList.add('confirmed');
+                setTimeout(() => reticle.classList.remove('confirmed'),240)
+            }
+            try { navigator.vibrate?.(36) } catch (error) {}
+            _tone('sine',920,1180,.075,.022)
+        }
+
+        function battleApplyDamage(rawDamage,source) {
+            if (!battleStarted || !battlePeersStarted || !battleActive || battleEnded || !battleMyRef || Date.now()+battleServerOffset-battleStartAt<1800) return;
+            const armorFactor = 1 - battleUpgrades.armor * .08,
+                damage = Math.max(1,Math.round(rawDamage * armorFactor * 10) / 10);
+            battleTriggerDamageFeedback(source);
+            battleMyRef.child('health').transaction(current => {
+                if (!Number.isFinite(current) || current <= 0) return;
+                return Math.max(0,current - damage)
+            }).catch(() => {});
+            if (source === 'lightning') { _tone('sawtooth',150,35,.45,.1); showFeedback(`⚡ Raio: -${Math.ceil(damage)} de vida`,false) }
+            else if (source === 'shot') _tone('square',150,90,.08,.04)
+        }
+
+        function battleHostDirector() {
+            const now = Date.now() + battleServerOffset;
+            if (now >= battleNextLightningAt) {
+                const serial = Math.floor((now - battleStartAt) / 1000),
+                    progress = Math.max(0,Math.min(1,(now - battleStartAt) / BATTLE_DURATION_MS)),
+                    burstCount = progress >= .8 ? 3 : (progress >= .5 ? 2 : 1);
+                for (let bolt = 0; bolt < burstCount; bolt++) {
+                    const boltSerial = serial * 7 + bolt,
+                        angle = battleRandom(boltSerial + 3000) * Math.PI * 2,
+                        radius = Math.sqrt(battleRandom(boltSerial + 3100)) * (BATTLE_ARENA_RADIUS - 80),
+                        ref = battleRoomRef.child('lightning').push(),
+                        stagger = bolt * 180;
+                    ref.set({ x: +(Math.cos(angle) * radius).toFixed(1), z: +(Math.sin(angle) * radius).toFixed(1),
+                        warnAt: now + stagger, strikeAt: now + 1400 + stagger,
+                        seed: Math.floor(battleRandom(boltSerial + 3200) * 999999) });
+                    setTimeout(() => ref.remove().catch(() => {}),4800 + stagger)
+                }
+                const baseInterval = 5600 - progress * 3400,
+                    variation = 2500 - progress * 1300;
+                battleNextLightningAt = now + baseInterval + battleRandom(serial + 3300) * variation
+            }
+            if (now >= battleNextRingAt) {
+                const hasFreeRing = Array.from(battleRings.values()).some(ring => !ring.data.claimedBy && ring.data.expiresAt > now);
+                if (!hasFreeRing) {
+                    const serial = Math.floor((now - battleStartAt) / 1000), angle = battleRandom(serial + 4000) * Math.PI * 2,
+                        radius = 120 + Math.sqrt(battleRandom(serial + 4100)) * (BATTLE_ARENA_RADIUS - 260),
+                        type = BATTLE_UPGRADE_TYPES[Math.floor(battleRandom(serial + 4200) * BATTLE_UPGRADE_TYPES.length)],
+                        ref = battleRoomRef.child('rings').push();
+                    ref.set({ x: +(Math.cos(angle) * radius).toFixed(1), y: +(45 + battleRandom(serial + 4300) * 145).toFixed(1),
+                        z: +(Math.sin(angle) * radius).toFixed(1), type, createdAt: now, expiresAt: now + 26000,
+                        claimedBy: null });
+                    setTimeout(() => ref.remove().catch(() => {}),28000)
+                }
+                battleNextRingAt = now + 28000 + battleRandom(Math.floor(now / 1000) + 4400) * 12000
+            }
+        }
+
+        function battleReceiveLightning(id,data) {
+            if (!data || battleLightning.has(id)) return;
+            const material = new THREE.MeshBasicMaterial({ color: 0xfde047, transparent: true, opacity: .8,
+                    side: THREE.DoubleSide, depthWrite: false }),
+                ring = new THREE.Mesh(new THREE.RingGeometry(38,43,32),material), group = new THREE.Group(),
+                light = new THREE.PointLight(0xc7d2fe,0,170);
+            ring.rotation.x = -Math.PI / 2;
+            ring.position.y = .8;
+            light.position.set(0,28,0);
+            group.position.set(Number(data.x) || 0,0,Number(data.z) || 0);
+            group.add(ring,light);
+            battleWorldRoot?.add(group);
+            battleLightning.set(id,{ id, data, group, ring, light, struck: false, damageApplied: false, bolts: [] })
+        }
+
+        function battleCreateBolt(event) {
+            const random = index => {
+                const value = Math.sin((Number(event.data.seed) || 1) + index * 91.17) * 43758.5453;
+                return value - Math.floor(value)
+            }, points = [];
+            for (let i = 0; i <= 12; i++) {
+                const y = 270 - i / 12 * 270,
+                    spread = i === 0 || i === 12 ? 0 : (1 - i / 12) * 16;
+                points.push(new THREE.Vector3((random(i) - .5) * spread,y,(random(i + 30) - .5) * spread))
+            }
+            const material = new THREE.LineBasicMaterial({ color: 0xf8fafc, transparent: true, opacity: 1 }),
+                main = new THREE.Line(new THREE.BufferGeometry().setFromPoints(points),material);
+            event.group.add(main); event.bolts.push(main);
+            for (let branch = 0; branch < 3; branch++) {
+                const startIndex = 3 + branch * 2, start = points[startIndex], branchPoints = [start.clone()];
+                for (let i = 1; i <= 4; i++) branchPoints.push(start.clone().add(new THREE.Vector3(
+                    (random(80 + branch * 8 + i) - .5) * i * 18,-i * 13,(random(120 + branch * 8 + i) - .5) * i * 18)));
+                const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints(branchPoints),material.clone());
+                event.group.add(line); event.bolts.push(line)
+            }
+        }
+
+        function battleUpdateLightning() {
+            const now = Date.now() + battleServerOffset;
+            let nearbyWarning = false;
+            for (const [id,event] of battleLightning) {
+                const warnAt = Number(event.data.warnAt) || now,
+                    strikeAt = Number(event.data.strikeAt) || now, distance = Math.hypot(
+                    airplane.position.x - event.group.position.x,airplane.position.z - event.group.position.z);
+                if (now < warnAt) {
+                    event.ring.material.opacity = 0;
+                    event.light.intensity = 0
+                } else if (now < strikeAt) {
+                    const pulse = .65 + .35 * Math.sin(now * .018);
+                    event.ring.scale.setScalar(.9 + pulse * .22); event.ring.material.opacity = .45 + pulse * .45;
+                    event.light.intensity = pulse * 1.2;
+                    if (distance < 125) nearbyWarning = true
+                } else if (!event.struck) {
+                    event.struck = true;
+                    battleCreateBolt(event);
+                    event.light.intensity = 9;
+                    event.ring.material.opacity = 1;
+                    if (!event.damageApplied && distance < 54) { event.damageApplied = true; battleApplyDamage(20,'lightning') }
+                } else {
+                    const age = (now - strikeAt) / 1000, opacity = Math.max(0,1 - age / .48);
+                    event.light.intensity = 8 * opacity;
+                    event.ring.material.opacity = opacity;
+                    event.bolts.forEach(bolt => bolt.material.opacity = opacity);
+                    if (age > .55) {
+                        battleWorldRoot?.remove(event.group);
+                        event.group.traverse(object => { object.geometry?.dispose(); object.material?.dispose?.() });
+                        battleLightning.delete(id)
+                    }
+                }
+            }
+            document.getElementById('battleWarning').style.display = nearbyWarning ? 'block' : 'none'
+        }
+
+        function battleReceiveRing(id,data) {
+            if (!data || battleRings.has(id) || data.claimedBy || Number(data.expiresAt) < Date.now() + battleServerOffset) return;
+            const colors = { weapon: 0xfb7185, armor: 0x60a5fa, engine: 0xfb923c, agility: 0x34d399,
+                    cooling: 0x67e8f9 },
+                group = new THREE.Group(), material = new THREE.MeshBasicMaterial({ color: colors[data.type] || 0xa78bfa }),
+                glowMaterial = new THREE.MeshBasicMaterial({ color: colors[data.type] || 0xa78bfa, transparent: true,
+                    opacity: .23, blending: THREE.AdditiveBlending, depthWrite: false }),
+                ring = new THREE.Mesh(new THREE.TorusGeometry(11,1.45,7,20),material),
+                glow = new THREE.Mesh(new THREE.TorusGeometry(11,3.8,7,20),glowMaterial);
+            group.add(ring,glow);
+            group.position.set(Number(data.x) || 0,Number(data.y) || 70,Number(data.z) || 0);
+            battleWorldRoot?.add(group);
+            battleRings.set(id,{ id, data, group, baseY: group.position.y, claimPending: false })
+        }
+
+        function battleUpdateRingClaim(id,data) {
+            const ring = battleRings.get(id);
+            if (!data) return;
+            if (ring) ring.data = data;
+            if (data.claimedBy) {
+                if (data.claimedBy === battlePlayerId && !battleAppliedRings.has(id)) {
+                    battleAppliedRings.add(id);
+                    battleApplyUpgrade(data.type)
+                }
+                if (ring) { battleWorldRoot?.remove(ring.group); ring.group.traverse(object => {
+                    object.geometry?.dispose(); object.material?.dispose?.() }); battleRings.delete(id) }
+            }
+        }
+
+        function battleUpdateRings(dt) {
+            const now = Date.now() + battleServerOffset;
+            for (const [id,ring] of battleRings) {
+                ring.group.rotation.y += dt * 1.8;
+                ring.group.position.y = ring.baseY + Math.sin(now * .003 + ring.baseY) * 2.5;
+                if (Number(ring.data.expiresAt) <= now) {
+                    battleWorldRoot?.remove(ring.group); battleRings.delete(id); continue
+                }
+                if (!ring.claimPending && airplane.position.distanceTo(ring.group.position) < 17) {
+                    ring.claimPending = true;
+                    battleRoomRef.child('rings/' + id).transaction(current => current && !current.claimedBy ?
+                        { ...current, claimedBy: battlePlayerId, claimedAt: now } : current).then(result => {
+                            if (!result.committed) ring.claimPending = false
+                        }).catch(() => { ring.claimPending = false })
+                }
+            }
+        }
+
+        function battleApplyUpgrade(type) {
+            if (!BATTLE_UPGRADE_TYPES.includes(type)) return;
+            if (battleUpgrades[type] >= 3) {
+                battleMyRef.child('health').transaction(value => Math.min(battleOwnMaxHealth,(Number(value) || 0) + 12));
+                showFeedback('✨ Melhoria máxima: +12 de vida',true); return
+            }
+            battleUpgrades[type]++;
+            const names = { weapon: 'ARMAS MAIS FORTES', armor: 'BLINDAGEM REFORÇADA', engine: 'MOTOR APRIMORADO',
+                agility: 'MANOBRA MELHORADA', cooling: 'RESFRIAMENTO RÁPIDO' };
+            if (type === 'armor') {
+                battleOwnMaxHealth = BATTLE_BASE_HEALTH + battleUpgrades.armor * 20;
+                const healed = Math.min(battleOwnMaxHealth,battleOwnHealth + 20);
+                battleMyRef.update({ maxHealth: battleOwnMaxHealth, health: healed })
+            }
+            battleMyRef.child('upgrades').set(battleUpgrades);
+            battleUpdateUpgradeHud();
+            showFeedback(`✨ ${names[type]} · NÍVEL ${battleUpgrades[type]}`,true);
+            _tone('sine',520,980,.28,.06)
+        }
+
+        async function battleResolveTimeout() {
+            if (!battleStarted || battleEnded || !battleRoomRef || Date.now()+battleServerOffset < battleEndAt) return;
+            try {
+                const snapshot = await battleRoomRef.child('players').get(), players = snapshot.val() || {},
+                    p1 = Number(players.player1?.health) || 0, p2 = Number(players.player2?.health) || 0,
+                    winner = Math.abs(p1 - p2) < .1 ? 'draw' : (p1 > p2 ? 'player1' : 'player2');
+                battleCommitResult(winner,'time')
+            } catch (error) { console.warn('Falha ao encerrar batalha por tempo:',error) }
+        }
+
+        async function battleCommitResult(winner,reason) {
+            if (!battleStarted || battleEnded || battleResultSubmitting || !battleRoomRef) return;
+            battleResultSubmitting = true;
+            const payload = { matchId:battleMatchId,startAt:battleStartAt,winner, reason, endedAt: Date.now() + battleServerOffset,
+                health: { player1: battlePlayerId === 'player1' ? battleOwnHealth : battleEnemyHealth,
+                    player2: battlePlayerId === 'player2' ? battleOwnHealth : battleEnemyHealth } };
+            try {
+                const result=await battleRoomRef.transaction(room=>{
+                    if(!validMatchResult(room,payload,Date.now()+battleServerOffset,true) || room.result) return;
+                    room.result=payload;return room
+                },undefined,false);
+                if(!result.committed) battleResultSubmitting=false
+            }
+            catch (error) { battleResultSubmitting = false; console.warn('Falha ao registrar resultado da batalha:',error) }
+        }
+
+        function battleSaveResult(isWinner,isDraw) {
+            const save = loadSave(), earned = isDraw ? BATTLE_REWARDS.draw :
+                (isWinner ? BATTLE_REWARDS.winner : BATTLE_REWARDS.loser),
+                update = recordBattleRankResult(save,isWinner,battleEnemyRankPoints,isDraw);
+            save.coins = (Number(save.coins) || 0) + earned;
+            save.battleLastPlayed = new Date().toISOString();
+            writeSave(save);
+            updateLobbyRankCard(save);
+            return { earned, update, save }
+        }
+
+        function battleEndMatch(result) {
+            if (battleResultProcessed) return;
+            battleResultProcessed = true;
+            battleEnded = true;
+            battleActive = false;
+            competitiveStopBackground();
+            gameActive = false;
+            if (requestID) { cancelAnimationFrame(requestID); requestID = null }
+            setEngineSound(false);
+            battleStopMusic();
+            clearTimeout(battleDamageEffectTimer); clearTimeout(battleHitEffectTimer);
+            battleDamageEffectTimer = battleHitEffectTimer = null;
+            document.body.classList.remove('battle-damage-shake','battle-hit-shake');
+            safeSdkCall('gameplayStop');
+            document.body.classList.remove('battle-game');
+            const isDraw = result.winner === 'draw', isWinner = result.winner === battlePlayerId,
+                saved = battleSaveResult(isWinner,isDraw), delta = saved.update.delta,
+                rank = getBattleRankView(saved.save), title = document.getElementById('battleResultTitle'),
+                card = document.getElementById('battleResultCard');
+            document.getElementById('battleHud').classList.remove('show');
+            document.getElementById('battleWarning').style.display = 'none';
+            document.getElementById('battleResultEmoji').innerText = isDraw ? '🤝' : (isWinner ? '🏆' : '💥');
+            title.innerText = isDraw ? 'EMPATE' : (isWinner ? 'VITÓRIA!' : 'DERROTA');
+            title.style.color = isDraw ? '#c4b5fd' : (isWinner ? '#fbbf24' : '#fb7185');
+            card.style.borderColor = isDraw ? '#8b5cf6' : (isWinner ? '#f59e0b' : '#ef4444');
+            const reasons = { destroyed: isWinner ? 'Você abateu o caça adversário.' : 'O seu caça foi abatido.',
+                lightning: 'A tempestade decidiu o confronto.', disconnect: 'O adversário deixou a batalha.',
+                inactivity: isWinner ? 'O adversário ficou mais de 8 segundos sem atualizar a batalha.' :
+                    'O seu avião ficou mais de 8 segundos sem atualizar a batalha.',
+                time: isDraw ? 'O tempo terminou com a mesma vida.' : 'O tempo terminou; venceu quem preservou mais vida.' };
+            document.getElementById('battleResultReason').innerText = reasons[result.reason] || 'Confronto encerrado.';
+            document.getElementById('battleResultCoins').innerText = `+${saved.earned} moedas`;
+            document.getElementById('battleResultRank').innerText = `${delta > 0 ? '+' : ''}${delta} PB · ${getPilotRankName(rank.current)} · ${rank.index} PB`;
+            document.getElementById('battleResultScreen').style.display = 'flex';
+            battleCleanupListeners();
+            _tone('sine',isWinner ? 880 : 220,isWinner ? 1320 : 110,.65,.1)
+        }
+
+        function battleCleanupListeners() {
+            battleSession++; battleStarted=false;
+            clearTimeout(battleWaitTimer);battleWaitTimer=null;
+            battleListeners.forEach(listener => { try { listener.ref.off(listener.event,listener.cb) } catch (error) {} });
+            battleListeners = []
+        }
+
+        function battleDisposeWorld() {
+            battleBullets.length = 0;
+            battleLightning.clear(); battleRings.clear(); battleSeenShots.clear(); battleAppliedRings.clear();
+            if (battleWorldRoot) {
+                scene.remove(battleWorldRoot);
+                battleWorldRoot.traverse(object => { object.geometry?.dispose();
+                    if (Array.isArray(object.material)) object.material.forEach(material => material.dispose?.());
+                    else object.material?.dispose?.() });
+                battleWorldRoot = null
+            }
+            [battleRemotePlane,airplane].forEach(fighter => {
+                if (!fighter) return;
+                scene.remove(fighter);
+                const geometries = new Set(), materials = new Set();
+                fighter.traverse(part => { if (part.geometry) geometries.add(part.geometry);
+                    if (part.material) (Array.isArray(part.material) ? part.material : [part.material]).forEach(material => materials.add(material)) });
+                geometries.forEach(geometry => geometry.dispose?.());
+                materials.forEach(material => material.dispose?.())
+            });
+            battleRemotePlane = null;
+            airplane = null;
+            battleRain = null; battleRainPositions = null; ground = null;
+            battleRestoreEnvironment()
+        }
+
+        function battleAbortMatch(message) {
+            battleEnded=true;
+            battleGoToLobby().then(()=>showFeedback(message,false))
+        }
+
+        async function battleGoToLobby() {
+            battleCleanupListeners();
+            setEngineSound(false);
+            battleActive = false; battlePreparing = false; battleEnded = false; battleResultProcessed = false;
+            competitiveStopBackground();
+            battleResultSubmitting = false;
+            gameActive = false; battleFiring = false;
+            document.body.classList.remove('battle-game');
+            document.body.classList.remove('battle-damage-shake','battle-hit-shake');
+            clearTimeout(battleDamageEffectTimer); clearTimeout(battleHitEffectTimer);
+            battleDamageEffectTimer = battleHitEffectTimer = null;
+            battleStopMusic();
+            if (requestID) { cancelAnimationFrame(requestID); requestID = null }
+            if (battlePlayerId === 'player1' && battleRoomRef) {await battleRoomRef.onDisconnect().cancel().catch(()=>{});await battleRoomRef.remove().catch(() => {})}
+            else if (battleMyRef) await battleMyRef.update({ connected: false }).catch(() => {});
+            battleCleanupListeners();
+            battleDisposeWorld();
+            battleRoomRef = battleMyRef = battleEnemyRef = null;
+            battleRoomCode = ''; battlePlayerId = ''; battleStartAt = 0; battleEndAt = 0;
+            document.getElementById('battleResultScreen').style.display = 'none';
+            document.getElementById('battleWaitingScreen').style.display = 'none';
+            document.getElementById('battleHud').classList.remove('show');
+            returnToLobbyAudio();
+            showBannerAdAgain();
+            const save = loadSave();
+            document.getElementById('lobbyRecord').innerText = save.bestDistance + 'M';
+            document.getElementById('lobbyCoins').innerText = save.coins;
+            document.getElementById('lobbyScreen').style.display = '';
+            initLobby()
+        }
+
+        // Mantém partidas competitivas avançando quando o navegador reduz ou suspende o RAF.
+        // Até oito segundos são recuperados em passos fixos; ausências maiores geram derrota
+        // técnica, evitando que trocar de aba ou congelar o aparelho deixe o avião invulnerável.
+        const COMPETITIVE_INACTIVITY_LIMIT = 8;
+        let competitiveVisibilityBound = false,
+            competitiveBackgroundTimer = null,
+            competitiveLastWallTime = 0,
+            competitiveCatchupRunning = false;
+
+        function competitiveStopBackground() {
+            clearInterval(competitiveBackgroundTimer);
+            competitiveBackgroundTimer = null;
+            competitiveLastWallTime = 0
+        }
+
+        function competitiveClearHeldInputs() {
+            ['w','a','s','d','arrowup','arrowdown','arrowleft','arrowright',' '].forEach(key => keyboard[key] = false);
+            battleFiring = false
+        }
+
+        function competitiveForfeitInactivity() {
+            competitiveClearHeldInputs();
+            if(battleActive){battleAbortMatch('A conexão foi interrompida. A partida foi cancelada.');return}
+            if(mpActive){mpShowDisconnect();return}
+            if (battleActive && !battleEnded && !battleResultSubmitting) {
+                const enemyId = battlePlayerId === 'player1' ? 'player2' : 'player1';
+                battleCommitResult(enemyId,'inactivity')
+            } else if (mpActive && !mpRaceEnded && !mpResultSubmitted) {
+                const enemyId = mpPlayerId === 'player1' ? 'player2' : 'player1';
+                mpCommitResult(enemyId,'inactivity')
+            }
+        }
+
+        function competitiveAdvanceElapsed(elapsed) {
+            if (competitiveCatchupRunning || elapsed <= 0 || (!battleActive && !mpActive)) return;
+            if (elapsed > COMPETITIVE_INACTIVITY_LIMIT) { competitiveForfeitInactivity(); return }
+            competitiveCatchupRunning = true;
+            try {
+                if (battleActive && !battleEnded) {
+                    battleAccumulator += elapsed;
+                    let steps = 0;
+                    while (battleAccumulator + 1e-8 >= BATTLE_FIXED_DT && steps < 485 && battleActive &&
+                        !battleResultSubmitting) {
+                        battleSimulate(BATTLE_FIXED_DT);
+                        battleAccumulator -= BATTLE_FIXED_DT;
+                        steps++
+                    }
+                } else if (mpActive && gameActive && !mpRaceEnded) {
+                    mpFixedAccumulator += elapsed;
+                    let steps = 0;
+                    while (mpFixedAccumulator + 1e-9 >= MP_FIXED_DT && steps < 485 && gameActive && !mpResultSubmitted) {
+                        runGameSimulation(MP_FIXED_DT,false);
+                        mpFixedAccumulator -= MP_FIXED_DT;
+                        steps++
+                    }
+                }
+            } finally { competitiveCatchupRunning = false }
+        }
+
+        function competitiveBackgroundStep() {
+            if (!document.hidden || (!battleActive && !mpActive)) return;
+            const now = Date.now(), elapsed = Math.max(0,(now - competitiveLastWallTime) / 1000);
+            competitiveLastWallTime = now;
+            competitiveAdvanceElapsed(elapsed)
+        }
+
+        function setupCompetitiveVisibility() {
+            if (competitiveVisibilityBound) return;
+            competitiveVisibilityBound = true;
+            document.addEventListener('visibilitychange',() => {
+                if (!gameActive || (!battleActive && !mpActive)) return;
+                if (document.hidden) {
+                    if (requestID) { cancelAnimationFrame(requestID); requestID = null }
+                    competitiveClearHeldInputs();
+                    competitiveLastWallTime = Date.now();
+                    clearInterval(competitiveBackgroundTimer);
+                    competitiveBackgroundTimer = setInterval(competitiveBackgroundStep,250)
+                } else {
+                    clearInterval(competitiveBackgroundTimer);
+                    competitiveBackgroundTimer = null;
+                    const elapsed = competitiveLastWallTime ? Math.max(0,(Date.now() - competitiveLastWallTime) / 1000) : 0;
+                    competitiveLastWallTime = 0;
+                    competitiveAdvanceElapsed(elapsed);
+                    if (battleActive && !battleEnded && !battleResultSubmitting) {
+                        battleLastFrame = performance.now();
+                        requestID = requestAnimationFrame(battleGameLoop)
+                    } else if (mpActive && gameActive && !mpRaceEnded && !mpResultSubmitted) {
+                        clock.getDelta();
+                        requestID = requestAnimationFrame(gameLoop)
+                    }
+                }
+            })
         }
 
         async function initGame() {
@@ -9725,6 +11837,8 @@ function checkCollisions() {
             });
             setupGameModeSelector();
             setupMusicModeUI();
+            setupBattleControls();
+            setupCompetitiveVisibility();
             setupPcRadioIntegration();
             setupDailyMissionsUI();
             attachClickSounds();
@@ -9749,7 +11863,7 @@ function checkCollisions() {
             let pb = document.getElementById('pauseButton');
             pb.style.display = 'none';
             pb.addEventListener('click', () => { if (gameActive && !isPaused && !resumeCountdownActive && !
-                    isGeneratingWorld && !mpActive) togglePause(); });
+                    isGeneratingWorld && !mpActive && !battleActive) togglePause(); });
             document.getElementById('headlightButton')?.addEventListener('click', () => toggleHeadlight());
             document.getElementById('pauseResumeBtn').addEventListener('click', () => { if (isPaused) togglePause(); });
             document.getElementById('pauseLobbyBtn').addEventListener('click', goToLobbyFromPause);
@@ -9776,6 +11890,96 @@ function checkCollisions() {
                 }
             });
         }
+
+        // Inline cockpit pictograms. No icon CDN, font download or platform emoji rendering.
+        const FLIGHT_ICON_PATHS = {
+            plane:'M22 2 9 8 2 7 1 10 7 13 10 19 13 18 13 12 22 2Z',
+            trophy:'M8 3h8v8a4 4 0 0 1-8 0V3ZM8 5H4v4a4 4 0 0 0 4 4m8-8h4v4a4 4 0 0 1-4 4m-4 2v6m-5 0h10',
+            mountain:'m2 20 7-15 5 9 3-6 5 12Zm4-8 3 2 3-2',
+            sun:'M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0ZM12 1v3m0 16v3M1 12h3m16 0h3M4 4l2 2m12 12 2 2M4 20l2-2M18 6l2-2',
+            moon:'M21 13A9 9 0 0 1 11 3 9 9 0 1 0 21 13Z',
+            cloud:'M6 18a4 4 0 0 1-1-8 7 7 0 0 1 13-1 4.5 4.5 0 1 1 0 9H6Z',
+            meteor:'M13 3 3 13m18-6-8 8M19 2l-7 7M12 15a5 5 0 1 1-10 0 5 5 0 0 1 10 0Z',
+            lightning:'m13 2-9 12h7l-1 8 10-13h-7l1-7Z',
+            flag:'M5 22V3m0 0c5-4 9 4 14 0v10c-5 4-9-4-14 0',
+            coin:'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM15 8h-4a2 2 0 0 0 0 4h2a2 2 0 0 1 0 4H9m3-10v12',
+            fuel:'M4 21V4h10v17H4Zm0-12h10m0 4h2v5a2 2 0 0 0 4 0V8l-3-3M2 21h14',
+            shield:'m12 2 9 4v6c0 5-9 10-9 10S3 17 3 12V6l9-4Z',
+            target:'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-4 0a5 5 0 1 1-10 0 5 5 0 0 1 10 0ZM12 2v6m0 8v6M2 12h6m8 0h6',
+            controls:'M7 7h10c4 0 7 14 2 13l-4-4H9l-4 4C0 21 3 7 7 7ZM7 10v5m-2-2h5m6-2h1m2 3h1',
+            music:'M9 18V5l11-2v12M9 18c0 4-7 4-7 0s7-4 7 0Zm11-3c0 4-7 4-7 0s7-4 7 0Z',
+            headphones:'M3 15v-3a9 9 0 0 1 18 0v3M3 12h4v8H3v-8Zm14 0h4v8h-4v-8Z',
+            globe:'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM3 12h18M12 3c6 5 6 13 0 18-6-5-6-13 0-18Z',
+            home:'m2 11 10-9 10 9M5 9v12h14V9M9 21v-7h6v7',
+            checklist:'M8 3h8v4H8V3Zm0 2H4v17h16V5h-4M8 12l1 1 2-3m2 2h4M8 18l1 1 2-3m2 2h4',
+            swords:'m3 3 7 2 11 14-2 2L5 10 3 3Zm18 0-7 2-3 4m-2 2L3 19l2 2 8-6M3 14l7 7m4-18 7 7',
+            fire:'M13 2c2 8 7 6 7 13a8 8 0 0 1-16 0c0-5 3-7 4-8 0 4 2 5 2 5s4-4 3-10Z',
+            snow:'M12 2v20M3 7l18 10M3 17 21 7M9 4l3 3 3-3M9 20l3-3 3 3',
+            leaf:'M20 3c-13-1-18 7-13 13s13-1 13-13ZM3 21l13-13',
+            tree:'m12 2 7 8h-3l5 7h-8v5h-2v-5H3l5-7H5l7-8Z',
+            pin:'M12 22S4 14 4 9a8 8 0 0 1 16 0c0 5-8 13-8 13Zm3-13a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z',
+            mail:'M3 5h18v14H3V5Zm0 0 9 8 9-8',
+            screen:'M3 4h18v13H3V4Zm9 13v4m-5 0h10m-7-13 6 3-6 3V8Z',
+            volume:'M3 9h4l5-5v16l-5-5H3V9Zm13-2c4 3 4 7 0 10m3-13c6 5 6 11 0 16',
+            mute:'M3 9h4l5-5v16l-5-5H3V9Zm13 0 6 6m0-6-6 6',
+            key:'M10 8a4 4 0 1 1-8 0 4 4 0 0 1 8 0Zm0 0h12m-4 0v4m3-4v3',
+            lock:'M6 10V7a6 6 0 0 1 12 0v3M4 10h16v12H4V10Zm8 4v4',
+            lamp:'M3 8h9v8H3V8Zm9 0 5-4v16l-5-4m8-9h3m-3 5h3m-3 5h3',
+            gun:'M2 6h20v5H9l-3 9H2l3-11M10 11v4h5v-4',
+            ufo:'M6 11a6 6 0 0 1 12 0M22 12c0 6-20 6-20 0s20-6 20 0ZM7 19l-2 3m7-3v3m5-3 2 3',
+            warning:'m12 2 11 20H1L12 2Zm0 7v5m0 3v1',
+            check:'m3 12 6 6L21 5', close:'m5 5 14 14M19 5 5 19',
+            star:'m12 2 3 7 8 1-6 5 2 8-7-4-7 4 2-8-6-5 8-1 3-7Z',
+            ring:'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-4 0a5 5 0 1 1-10 0 5 5 0 0 1 10 0Z',
+            wing:'M2 19 22 3l-4 10h-4l-2 4H7l-5 2Z',
+            map:'m2 5 7-3 6 3 7-3v17l-7 3-6-3-7 3V5Zm7-3v17m6-14v17'
+        };
+        const FLIGHT_ICON_GROUPS = {
+            plane:['✈️','🚀'],trophy:['🏆','🏅','♛'],mountain:['⛰️','🏜️','🌋'],sun:['☀️','🌤️','🌅','🌆','🌇'],
+            moon:['🌑','🌙'],cloud:['☁️','⛈️'],meteor:['☄️'],lightning:['⚡'],flag:['🏁'],coin:['💰'],fuel:['⛽'],
+            shield:['🛡️'],target:['🎯'],controls:['🎮'],music:['🎵','♫'],headphones:['🎧'],globe:['🌍','🌐'],
+            home:['🏠'],checklist:['📋'],swords:['⚔️','🤝'],fire:['🔥','💥'],snow:['❄️'],leaf:['🌱','🌸','🌾'],
+            tree:['🌲','🏝️'],pin:['📍'],mail:['📨'],screen:['📺'],volume:['🔊'],mute:['🔇'],key:['🔑'],lock:['🔒'],
+            lamp:['🔦'],gun:['🔫'],ufo:['🛸','👽'],warning:['⚠️','😟'],check:['✓','✔️'],close:['✕'],
+            star:['★','✦','✨'],ring:['💍','🔴'],wing:['🪽'],map:['🗺️']
+        };
+        function installFlightIcons() {
+            const mapping=new Map();
+            Object.entries(FLIGHT_ICON_GROUPS).forEach(([name,chars])=>chars.forEach(char=>mapping.set(char,name)));
+            const pattern=new RegExp([...mapping.keys()].sort((a,b)=>b.length-a.length).join('|'),'gu');
+            function decorate(root){
+                if(!root || root.nodeType!==1 || root.closest?.('script,style,svg,canvas,textarea,input,option,[contenteditable]')) return;
+                const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT), nodes=[];
+                while(walker.nextNode()) nodes.push(walker.currentNode);
+                for(const node of nodes){
+                    if(node.parentElement?.closest('script,style,svg,canvas,textarea,option,[contenteditable]'))continue;
+                    pattern.lastIndex=0; const text=node.nodeValue;
+                    if(!pattern.test(text))continue;
+                    pattern.lastIndex=0;
+                    const fragment=document.createDocumentFragment();let last=0;
+                    for(const match of text.matchAll(pattern)){
+                        fragment.append(document.createTextNode(text.slice(last,match.index)));
+                        const svg=document.createElementNS('http://www.w3.org/2000/svg','svg'),name=mapping.get(match[0]),
+                            path=document.createElementNS('http://www.w3.org/2000/svg','path');
+                        svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('class','flight-icon');
+                        svg.setAttribute('aria-hidden','true');svg.setAttribute('focusable','false');
+                        path.setAttribute('d',FLIGHT_ICON_PATHS[name]);svg.append(path);fragment.append(svg);
+                        last=match.index+match[0].length
+                    }
+                    fragment.append(document.createTextNode(text.slice(last)));node.replaceWith(fragment)
+                }
+            }
+            decorate(document.body);
+            new MutationObserver(records=>{
+                const roots=new Set();
+                records.forEach(record=>{
+                    if(record.type==='characterData')roots.add(record.target.parentElement);
+                    else record.addedNodes.forEach(node=>roots.add(node.nodeType===3?node.parentElement:node))
+                });
+                roots.forEach(decorate)
+            }).observe(document.body,{subtree:true,childList:true,characterData:true})
+        }
+        installFlightIcons();
 
         window.onload = () => {
             setTimeout(() => {
