@@ -5209,7 +5209,7 @@
         };
         const specialEventDirector = {
             activeType: null, lastType: null, nextDistance: 3200 + Math.random() * 1800,
-            weights: { alien: 34, volcano: 23, meteor: 13, thermal: 12, migration: 10, aurora: 8 }
+            weights: { alien: 34, volcano: 23, meteor: 13, hurricane: 12, migration: 10, aurora: 8 }
         };
         const METEOR_SKY = {
             top: new THREE.Color(0x21033f), horizon: new THREE.Color(0xb45309), bottom: new THREE.Color(0x4c1d36),
@@ -5600,42 +5600,235 @@
             scene.add(a.root)
         }
 
+        // ==================== EVENTO: FURACÃO (antiga corrente térmica) ====================
+        const HURRICANE = { height: 230, eye: 16, top: 88, pullRadius: 230, layers: 16, perLayer: 14, arms: 3,
+            armPuffs: 22, debris: 140, puffOpacity: .3, funnelOpacity: .16, debrisOpacity: .55 };
+        const _stormDummy = new THREE.Object3D();
+
+        function buildHurricane(root) {
+            const C = HURRICANE, wallCount = C.layers * C.perLayer, count = wallCount + C.arms * C.armPuffs,
+                material = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 1, flatShading: true,
+                    transparent: true, opacity: C.puffOpacity, depthWrite: false, emissive: 0xbcd0ff, emissiveIntensity: 0 }),
+                puffs = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1, 1), material, count),
+                tint = new THREE.Color(), seeds = [];
+            puffs.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+            puffs.frustumCulled = false;
+            for (let i = 0; i < count; i++) {
+                const wall = i < wallCount, rel = i - wallCount,
+                    layer = wall ? Math.floor(i / C.perLayer) : 0, slot = wall ? i % C.perLayer : rel % C.armPuffs,
+                    arm = wall ? 0 : Math.floor(rel / C.armPuffs), k = wall ? layer / (C.layers - 1) : 1;
+                seeds.push({ wall, layer, slot, arm, jitter: Math.random(), size: Math.random() });
+                // base escura, topo mais claro
+                tint.setRGB(.18 + .38 * k, .21 + .4 * k, .27 + .42 * k);
+                puffs.setColorAt(i, tint)
+            }
+            puffs.instanceColor.needsUpdate = true;
+            const funnel = new THREE.Mesh(new THREE.CylinderGeometry(C.top * .8, C.eye * 1.2, C.height, 14, 1, true),
+                new THREE.MeshBasicMaterial({ color: 0x1b2230, transparent: true, opacity: C.funnelOpacity,
+                    side: THREE.DoubleSide, depthWrite: false }));
+            funnel.position.y = C.height / 2;
+            const debrisSeeds = [], positions = new Float32Array(C.debris * 3), debrisGeo = new THREE.BufferGeometry();
+            for (let i = 0; i < C.debris; i++)
+                debrisSeeds.push({ angle: Math.random() * 6.283, h: Math.random(), off: 4 + Math.random() * 14,
+                    spin: .8 + Math.random() * .9 });
+            debrisGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            const debris = new THREE.Points(debrisGeo, new THREE.PointsMaterial({ color: 0xdbe3ee, size: 4.5,
+                transparent: true, opacity: C.debrisOpacity, depthWrite: false }));
+            debris.frustumCulled = false;
+            root.add(funnel, puffs, debris);
+            return { puffs, material, seeds, funnel, debris, debrisSeeds, flash: 0, rumbleAt: 0 }
+        }
+
+        function updateHurricane(a, dt) {
+            const root = a.eventRoot, h = root.userData.hurricane, C = HURRICANE, t = a.time,
+                radiusAt = k => C.eye + (C.top - C.eye) * Math.pow(k, 1.55);
+            if (!h) return;
+            // Parede do furação girando (mais rápido embaixo) + "guarda-chuva" de braços espiralados no topo
+            h.seeds.forEach((sd, i) => {
+                if (sd.wall) {
+                    const k = sd.layer / (C.layers - 1), r = radiusAt(k) + 9 + sd.jitter * 8,
+                        ang = sd.slot / C.perLayer * 6.283 + sd.jitter * .6 + t * (1.9 - 1.2 * k) + k * 3.2,
+                        s = 11 + 16 * k + sd.size * 5;
+                    _stormDummy.position.set(Math.cos(ang) * r, k * C.height + Math.sin(t * .7 + sd.layer) * 3,
+                        Math.sin(ang) * r);
+                    _stormDummy.scale.set(s, s * .75, s)
+                } else {
+                    const q = sd.slot / (C.armPuffs - 1), r = 32 + q * 140, ang = sd.arm * 2.094 + q * 3.4 + t * .55,
+                        s = 22 + 16 * q + sd.size * 6;
+                    _stormDummy.position.set(Math.cos(ang) * r, C.height + 6 - q * 22, Math.sin(ang) * r);
+                    _stormDummy.scale.set(s, 5 + 5 * q + sd.size * 2, s)
+                }
+                _stormDummy.rotation.set(0, sd.jitter * 6.28, 0);
+                _stormDummy.updateMatrix();
+                h.puffs.setMatrixAt(i, _stormDummy.matrix)
+            });
+            h.puffs.instanceMatrix.needsUpdate = true;
+            h.funnel.rotation.y += dt * .5;
+            const pos = h.debris.geometry.attributes.position.array;
+            h.debrisSeeds.forEach((d, i) => {
+                d.angle += dt * d.spin * (1.9 - 1.2 * d.h) * 1.4;
+                const r = radiusAt(d.h) + d.off;
+                pos[i * 3] = Math.cos(d.angle) * r;
+                pos[i * 3 + 1] = d.h * C.height * .95;
+                pos[i * 3 + 2] = Math.sin(d.angle) * r
+            });
+            h.debris.geometry.attributes.position.needsUpdate = true;
+            // Relâmpagos: só brilho emissivo (sem luz extra, para não recompilar shaders)
+            if (h.flash <= 0 && Math.random() < dt * .4) h.flash = .22;
+            h.flash = Math.max(0, h.flash - dt);
+            h.material.emissiveIntensity = h.flash > 0 ? (h.flash / .22) * (.5 + Math.random() * .8) * 1.6 : 0;
+
+            // Persegue o jogador: o centro fica de ~20 a 120 à frente do avião e acompanha o voo (z) e o lado (x).
+            // Só some no fim da duração do evento (10 a 20 s), com fade de entrada e de saída.
+            const dur = a.duration || 15, life = Math.min(1, a.eventTime / 1.5, (dur - a.eventTime) / 1.5),
+                p = airplane.position, lead = 70 + Math.sin(a.eventTime * .45) * 50,
+                err = root.position.z - (p.z - lead),
+                closing = -Math.max(-260, Math.min(260, err * 1.2));
+            root.position.z += (closing - flightSpeed) * dt;
+            root.position.x += Math.max(-45 * dt, Math.min(45 * dt, p.x - root.position.x));
+            h.material.opacity = C.puffOpacity * Math.max(0, life);
+            h.funnel.material.opacity = C.funnelOpacity * Math.max(0, life);
+            h.debris.material.opacity = C.debrisOpacity * Math.max(0, life);
+
+            // Força do furacão: mesmo passando de lado, puxa o alvo do avião para o centro e para a altura
+            // do meio do funil, com leve balanço e turbulência. Mexe só em targetX/targetY (o avião segue o
+            // alvo), então os limites do jogo continuam valendo.
+            const px = p.x - root.position.x, pz = p.z - root.position.z,
+                dist = Math.hypot(px, pz), f = Math.max(0, 1 - dist / C.pullRadius),
+                s = f * f * (3 - 2 * f) * Math.max(0, life);
+            if (s > .002) {
+                const toward = -px, step = Math.min(Math.abs(toward), 125 * s * dt) * Math.sign(toward),
+                    lift = Math.max(-55 * s * dt, Math.min(55 * s * dt, 95 - targetY));
+                targetX += step + Math.sin(t * .9) * 35 * s * dt;
+                targetY += lift + Math.sin(t * 1.3) * 30 * s * dt;
+                bankAngle += (Math.sin(t * 11) + Math.sin(t * 17.3 + 1.7)) * .014 * s;
+                pitchAngle += Math.sin(t * 9.2) * .008 * s;
+                if (!a.collected && s > .2) {
+                    a.collected = true;
+                    showFeedback(currentLanguage === 'en' ? '🌪️ Hurricane! Hold on!' : '🌪️ Furacão! Segure firme!', false)
+                }
+                if (t > h.rumbleAt) {
+                    h.rumbleAt = t + .55;
+                    playAirNoise(.7, .05 + .12 * s, 260 + 520 * s, Math.max(-1, Math.min(1, -px / 120)))
+                }
+            }
+        }
+
+        // ==================== EVENTO: REVOADA DE GAIVOTAS (antiga rota migratória) ====================
+        const GULL_SPEED = 70, GULL_COUNT = 17;
+
+        function buildGullFlock(root) {
+            const makeWing = (verts, cols, tris) => {
+                const g = new THREE.BufferGeometry(), pos = [], col = [];
+                tris.forEach(tri => tri.forEach(i => { pos.push(...verts[i]); col.push(...cols[i]) }));
+                g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+                g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
+                g.computeVertexNormals();
+                return g
+            };
+            const white = [.97, .98, .99], pale = [.88, .9, .93], grey = [.72, .75, .8], black = [.06, .08, .12],
+                inner = makeWing([[0, 0, 1.1], [0, 0, -1.1], [3.6, 0, .8], [3.6, 0, -1.2]], [white, white, pale, pale],
+                    [[0, 2, 3], [0, 3, 1]]),
+                outer = makeWing([[0, 0, .8], [4.8, .25, .2], [4.4, .2, -.8], [0, 0, -1.2]], [grey, black, black, grey],
+                    [[0, 1, 2], [0, 2, 3]]),
+                wingMat = new THREE.MeshStandardMaterial({ vertexColors: true, side: THREE.DoubleSide,
+                    flatShading: true, roughness: 1 }),
+                bodyMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: .9, flatShading: true }),
+                beakMat = new THREE.MeshStandardMaterial({ color: 0xfbbf24, roughness: .7, flatShading: true }),
+                bodyGeo = new THREE.SphereGeometry(1, 7, 5), headGeo = new THREE.SphereGeometry(.75, 6, 5),
+                beakGeo = new THREE.ConeGeometry(.28, 1.2, 4), tailGeo = new THREE.ConeGeometry(.95, 2.4, 3);
+            for (let i = 0; i < GULL_COUNT; i++) {
+                const row = Math.ceil(i / 2), side = i % 2 ? -1 : 1, bird = new THREE.Group(),
+                    body = new THREE.Mesh(bodyGeo, bodyMat), head = new THREE.Mesh(headGeo, bodyMat),
+                    beak = new THREE.Mesh(beakGeo, beakMat), tail = new THREE.Mesh(tailGeo, bodyMat);
+                body.scale.set(1.05, 1, 2.8);
+                head.position.set(0, .4, 2.9);
+                beak.rotation.x = Math.PI / 2; beak.position.set(0, .3, 4.1);
+                tail.rotation.x = -Math.PI / 2; tail.scale.set(1.3, 1, .3); tail.position.set(0, .1, -3.5);
+                bird.add(body, head, beak, tail);
+                const wings = [1, -1].map(w => {
+                    const shoulder = new THREE.Group(), elbow = new THREE.Group();
+                    shoulder.position.set(w * .7, .3, .2);
+                    shoulder.scale.x = w;
+                    shoulder.add(new THREE.Mesh(inner, wingMat));
+                    elbow.position.x = 3.6;
+                    elbow.add(new THREE.Mesh(outer, wingMat));
+                    shoulder.add(elbow);
+                    bird.add(shoulder);
+                    return { shoulder, elbow, w }
+                });
+                // Formação em V com a líder (i=0) na frente, voando em direção ao jogador (+Z)
+                bird.userData = { wings, side, phase: Math.random() * 6.28, ox: side * row * 7,
+                    oy: ((row % 3) - 1) * 2.2 + (i % 2 ? .8 : 0), oz: -row * 8 };
+                bird.position.set(bird.userData.ox, bird.userData.oy, bird.userData.oz);
+                root.add(bird)
+            }
+        }
+
+        function updateGullFlock(a, dt) {
+            const root = a.eventRoot, p = airplane.position;
+            root.position.z += dt * GULL_SPEED;
+            const ahead = p.z - root.position.z;
+            // Enquanto está longe, a revoada acompanha a altura e a posição do jogador para vir direto nele
+            if (ahead > 170) {
+                const k = Math.min(1, 1.5 * dt);
+                root.position.x += (p.x - root.position.x) * k;
+                root.position.y += (Math.max(30, Math.min(150, p.y)) - root.position.y) * k
+            }
+            let nearest = 1e9;
+            root.children.forEach(bird => {
+                const u = bird.userData, wx = root.position.x + u.ox - p.x, wy = root.position.y + u.oy - p.y,
+                    dzb = p.z - (root.position.z + u.oz),
+                    t = Math.max(0, Math.min(1, 1 - (dzb - 25) / 120)), pf = t * t * (3 - 2 * t),
+                    dirX = wx === 0 ? u.side : Math.sign(wx), dirY = wy >= 0 ? 1 : -1,
+                    // Perto do avião, as gaivotas abrem para os lados (passam rente, sem acertar)
+                    pushX = Math.abs(wx) < 26 ? dirX * (26 - Math.abs(wx)) * pf : 0,
+                    pushY = Math.abs(wy) < 16 ? dirY * (16 - Math.abs(wy)) * .6 * pf : 0,
+                    flap = a.time * 7.5 + u.phase;
+                bird.position.set(u.ox + pushX, u.oy + pushY + Math.sin(a.time * 1.4 + u.phase) * 1.2, u.oz);
+                bird.rotation.set(0, (pushX / 26) * .4, -(pushX / 26) * .5);
+                u.wings.forEach(w => {
+                    w.shoulder.rotation.z = w.w * (Math.sin(flap) * .55 + .08);
+                    // o cotovelo fica dentro do ombro espelhado, então usa o mesmo sinal nas duas asas
+                    w.elbow.rotation.z = Math.sin(flap - .9) * .45 - .1
+                });
+                nearest = Math.min(nearest, Math.abs(dzb))
+            });
+            const closeness = Math.max(0, Math.min(1, 1 - Math.abs(ahead) / 650));
+            if (a.eventTime > a.chirpAt && engineRunning && ahead > -120) {
+                a.chirpAt = a.eventTime + .7 + Math.random() * .9;
+                const f0 = 1500 + Math.random() * 500;
+                _tone('sine', f0, f0 * 1.45, .14, .02 + .06 * closeness)
+            }
+            if (!root.userData.passed && nearest < 10) {
+                root.userData.passed = true;
+                playAirNoise(.6, .08, 2200, 0)
+            }
+        }
+
         function startScenicEvent(type) {
             if (mpActive || selectedGameMode === 'music' || !scene || !airplane || flightAtmosphere.event) return;
             if (type === 'aurora' && getAircraftNightFactor() < .45) type = 'migration';
             const a = flightAtmosphere;
             a.event = type; a.eventTime = 0; a.collected = false; a.chirpAt=0;
+            a.duration = type === 'hurricane' ? 10 + Math.random() * 10 : 0;
             specialEventDirector.activeType = type;
             specialEventDirector.lastType = type;
             a.eventRoot = new THREE.Group();
-            a.eventRoot.position.z = airplane.position.z - (type === 'thermal' ? 620 : 800);
+            a.eventRoot.position.z = airplane.position.z - (type === 'hurricane' ? 700 : type === 'migration' ? 650 : 800);
             const en = currentLanguage === 'en';
             let title, copy;
-            if (type === 'thermal') {
-                title = en ? 'THERMAL CURRENT' : 'CORRENTE TÉRMICA';
-                copy = en ? 'Cross the golden spiral to recover fuel' : 'Atravesse a espiral dourada para recuperar combustível';
-                const geo = new THREE.BufferGeometry(), points = [];
-                for(let i=0;i<160;i++) {
-                    const angle = i*.28, radius = 29 + Math.sin(i*.1)*5;
-                    points.push(Math.cos(angle)*radius,18+i*.9,Math.sin(angle)*radius)
-                }
-                geo.setAttribute('position',new THREE.Float32BufferAttribute(points,3));
-                const spiral = new THREE.Points(geo,new THREE.PointsMaterial({color:0xffd38a,size:2.5,
-                    transparent:true,opacity:.85,depthWrite:false}));
-                a.eventRoot.add(spiral)
+            if (type === 'hurricane') {
+                title = en ? 'HURRICANE' : 'FURACÃO';
+                copy = en ? 'The storm is chasing you and pulling you in!' : 'A tempestade te persegue e puxa para o centro!';
+                a.eventRoot.position.x = Math.max(-70, Math.min(70, airplane.position.x * .4 + (Math.random() * 2 - 1) * 45));
+                a.eventRoot.userData.hurricane = buildHurricane(a.eventRoot)
             } else if (type === 'migration') {
-                title = en ? 'MIGRATION ROUTE' : 'ROTA MIGRATÓRIA';
-                copy = en ? 'A flock shares the sky with you' : 'Uma revoada compartilha o céu com você';
-                const geometry = new THREE.BufferGeometry();
-                geometry.setAttribute('position',new THREE.Float32BufferAttribute([0,0,0,-6,1,-2,-2,0,-1,0,0,0,2,0,-1,6,1,-2],3));
-                geometry.computeVertexNormals();
-                const mat = new THREE.MeshStandardMaterial({color:0xced9db,roughness:1,side:THREE.DoubleSide,flatShading:true});
-                for(let i=0;i<15;i++) {
-                    const bird = new THREE.Mesh(geometry,mat), side = i%2 ? -1 : 1;
-                    bird.position.set(side*Math.ceil(i/2)*16,205 + (i%3)*3,-Math.ceil(i/2)*15);
-                    bird.userData.baseY = bird.position.y;
-                    a.eventRoot.add(bird)
-                }
+                title = en ? 'GULL FLOCK' : 'REVOADA DE GAIVOTAS';
+                copy = en ? 'A flock of gulls is flying straight at you' : 'Uma revoada de gaivotas vem na sua direção';
+                a.eventRoot.position.x = airplane.position.x;
+                a.eventRoot.position.y = Math.max(30, Math.min(150, airplane.position.y));
+                buildGullFlock(a.eventRoot)
             } else {
                 title = en ? 'AURORA' : 'AURORA BOREAL';
                 copy = en ? 'A quiet moment beneath the lights' : 'Um momento de calmaria sob as luzes';
@@ -5690,34 +5883,16 @@
             if (!a.eventRoot) return;
             a.eventTime += dt;
             if (a.eventTime > 6) document.getElementById('flightMoment').classList.remove('show');
-            if (a.event === 'thermal') {
-                a.eventRoot.rotation.y += dt*.6;
-                if (!a.collected && Math.abs(airplane.position.z-a.eventRoot.position.z)<35 &&
-                    Math.abs(airplane.position.x)<34 && airplane.position.y>18 && airplane.position.y<166) {
-                    a.collected=true; fuel=Math.min(100,fuel+25); targetY=Math.min(175,targetY+12);
-                    if(fuel>0) {fuelDepleted=false;fuelDepletedTimer=0}
-                    showFeedback(currentLanguage==='en'?'Thermal current · +25 fuel':'Corrente térmica · +25 combustível',true);
-                    playCollectSound()
-                }
-            } else if (a.event === 'migration') {
-                a.eventRoot.position.z -= dt*65;
-                a.eventRoot.position.x = Math.sin(a.eventTime*.12)*120;
-                a.eventRoot.children.forEach((bird,i)=>{
-                    bird.scale.y=.35+Math.abs(Math.sin(a.time*4+i*.7));
-                    bird.position.y=bird.userData.baseY+Math.sin(a.time*1.2+i)*2
-                });
-                if(a.eventTime>a.chirpAt && engineRunning && a.eventTime<8) {
-                    a.chirpAt=a.eventTime+2.4;
-                    _tone('sine',1250,1800,.13,.006)
-                }
-            } else {
+            if (a.event === 'hurricane') updateHurricane(a, dt);
+            else if (a.event === 'migration') updateGullFlock(a, dt);
+            else {
                 a.eventRoot.position.z = airplane.position.z-900;
                 a.eventRoot.children.forEach((ribbon,i)=>{
                     ribbon.material.opacity=Math.min(1,a.eventTime/3,(18-a.eventTime)/3)*(.22+Math.sin(a.time*.6+i)*.08);
                     ribbon.position.y=Math.sin(a.time*.3+i)*14
                 })
             }
-            if(a.eventTime>18 || (a.event !== 'aurora' && a.eventRoot.position.z>airplane.position.z+260)) {
+            if(a.eventTime>(a.duration||18) || (a.event !== 'aurora' && a.event !== 'hurricane' && a.eventRoot.position.z>airplane.position.z+260)) {
                 const type=a.event; disposeFlightGroup(a.eventRoot); a.eventRoot=null; a.event=null;
                 scheduleNextSpecialEvent(type,distance,true)
             }
@@ -5788,7 +5963,7 @@
         }
 
         function chooseNextSpecialEvent() {
-            const choices = ['alien','volcano','meteor','thermal','migration','aurora'].filter(type => type !== specialEventDirector.lastType),
+            const choices = ['alien','volcano','meteor','hurricane','migration','aurora'].filter(type => type !== specialEventDirector.lastType),
                 total = choices.reduce((sum, type) => sum + specialEventDirector.weights[type], 0);
             let roll = Math.random() * total;
             for (const type of choices) {
@@ -9196,6 +9371,86 @@ function checkCollisions() {
                     hub.add(_meshAt(new THREE.BoxGeometry(7, .4, .1), kM, 0, 0, .4));
                     return hub;
                 } },
+            { id: 'heli', name: 'Helicóptero Resgate', desc: 'Rotor potente e voo estável. Mais lento, mas muito manobrável.',
+                price: 4000, emoji: '🚁', rarity: 'Raro', rarityColor: '#3b82f6', stats: { speed: 2, agility: 4,
+                    fuel: 3 }, buildFn: function(col, par) {
+                    let bM = new THREE.MeshStandardMaterial({ color: col, roughness: .3, metalness: .15, flatShading: true }),
+                        wM = new THREE.MeshStandardMaterial({ color: 0xf1f5f9, roughness: .4, flatShading: true }),
+                        kM = new THREE.MeshStandardMaterial({ color: 0x1e293b, flatShading: true }),
+                        rM = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: .6, flatShading: true }),
+                        gM = new THREE.MeshStandardMaterial({ color: 0x7dd3fc, transparent: true, opacity: .6,
+                            roughness: .08 });
+                    // Corpo inteiro num grupo levemente inclinado: nariz (+Z) apontado um pouco para baixo,
+                    // como um helicóptero em voo de avanço. Deslocado em Z para o centro ficar perto do rotor.
+                    let body = new THREE.Group();
+                    body.rotation.x = .11;
+                    body.position.z = 2.6;
+                    par.add(body);
+                    let ell = (rx, ry, rz, m, x, y, z) => {
+                        let o = _meshAt(new THREE.SphereGeometry(1, 7, 5), m, x, y, z);
+                        o.scale.set(rx, ry, rz);
+                        return o;
+                    };
+                    // Cabine, vidro frontal, janelas laterais e cobertura do motor
+                    body.add(ell(2.5, 2.4, 4.6, bM, 0, 0, 1.5));
+                    body.add(ell(1.8, 1.45, 2.7, gM, 0, .75, 3.5));
+                    [-1, 1].forEach(s => { body.add(_meshAt(new THREE.BoxGeometry(.12, 1.1, 2.2), gM, s * 2.37,
+                        .6, .9)); });
+                    body.add(ell(1.7, 1.2, 2.8, kM, 0, 2, -.6));
+                    // Cauda: lança afunilada, deriva, estabilizador e rotor de cauda
+                    body.add(_meshAt(new THREE.CylinderGeometry(.34, 1.1, 10.4, 6), bM, 0, .5, -7.8,
+                        [-Math.PI / 2, 0, 0]));
+                    body.add(_meshAt(new THREE.BoxGeometry(.28, 3.8, 2.4), bM, 0, 2.3, -12.3, [-.38, 0, 0]));
+                    body.add(_meshAt(new THREE.BoxGeometry(5.2, .2, 1.7), wM, 0, .8, -11.4));
+                    let tailRotor = new THREE.Group();
+                    tailRotor.position.set(.55, 2.6, -12.6);
+                    body.add(tailRotor);
+                    let tailHub = _meshAt(new THREE.CylinderGeometry(.25, .25, .3, 6), kM, 0, 0, 0, [0, 0, Math.PI / 2]),
+                        tailBladeA = _meshAt(new THREE.BoxGeometry(.1, 3, .32), rM),
+                        tailBladeB = _meshAt(new THREE.BoxGeometry(.1, .32, 3), rM);
+                    [tailHub, tailBladeA, tailBladeB].forEach(m => { m.userData.ignoreAirplaneCollider = true;
+                        tailRotor.add(m); });
+                    // Asas curtas com flutuadores nas pontas
+                    body.add(_meshAt(new THREE.BoxGeometry(9.4, .26, 2), bM, 0, -.55, 1));
+                    [-1, 1].forEach(s => {
+                        body.add(_meshAt(new THREE.CylinderGeometry(.42, .42, 2.8, 6), kM, s * 4.6, -.7, 1,
+                            [Math.PI / 2, 0, 0]));
+                        // Esquis de pouso com hastes e ponta dianteira levantada
+                        body.add(_meshAt(new THREE.BoxGeometry(.26, .26, 8.2), kM, s * 2.4, -2.4, 1.2));
+                        body.add(_meshAt(new THREE.BoxGeometry(.26, .26, 1.2), kM, s * 2.4, -2.06, 5.8,
+                            [-.6, 0, 0]));
+                        [3, -1].forEach(z => { body.add(_meshAt(new THREE.BoxGeometry(.22, 1.95, .22), kM,
+                            s * 1.95, -1.55, z, [0, 0, s * .49])); });
+                    });
+                    // Mastro e rotor principal (4 pás). As pás giram sozinhas por tempo (onBeforeRender),
+                    // assim funcionam no jogo, no lobby e na loja sem depender do loop de cada tela.
+                    body.add(_meshAt(new THREE.CylinderGeometry(.32, .45, 1.7, 6), kM, 0, 3.15, -.4));
+                    let rotor = new THREE.Group();
+                    rotor.position.set(0, 4.05, -.4);
+                    rotor.rotation.x = -Math.PI / 2;
+                    body.add(rotor);
+                    let head = _meshAt(new THREE.CylinderGeometry(.6, .6, .5, 6), kM, 0, 0, 0, [Math.PI / 2, 0, 0]);
+                    head.userData.ignoreAirplaneCollider = true;
+                    rotor.add(head);
+                    let mainBlade = null;
+                    for (let i = 0; i < 4; i++) {
+                        let arm = new THREE.Group();
+                        arm.rotation.z = i * Math.PI / 2;
+                        let blade = _meshAt(new THREE.BoxGeometry(11.8, .75, .12), rM, 6.4, 0, 0),
+                            tip = _meshAt(new THREE.BoxGeometry(1.4, .76, .13), wM, 11.6, 0, 0);
+                        blade.userData.ignoreAirplaneCollider = true;
+                        tip.userData.ignoreAirplaneCollider = true;
+                        arm.add(blade, tip);
+                        rotor.add(arm);
+                        if (!mainBlade) mainBlade = blade;
+                    }
+                    mainBlade.onBeforeRender = function() { rotor.rotation.z = performance.now() * .032; };
+                    tailBladeA.onBeforeRender = function() { tailRotor.rotation.x = performance.now() * .05; };
+                    // Hub "vazio" devolvido ao jogo (o loop só gira o .rotation.z dele; sem efeito visual)
+                    let hub = new THREE.Group();
+                    par.add(hub);
+                    return hub;
+                } },
             { id: 'ww2', name: 'Spitfire Vintage', desc: 'Lenda da Segunda Guerra. Motor Merlin.', price: 6000,
                 emoji: '⚡', rarity: 'Épico', rarityColor: '#8b5cf6', stats: { speed: 4, agility: 3, fuel: 3 },
                 buildFn: function(col, par) {
@@ -9410,7 +9665,7 @@ function checkCollisions() {
                 dl.position.set(5, 8, 5);
                 s.add(dl);
                 let cam = new THREE.PerspectiveCamera(40, 110 / 90, .1, 200);
-                let dists = { biplane: 28, acrobatic: 28, ww2: 30, jet: 32, f22: 34 };
+                let dists = { biplane: 28, acrobatic: 28, heli: 36, ww2: 30, jet: 32, f22: 34 };
                 let d = dists[plane.id] || 28;
                 cam.position.set(-d * .4, d * .18, d * .7);
                 cam.lookAt(0, 0, 0);
