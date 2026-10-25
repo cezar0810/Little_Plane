@@ -9,11 +9,20 @@
     const video = $("video.html5-main-video") || $("video");
     const title = ($("h1.ytd-watch-metadata yt-formatted-string")?.textContent ||
       $("ytmusic-player-bar .title")?.textContent ||
-      $("title")?.textContent?.replace(/\s*-\s*YouTube.*$/i, "") || "").trim();
+      $("ytmusic-player-bar .title yt-formatted-string")?.textContent ||
+      $("meta[property='og:title']")?.content ||
+      $("title")?.textContent?.replace(/\\s*-\\s*YouTube.*$/i, "") || "").trim();
     const channel = ($("#owner #channel-name a")?.textContent ||
       $("ytmusic-player-bar .byline a")?.textContent ||
+      $("ytmusic-player-bar .subtitle yt-formatted-string")?.textContent ||
       $("ytd-channel-name a")?.textContent || "").trim();
-    const thumbnail = $("meta[property='og:image']")?.content ||
+    const videoId = new URL(location.href).searchParams.get("v");
+    const musicArtwork = $("ytmusic-player-bar img.image")?.src ||
+      $("ytmusic-player-bar .thumbnail img")?.src ||
+      $("ytmusic-player .image img")?.src || "";
+    const youtubeArtwork = videoId ? "https://i.ytimg.com/vi/" + encodeURIComponent(videoId) + "/hqdefault.jpg" : "";
+    const thumbnail = musicArtwork || (location.hostname === "www.youtube.com" ? youtubeArtwork : "") ||
+      $("meta[property='og:image']")?.content ||
       $("link[itemprop='thumbnailUrl']")?.href || "";
     return {
       available:!!title && !!video,
