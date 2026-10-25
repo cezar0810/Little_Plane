@@ -38,8 +38,8 @@
     (document.head || document.documentElement).appendChild(style);
     lobby.appendChild(notice);
     notice.querySelector("#lpRadioInstallAction").addEventListener("click", () => {
-      const text = "Para ativar a Rádio do YouTube no Little Plane:\n1. Baixe o repositório do jogo pelo GitHub (Code > Download ZIP).\n2. Extraia o ZIP.\n3. No Chrome, abra chrome://extensions e ative o Modo do desenvolvedor.\n4. Clique em Carregar sem compactação e selecione a pasta extension dentro do projeto.\n5. Recarregue o Little Plane e deixe uma aba do YouTube aberta.\n\nProjeto: https://github.com/cezar0810/Little_Plane/tree/main/extension";
-      window.open("https://github.com/cezar0810/Little_Plane/tree/main/extension", "_blank", "noopener");
+      const text = "Para ativar a Rádio do YouTube no Little Plane:\n1. Baixe o repositório do jogo pelo GitHub (Code > Download ZIP).\n2. Extraia o ZIP.\n3. No Chrome, abra chrome://extensions e ative o Modo do desenvolvedor.\n4. Clique em Carregar sem compactação e selecione a pasta extension dentro do projeto.\n5. Recarregue o Little Plane e deixe uma aba do YouTube aberta.\n\nProjeto: https://github.com/cezar0810/Little_Plane/tree/feature/youtube-radio-extension/extension";
+      window.open("https://github.com/cezar0810/Little_Plane/tree/feature/youtube-radio-extension/extension", "_blank", "noopener");
       alert(text);
     });
   }
