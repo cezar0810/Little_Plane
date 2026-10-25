@@ -797,8 +797,7 @@
         }
 
         #rankPromotionText {
-            display: none;            margin-top: 3px;
-            color: #fde68a;
+            display: none;            margin-top: 3px;            color: #fde68a;
             font-size: .7rem;
             font-weight: 900
         }
@@ -1597,8 +1596,7 @@
         .missions-title { margin: 0; font-size: clamp(1.8rem,5vw,2.55rem); line-height: 1; font-weight: 900 }
         .missions-subtitle { margin: 5px 0 0; color: #94a3b8; font-size: .75rem; font-weight: 700 }
         .missions-close { width: 39px; height: 39px; flex: 0 0 auto; border: 1px solid rgba(255,255,255,.12); border-radius: 12px; color: #cbd5e1; background: rgba(255,255,255,.07); cursor: pointer; font-weight: 900 }        .missions-summary { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 14px; padding: 10px 12px; border-radius: 14px; background: rgba(2,6,23,.42); border: 1px solid rgba(255,255,255,.07) }
-        #missionsDailyCount { color: #e2e8f0; font-size: .7rem; font-weight: 900 }
-        #missionsResetText { color: #64748b; font-size: .62rem; font-weight: 800 }
+        #missionsDailyCount { color: #e2e8f0; font-size: .7rem; font-weight: 900 }        #missionsResetText { color: #64748b; font-size: .62rem; font-weight: 800 }
         #missionsList { display: grid; gap: 10px; margin-top: 11px }
         .mission-row { display: grid; grid-template-columns: 43px minmax(0,1fr) auto; align-items: center; gap: 11px; padding: 11px; border: 1px solid rgba(255,255,255,.09); border-radius: 16px; background: rgba(255,255,255,.042) }
         .mission-row.complete { border-color: rgba(52,211,153,.35); background: rgba(6,78,59,.16) }
@@ -2397,8 +2395,7 @@
             <div class="battle-actions">
                 <button class="battle-btn" onclick="battleCreateRoom()">⚔️ Criar batalha</button>
                 <button class="battle-btn join" onclick="battleOpenJoin()">🔑 Entrar por código</button>
-                <button class="battle-btn ghost" onclick="closeBattleModal()">✕ Voltar</button>
-            </div>
+                <button class="battle-btn ghost" onclick="closeBattleModal()">✕ Voltar</button>            </div>
         </div>
         <div class="battle-card" id="battleCardCreate" style="display:none">
             <h2 class="battle-title">Sala de combate</h2>
@@ -3197,8 +3194,7 @@
             const screen = document.getElementById('missionsScreen');
             if (!screen) return;
             renderDailyMissions();
-            screen.classList.add('open');
-            screen.setAttribute('aria-hidden', 'false')
+            screen.classList.add('open');            screen.setAttribute('aria-hidden', 'false')
         }
 
         function closeMissionsScreen() {
@@ -3989,19 +3985,18 @@
             if (pm) pm.innerHTML = icon + ' MÚSICA'
         }
 
-        // Uma página comum não pode consultar a sessão de mídia de outros aplicativos. Este adaptador
-        // só revela o rádio quando um empacotador desktop fornecer um estado real pela ponte abaixo.
+        // A extensão do navegador fornece o estado da aba do YouTube pela ponte abaixo.
+        // Mantemos a rádio visível mesmo quando a faixa está pausada, para permitir retomar pelo jogo.
         const pcRadioState = {
             available: false, isPlaying: false, title: '', artist: '', source: 'RÁDIO DO PC',
             coverUrl: '', renderedCoverUrl: '', position: 0, duration: 0, playbackRate: 1, updatedAt: 0
         };
         let pcRadioCoverToken = 0, pcRadioPollTimer = null;
 
-        function isDesktopRadioDevice() {
-            return !!window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches
+        function isDesktopRadioDevice() {            return !!window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches
         }
 
-        function isExternalMediaPlaying() { return pcRadioState.available && pcRadioState.isPlaying }
+        function isExternalMediaPlaying() { return pcRadioState.available }
 
         function formatRadioTime(seconds) {
             const safe = Math.max(0, Math.floor(Number(seconds) || 0));
@@ -4797,8 +4792,7 @@
                 ring: new THREE.TorusGeometry(10.5, 1.45, 8, 32),
                 halo: new THREE.TorusGeometry(13.2, .34, 6, 32),
                 core: new THREE.TorusGeometry(8.2, .2, 5, 28),
-                tick: new THREE.BoxGeometry(2.4, .8, .85)
-            };
+                tick: new THREE.BoxGeometry(2.4, .8, .85)            };
             return musicRingAssets
         }
 
@@ -5597,8 +5591,7 @@
             a.root = new THREE.Group();
             a.clouds = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1,1), M.cloud, 72);
             a.clouds.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-            a.clouds.frustumCulled = false;
-            a.root.add(a.clouds);
+            a.clouds.frustumCulled = false;            a.root.add(a.clouds);
             for (let i=0;i<18;i++) a.banks.push({ x: (i%3-1)*470 + Math.random()*180-90,
                 y: 305 + Math.random()*105, z: airplane.position.z + 180-Math.floor(i/3)*330,
                 phase: Math.random()*6.28, size: 35+Math.random()*20 });
@@ -6397,8 +6390,7 @@
                     (entity.type === 'blimp' ? 30 : 28),
                     halfWidth = entity.type === 'mountain' && entity.mWidth && entity.mDepth ?
                     Math.abs(Math.cos(rotation)) * entity.mWidth * .5 + Math.abs(Math.sin(rotation)) * entity.mDepth * .5 :
-                    (entity.radius || entity.colRadius || 24),
-                    overlapsDepth = Math.abs(entity.mesh.position.z - volcanoZ) < 135 + halfDepth,
+                    (entity.radius || entity.colRadius || 24),                    overlapsDepth = Math.abs(entity.mesh.position.z - volcanoZ) < 135 + halfDepth,
                     overlapsRoute = Math.abs(entity.mesh.position.x) < 175 + halfWidth;
                 if (!overlapsDepth || !overlapsRoute) continue;
                 if (entity.type === 'mountain') {
@@ -7197,8 +7189,7 @@ class DayNightManager {
         });
         this.sunHaloMesh = new THREE.Mesh(haloGeo, this.sunHaloMaterial);
         this.sunHaloMesh.position.z = -2;
-        this.sunGroup.add(this.sunHaloMesh);
-        this.sunGroup.name = 'DayNightSunGroup';
+        this.sunGroup.add(this.sunHaloMesh);        this.sunGroup.name = 'DayNightSunGroup';
         this.scene.add(this.sunGroup);
     }
 
@@ -7997,8 +7988,7 @@ function _obstacleMountainDims(b, central, rng) {
                 fuelLockActive = true;
                 fuelLockTimer = 20;
                 fuelDepleted = false;
-                fuelDepletedTimer = 0;
-                advanceMissionProgress('fuel_ring', 1);
+                fuelDepletedTimer = 0;                advanceMissionProgress('fuel_ring', 1);
             }
             if (typeof playCollectSound === 'function') playCollectSound();
             if (typeof showFeedback === 'function') showFeedback(e.kind === 'shield' ? '🛡️ Escudo ativado!' :
@@ -8797,8 +8787,7 @@ function _obstacleMountainDims(b, central, rng) {
         function handleImpact(crashMsg) {
             if (shieldActive) {
                 if (impactFeedbackCooldown <= 0) { impactFeedbackCooldown = .8;
-                    showFeedback('🛡️ Escudo protegeu!', true); }
-                return false;
+                    showFeedback('🛡️ Escudo protegeu!', true); }                return false;
             }
             if (mpActive) { mpHandleLocalCrash(); } else { triggerGameOver(crashMsg); }
             return true;
@@ -9597,8 +9586,7 @@ function checkCollisions() {
                 card.appendChild(prev);
                 let info = document.createElement('div');
                 info.style.cssText = 'flex:1;min-width:0';
-                info.innerHTML =
-                    `<div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.2rem"><span style="font-size:1.1rem">${p.emoji}</span><span style="font-size:1rem;font-weight:900;color:#f1f5f9">${p.name}</span><span style="font-size:.65rem;font-weight:800;padding:2px 7px;border-radius:20px;background:${p.rarityColor}22;color:${p.rarityColor};border:1px solid ${p.rarityColor}44">${p.rarity}</span></div><p style="font-size:.7rem;color:#94a3b8;margin-bottom:.55rem">${p.desc}</p><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.3rem .6rem;margin-bottom:.6rem"><div><div style="font-size:.6rem;color:#64748b;font-weight:700">VELOC.</div>${star(p.stats.speed,5,'#f59e0b')}</div><div><div style="font-size:.6rem;color:#64748b;font-weight:700">AGILID.</div>${star(p.stats.agility,5,'#3b82f6')}</div><div><div style="font-size:.6rem;color:#64748b;font-weight:700">COMBUST.</div>${star(p.stats.fuel,5,'#22c55e')}</div></div>${!o ? `<div style="font-size:.75rem;color:${ca ? '#fbbf24' : '#ef4444'};font-weight:800">💰 ${p.price} moedas ${ca ? '' : ' (insuficiente)'}</div>` : ''}`;
+                info.innerHTML =                    `<div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.2rem"><span style="font-size:1.1rem">${p.emoji}</span><span style="font-size:1rem;font-weight:900;color:#f1f5f9">${p.name}</span><span style="font-size:.65rem;font-weight:800;padding:2px 7px;border-radius:20px;background:${p.rarityColor}22;color:${p.rarityColor};border:1px solid ${p.rarityColor}44">${p.rarity}</span></div><p style="font-size:.7rem;color:#94a3b8;margin-bottom:.55rem">${p.desc}</p><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.3rem .6rem;margin-bottom:.6rem"><div><div style="font-size:.6rem;color:#64748b;font-weight:700">VELOC.</div>${star(p.stats.speed,5,'#f59e0b')}</div><div><div style="font-size:.6rem;color:#64748b;font-weight:700">AGILID.</div>${star(p.stats.agility,5,'#3b82f6')}</div><div><div style="font-size:.6rem;color:#64748b;font-weight:700">COMBUST.</div>${star(p.stats.fuel,5,'#22c55e')}</div></div>${!o ? `<div style="font-size:.75rem;color:${ca ? '#fbbf24' : '#ef4444'};font-weight:800">💰 ${p.price} moedas ${ca ? '' : ' (insuficiente)'}</div>` : ''}`;
                 card.appendChild(info);
                 let btn = document.createElement('button');
                 btn.style.cssText =
@@ -10397,8 +10385,7 @@ function checkCollisions() {
             mpCommitResult(winnerId, 'crash')
         }
 
-        function mpEndRace(isWinner, reason = 'finish') { if (mpRaceEnded) return;
-            mpRaceEnded = true;
+        function mpEndRace(isWinner, reason = 'finish') { if (mpRaceEnded) return;            mpRaceEnded = true;
             mpActive = false;
             competitiveStopBackground();
             mpStopLocalSimulation(false);
@@ -11197,8 +11184,7 @@ function checkCollisions() {
                     !room.players?.player1?.ready || !room.players?.player2?.ready ||
                     !room.players.player1.connected || !room.players.player2.connected) return;
                 await battleMyRef.update({started:true,timestamp:Date.now()+battleServerOffset});
-                if(session!==battleSession) return
-            }catch(error){battleAbortMatch('Não foi possível iniciar a batalha.');return}
+                if(session!==battleSession) return            }catch(error){battleAbortMatch('Não foi possível iniciar a batalha.');return}
             battleStarted=true; clearTimeout(battleWaitTimer);
             battlePreparing = false;
             battleActive = true;            battleEnded = false;
@@ -11997,8 +11983,7 @@ function checkCollisions() {
                     battleAccumulator += elapsed;
                     let steps = 0;
                     while (battleAccumulator + 1e-8 >= BATTLE_FIXED_DT && steps < 485 && battleActive &&
-                        !battleResultSubmitting) {
-                        battleSimulate(BATTLE_FIXED_DT);
+                        !battleResultSubmitting) {                        battleSimulate(BATTLE_FIXED_DT);
                         battleAccumulator -= BATTLE_FIXED_DT;
                         steps++                    }
                 } else if (mpActive && gameActive && !mpRaceEnded) {
@@ -12261,5 +12246,3 @@ function checkCollisions() {
         document.body.addEventListener('click', tryPlayMusic, { once: true });
     </script>
 </body>
-
-</html>
