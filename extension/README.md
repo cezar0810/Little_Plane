@@ -1,29 +1,51 @@
 # Little Plane — Rádio do YouTube
 
-Extensão Manifest V3 para conectar a rádio do Little Plane à aba aberta do YouTube ou YouTube Music.
+Extensão Chrome (Manifest V3) que conecta a rádio do Little Plane à música que já está tocando em uma aba do YouTube ou YouTube Music.
 
-## O que faz
-- Detecta uma aba aberta do YouTube/YouTube Music.
-- Lê título, canal, miniatura, duração, posição e estado de reprodução da faixa.
-- Mostra os metadados na rádio do jogo durante o Voo Livre.
-- Os botões da rádio tentam controlar a aba original: anterior, play/pause e próxima.
+## Recursos
 
-## Instalação local (Chrome)
-1. Baixe o ZIP da branch [feature/youtube-radio-extension](https://github.com/cezar0810/Little_Plane/archive/refs/heads/feature/youtube-radio-extension.zip) e extraia.
-2. Abra `chrome://extensions`.
-3. Ative **Modo do desenvolvedor**.
-4. Clique em **Carregar sem compactação** e selecione a pasta `extension` extraída.
-5. Abra ou recarregue o Little Plane em https://little-plane.cezaraugust76.workers.dev/.
-6. Deixe uma aba do YouTube ou YouTube Music aberta.
+- Detecta a faixa atual e atualiza título, canal e capa quando a música muda.
+- Mostra controles de faixa anterior, reproduzir/pausar e próxima.
+- Interface da rádio usa ícones SVG próprios, sem depender de emojis ou fontes de ícones instaladas no computador.
+- A comunicação da extensão com o jogo ocorre localmente no navegador.
 
-## Domínios autorizados
-A extensão está configurada para o domínio de produção `little-plane.cezaraugust76.workers.dev`, o domínio de teste `little-plane-test.pages.dev` e desenvolvimento local (`localhost` / `127.0.0.1`).
+## Instalação para teste (manual)
 
-## Limitações
-- Se houver várias abas do YouTube, prioriza a aba ativa; caso nenhuma esteja ativa, usa a mais recentemente acessada.
-- Os seletores do YouTube podem mudar com atualizações do site.
-- Não acessa contas, cookies nem credenciais. Só lê informações da faixa na página aberta e envia comandos básicos de mídia.
-- Esta versão é instalada manualmente; ainda não foi publicada na Chrome Web Store.
+> Esta é a instalação de desenvolvimento. Para o público geral, o objetivo é publicar na Chrome Web Store, onde a instalação será feita com um clique.
 
-## Segurança e privacidade
-A extensão não envia dados para servidores externos. A comunicação entre a extensão e o jogo ocorre localmente no navegador.
+1. Baixe o ZIP desta branch: [Baixar Little Plane — Rádio do YouTube](https://github.com/cezar0810/Little_Plane/archive/refs/heads/feature/youtube-radio-extension.zip).
+2. Extraia o arquivo ZIP.
+3. No Chrome, abra `chrome://extensions`.
+4. Ative **Modo do desenvolvedor**.
+5. Clique em **Carregar sem compactação** e selecione a pasta `extension` que está dentro da pasta extraída.
+6. Abra ou recarregue o jogo: https://little-plane.cezaraugust76.workers.dev/
+7. Abra uma aba do YouTube ou YouTube Music e reproduza uma faixa.
+8. Entre no modo **Voo Livre** para ver o player.
+
+## Atualização de uma versão instalada manualmente
+
+1. Baixe e extraia o ZIP mais recente.
+2. Em `chrome://extensions`, encontre **Little Plane — Rádio do YouTube** e clique em **Recarregar** ou remova a versão antiga e carregue a pasta `extension` nova.
+3. Recarregue a aba do jogo e a aba do YouTube.
+
+## Compatibilidade
+
+- Site oficial: `https://little-plane.cezaraugust76.workers.dev/`
+- Site de teste: `https://little-plane-test.pages.dev/`
+- Desenvolvimento local: `localhost` e `127.0.0.1`
+
+## Privacidade
+
+A extensão não envia o histórico de navegação nem dados da faixa para um servidor externo. Ela consulta o título, canal, capa e estado de reprodução da página aberta do YouTube/YouTube Music e envia comandos básicos de mídia. Não lê cookies, senhas ou credenciais.
+
+## Publicação na Chrome Web Store
+
+A publicação ainda precisa ser concluída pelo proprietário da conta de desenvolvedor. Antes do envio, revisar:
+
+- Criar/confirmar a conta de desenvolvedor e ativar a verificação em duas etapas.
+- Preparar ícones e capturas de tela oficiais para a página da loja.
+- Preencher a descrição, categoria e a seção de privacidade no painel.
+- Declarar apenas as permissões necessárias e explicar por que a extensão acessa as páginas do YouTube e do Little Plane.
+- Enviar o pacote ZIP para análise. A loja publica depois da aprovação.
+
+Documentação oficial: https://developer.chrome.com/docs/webstore/publish/
