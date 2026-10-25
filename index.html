@@ -1891,7 +1891,14 @@
             font-family: 'Baloo 2',cursive
         }
         #pcRadioPlayer.show { display: grid }
-        #pcRadioCover { width: 62px; height: 62px; border-radius: 11px; background: #111827; image-rendering: pixelated; image-rendering: crisp-edges; box-shadow: inset 0 0 0 1px rgba(255,255,255,.08) }
+        #pcRadioCover { width: 62px; height: 62px; display: block; border-radius: 11px; background: #111827; image-rendering: pixelated; image-rendering: crisp-edges; object-fit: cover; box-shadow: 0 5px 14px rgba(0,0,0,.3), inset 0 0 0 1px rgba(255,255,255,.12) }
+        .pc-radio-status-icon { width: 17px; height: 17px; fill: none; stroke: #67e8f9; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; opacity: .9 }
+        .pc-radio-control { appearance: none; -webkit-appearance: none; flex: 0 0 28px; width: 28px; height: 27px; display: inline-grid; place-items: center; padding: 0; border: 1px solid rgba(148,163,184,.2); border-radius: 8px; color: #e2e8f0; background: rgba(255,255,255,.075); cursor: pointer; line-height: 1; transition: color .12s, background .12s, border-color .12s, transform .12s }
+        .pc-radio-control svg { width: 16px; height: 16px; display: block; overflow: visible; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; pointer-events: none }
+        .pc-radio-control:hover { color: #fff; border-color: rgba(125,211,252,.55); background: rgba(125,211,252,.18) }
+        .pc-radio-control:active { transform: scale(.92) }
+        .pc-radio-control:focus-visible { outline: 2px solid #67e8f9; outline-offset: 2px }
+        #pcRadioToggle svg { width: 15px; height: 15px }
         .pc-radio-main { min-width: 0 }
         .pc-radio-top { display: flex; align-items: center; justify-content: space-between; gap: 8px }
         #pcRadioSource { color: #67e8f9; font-size: .54rem; letter-spacing: .14em; font-weight: 900; text-transform: uppercase }
@@ -1901,9 +1908,7 @@
         #pcRadioProgressFill { width: 0; height: 100%; border-radius: inherit; background: linear-gradient(90deg,#38bdf8,#a78bfa) }
         .pc-radio-bottom { display: flex; align-items: center; justify-content: space-between; margin-top: 3px }
         #pcRadioTime { color: #64748b; font-size: .55rem; font-weight: 800 }
-        .pc-radio-controls { display: flex; align-items: center; gap: 3px }
-        .pc-radio-control { width: 24px; height: 21px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 7px; color: #cbd5e1; background: rgba(255,255,255,.065); cursor: pointer; font-size: .65rem }
-        .pc-radio-control:hover { color: #fff; background: rgba(125,211,252,.16) }
+        .pc-radio-controls { display: flex; align-items: center; gap: 5px }
 
         body.music-game #gameHUD > div:first-child > div { border-color: rgba(232,121,249,.35) }
         body.music-game #gameHUD > div:first-child > div:nth-child(2) { background: rgba(46,16,101,.84) }
@@ -2119,6 +2124,15 @@
         .lobby-side-action:hover .lobby-side-icon {color:#fff0cc}
         .game-mode-card {border-color:#b7cddd38;box-shadow:0 12px 26px #0003}
         .game-mode-card:focus-visible,button:focus-visible{outline:3px solid #8bdff7;outline-offset:4px}
+    
+        /* ========== AVISO OPCIONAL: RÁDIO DO YOUTUBE ========== */
+        #littlePlaneRadioInstall{position:absolute;left:50%;top:27%;transform:translateX(-50%);z-index:80;display:flex;align-items:center;gap:11px;width:min(390px,calc(100vw - 28px));box-sizing:border-box;padding:11px 13px;border:1px solid #67e8f955;border-radius:17px;color:#eafaff;background:linear-gradient(120deg,#0b1728ee,#15223cee);box-shadow:0 12px 35px #0007,0 0 24px #22d3ee16;font-family:system-ui,sans-serif;backdrop-filter:blur(12px)}
+        .lp-radio-install-icon{flex:0 0 37px;width:37px;height:37px;display:grid;place-items:center;border-radius:12px;background:#22d3ee18;color:#67e8f9;font-size:24px;font-weight:900}
+        .lp-radio-install-copy{min-width:0;flex:1}.lp-radio-install-copy strong{display:block;font-size:10px;letter-spacing:.13em;color:#67e8f9}.lp-radio-install-copy span{display:block;margin-top:3px;font-size:11px;line-height:1.3;color:#cbd5e1}
+        #lpRadioInstallAction{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border:0;border-radius:10px;padding:9px 10px;background:#67e8f9;color:#082032;font-size:10px;font-weight:900;white-space:nowrap;cursor:pointer}
+        @media(max-width:520px){#littlePlaneRadioInstall{top:23%;gap:8px;padding:9px}.lp-radio-install-icon{display:none}#lpRadioInstallAction{font-size:9px;padding:8px}}
+        @media(max-height:620px){#littlePlaneRadioInstall{top:20%;transform:translateX(-50%) scale(.9);transform-origin:top center}}
+
     </style>
 </head>
 
@@ -2151,6 +2165,14 @@
         <canvas id="lobbyBgCanvas" class="absolute inset-0 w-full h-full" style="filter:blur(4px) brightness(0.3) saturate(0.55)"></canvas>
         <canvas id="lobbyPlaneCanvas" class="absolute inset-0 w-full h-full pointer-events-none"></canvas>
         <div id="lobbyBannerContainer"></div>
+        <aside id="littlePlaneRadioInstall" aria-label="Rádio do YouTube">
+            <div class="lp-radio-install-icon" aria-hidden="true">♫</div>
+            <div class="lp-radio-install-copy">
+                <strong>RÁDIO DO YOUTUBE</strong>
+                <span id="lpRadioInstallText">Quer ouvir sua própria música durante o voo? Instale a extensão gratuita.</span>
+            </div>
+            <a id="lpRadioInstallAction" href="https://github.com/cezar0810/Little_Plane/tree/main/extension" target="_blank" rel="noopener noreferrer">COMO ATIVAR</a>
+        </aside>
         <div id="lobbyLogo"><img src="logo.png" alt="Logo" style="width:100%" onerror="this.style.display='none'"></div>
         <div class="absolute top-3 left-3 z-2">
             <div class="text-white font-extrabold shadow-2xl" style="background:#e8a200;border-radius:50% 45% 55% 40%/55% 50% 45% 50%;padding:18px 28px 22px 24px;min-width:170px">
@@ -2487,12 +2509,12 @@
             <div id="meteorIndicator"><span>☄️</span><span id="meteorTimerText">CHUVA DE METEOROS</span></div>
         </div>
         <div id="pcRadioPlayer" aria-live="polite">
-            <canvas id="pcRadioCover" width="32" height="32" aria-label="Capa pixelada da música"></canvas>
+            <canvas id="pcRadioCover" width="300" height="300" aria-label="Capa da música atual"></canvas>
             <div class="pc-radio-main">
-                <div class="pc-radio-top"><span id="pcRadioSource">RÁDIO DO PC</span><span aria-hidden="true">▮▮▯</span></div>
+                <div class="pc-radio-top"><span id="pcRadioSource">RÁDIO DO PC</span><svg class="pc-radio-status-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10v4m4-7v10m4-13v16m4-12v8m4-5v2"/></svg></div>
                 <span id="pcRadioTitle">Música atual</span><span id="pcRadioArtist">Artista</span>
                 <div class="pc-radio-progress"><div id="pcRadioProgressFill"></div></div>
-                <div class="pc-radio-bottom"><span id="pcRadioTime">0:00 / 0:00</span><span class="pc-radio-controls"><button id="pcRadioPrevious" class="pc-radio-control" aria-label="Música anterior">◀◀</button><button id="pcRadioToggle" class="pc-radio-control" aria-label="Pausar música">Ⅱ</button><button id="pcRadioNext" class="pc-radio-control" aria-label="Próxima música">▶▶</button></span></div>
+                <div class="pc-radio-bottom"><span id="pcRadioTime">0:00 / 0:00</span><span class="pc-radio-controls"><button type="button" id="pcRadioPrevious" class="pc-radio-control" aria-label="Música anterior" title="Música anterior"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5v14M19 6 8 12l11 6V6Z"/></svg></button><button type="button" id="pcRadioToggle" class="pc-radio-control" aria-label="Pausar música" title="Pausar ou continuar música"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg></button><button type="button" id="pcRadioNext" class="pc-radio-control" aria-label="Próxima música" title="Próxima música"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 5v14M5 6l11 6-11 6V6Z"/></svg></button></span></div>
             </div>
         </div>
         <div id="mobileControls" class="pointer-events-auto flex justify-between items-end w-full px-2 pb-2">
@@ -3976,19 +3998,19 @@
             if (pm) pm.innerHTML = icon + ' MÚSICA'
         }
 
-        // Uma página comum não pode consultar a sessão de mídia de outros aplicativos. Este adaptador
-        // só revela o rádio quando um empacotador desktop fornecer um estado real pela ponte abaixo.
+        // A extensão do navegador fornece o estado da aba do YouTube pela ponte abaixo.
+        // Mantemos a rádio visível mesmo quando a faixa está pausada, para permitir retomar pelo jogo.
         const pcRadioState = {
             available: false, isPlaying: false, title: '', artist: '', source: 'RÁDIO DO PC',
             coverUrl: '', renderedCoverUrl: '', position: 0, duration: 0, playbackRate: 1, updatedAt: 0
         };
-        let pcRadioCoverToken = 0, pcRadioPollTimer = null;
+        let pcRadioCoverToken = 0, pcRadioPollTimer = null, pcRadioPollInFlight = false;
 
         function isDesktopRadioDevice() {
             return !!window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches
         }
 
-        function isExternalMediaPlaying() { return pcRadioState.available && pcRadioState.isPlaying }
+        function isExternalMediaPlaying() { return pcRadioState.available }
 
         function formatRadioTime(seconds) {
             const safe = Math.max(0, Math.floor(Number(seconds) || 0));
@@ -3998,37 +4020,36 @@
         function drawRadioPlaceholder() {
             const canvas = document.getElementById('pcRadioCover');
             if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            ctx.imageSmoothingEnabled = false;
-            ctx.fillStyle = '#111827';
-            ctx.fillRect(0, 0, 32, 32);
-            ctx.fillStyle = '#334155';
-            for (let y = 0; y < 32; y += 8) for (let x = (y / 8 % 2) * 8; x < 32; x += 16)
-                ctx.fillRect(x, y, 8, 8);
-            ctx.fillStyle = '#67e8f9';
-            ctx.fillRect(14, 8, 4, 13);
-            ctx.fillRect(18, 7, 7, 4);
-            ctx.fillRect(10, 19, 8, 6);
-            ctx.fillRect(20, 17, 7, 6)
+            const ctx = canvas.getContext('2d'), size = canvas.width || 256;
+            ctx.clearRect(0, 0, size, size);
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#0f172a'); gradient.addColorStop(1, '#164e63');
+            ctx.fillStyle = gradient; ctx.fillRect(0, 0, size, size);
+            ctx.strokeStyle = '#67e8f9'; ctx.lineWidth = 12; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+            ctx.beginPath(); ctx.moveTo(size * .59, size * .23); ctx.lineTo(size * .59, size * .67); ctx.lineTo(size * .43, size * .67); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(size * .59, size * .23); ctx.lineTo(size * .79, size * .18); ctx.lineTo(size * .79, size * .57); ctx.stroke();
+            ctx.beginPath(); ctx.ellipse(size * .42, size * .72, size * .13, size * .09, -.2, 0, Math.PI * 2); ctx.stroke();
+            ctx.beginPath(); ctx.ellipse(size * .65, size * .62, size * .13, size * .09, -.2, 0, Math.PI * 2); ctx.stroke();
         }
 
-        function drawPixelatedRadioCover(url) {
+        function drawRadioCover(url) {
             const canvas = document.getElementById('pcRadioCover');
             if (!canvas) return;
-            if (!url) { drawRadioPlaceholder(); return }
+            if (!url) { drawRadioPlaceholder(); return; }
             const token = ++pcRadioCoverToken, image = new Image();
             image.decoding = 'async';
             image.onload = () => {
                 if (token !== pcRadioCoverToken) return;
-                const ctx = canvas.getContext('2d');
+                const ctx = canvas.getContext('2d'), size = canvas.width || 256;
+                ctx.clearRect(0, 0, size, size);
                 ctx.imageSmoothingEnabled = false;
-                ctx.clearRect(0, 0, 32, 32);
-                ctx.drawImage(image, 0, 0, 32, 32)
+                const width = image.naturalWidth || size, height = image.naturalHeight || size;
+                const side = Math.min(width, height), sx = (width - side) / 2, sy = (height - side) / 2;
+                ctx.drawImage(image, sx, sy, side, side, 0, 0, size, size);
             };
-            image.onerror = () => { if (token === pcRadioCoverToken) drawRadioPlaceholder() };
-            image.src = url
+            image.onerror = () => { if (token === pcRadioCoverToken) drawRadioPlaceholder(); };
+            image.src = url;
         }
-
         function setPcRadioState(rawState) {
             const raw = rawState && typeof rawState === 'object' ? rawState : {},
                 position = Number.isFinite(Number(raw.position)) ? Number(raw.position) : Number(raw.positionMs) / 1000,
@@ -4048,14 +4069,19 @@
             pcRadioState.updatedAt = performance.now();
             if (pcRadioState.coverUrl !== pcRadioState.renderedCoverUrl) {
                 pcRadioState.renderedCoverUrl = pcRadioState.coverUrl;
-                drawPixelatedRadioCover(pcRadioState.coverUrl)
+                drawRadioCover(pcRadioState.coverUrl)
             }
             const titleEl = document.getElementById('pcRadioTitle'), artistEl = document.getElementById('pcRadioArtist'),
                 sourceEl = document.getElementById('pcRadioSource'), toggle = document.getElementById('pcRadioToggle');
             if (titleEl) titleEl.textContent = pcRadioState.title || 'Música atual';
             if (artistEl) artistEl.textContent = pcRadioState.artist || 'Artista desconhecido';
             if (sourceEl) sourceEl.textContent = pcRadioState.source || 'RÁDIO DO PC';
-            if (toggle) toggle.textContent = pcRadioState.isPlaying ? 'Ⅱ' : '▶';
+            if (toggle) {
+                toggle.innerHTML = pcRadioState.isPlaying
+                    ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg>'
+                    : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 12 7-12 7V5Z"/></svg>';
+                toggle.setAttribute('aria-label', pcRadioState.isPlaying ? 'Pausar música' : 'Continuar música');
+            }
             if (isExternalMediaPlaying()) {
                 if (musicAudio) musicAudio.pause()
             } else if (musicEnabled && selectedGameMode === 'normal' && musicAudio && !isPaused) {
@@ -4082,9 +4108,11 @@
 
         async function pollPcRadioBridge() {
             const bridge = window.LittlePlaneMediaBridge;
-            if (!isDesktopRadioDevice() || !bridge || typeof bridge.getState !== 'function') return;
+            if (!isDesktopRadioDevice() || !bridge || typeof bridge.getState !== 'function' || pcRadioPollInFlight) return;
+            pcRadioPollInFlight = true;
             try { setPcRadioState(await bridge.getState()) }
             catch (error) { console.warn('Ponte do rádio indisponível:', error) }
+            finally { pcRadioPollInFlight = false }
         }
 
         function invokePcRadioAction(action) {
@@ -4107,7 +4135,7 @@
             document.getElementById('pcRadioToggle')?.addEventListener('click', () => invokePcRadioAction('toggle'));
             document.getElementById('pcRadioNext')?.addEventListener('click', () => invokePcRadioAction('next'));
             pollPcRadioBridge();
-            pcRadioPollTimer = setInterval(pollPcRadioBridge, 1800)
+            pcRadioPollTimer = setInterval(pollPcRadioBridge, 500)
         }
 
         function clampMusicNumber(value, min, max, fallback) {
@@ -7383,9 +7411,9 @@ const moonPos = new THREE.Vector3(0, moonY, moonZ);
 scene.add(ambientLight);
 sunLight = new THREE.DirectionalLight(0xff8c40, 1.15);
 sunLight.castShadow = true;
-sunLight.shadow.mapSize.set(512, 512);
+sunLight.shadow.mapSize.set(1024, 1024);
 Object.assign(sunLight.shadow.camera, { near: 1, far: 800, left: -300, right: 300, top: 300, bottom: -300 });
-sunLight.shadow.bias = -.001;
+sunLight.shadow.bias = -.0005;
 scene.add(sunLight);
 scene.add(sunLight.target);
 hemiLight = new THREE.HemisphereLight(0xffa060, 0x2d1b69, .5);
