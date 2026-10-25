@@ -19,6 +19,8 @@
     const videoId = new URL(location.href).searchParams.get("v");
     const musicArtwork = $("ytmusic-player-bar img.image")?.src ||
       $("ytmusic-player-bar .thumbnail img")?.src ||
+      $("ytmusic-player-bar img")?.src ||
+      $("ytmusic-player .thumbnail img")?.src ||
       $("ytmusic-player .image img")?.src || "";
     const youtubeArtwork = videoId ? "https://i.ytimg.com/vi/" + encodeURIComponent(videoId) + "/hqdefault.jpg" : "";
     const thumbnail = musicArtwork || (location.hostname === "www.youtube.com" ? youtubeArtwork : "") ||
