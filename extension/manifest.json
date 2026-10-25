@@ -1,54 +1,34 @@
 {
   "manifest_version": 3,
   "name": "Little Plane — Rádio do YouTube",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Conecta a rádio do Little Plane à aba aberta do YouTube ou YouTube Music.",
-  "permissions": [
-    "tabs"
-  ],
+  "permissions": ["tabs"],
   "host_permissions": [
     "https://www.youtube.com/*",
     "https://music.youtube.com/*",
+    "https://little-plane.cezaraugust76.workers.dev/*",
     "https://little-plane-test.pages.dev/*",
     "http://localhost/*",
     "http://127.0.0.1/*"
   ],
-  "background": {
-    "service_worker": "background.js"
-  },
+  "background": { "service_worker": "background.js" },
   "content_scripts": [
     {
-      "matches": [
-        "https://www.youtube.com/*",
-        "https://music.youtube.com/*"
-      ],
-      "js": [
-        "youtube.js"
-      ],
+      "matches": ["https://www.youtube.com/*", "https://music.youtube.com/*"],
+      "js": ["youtube.js"],
       "run_at": "document_idle"
     },
     {
-      "matches": [
-        "https://little-plane-test.pages.dev/*",
-        "http://localhost/*",
-        "http://127.0.0.1/*"
-      ],
-      "js": [
-        "game.js"
-      ],
+      "matches": ["https://little-plane.cezaraugust76.workers.dev/*", "https://little-plane-test.pages.dev/*", "http://localhost/*", "http://127.0.0.1/*"],
+      "js": ["game.js"],
       "run_at": "document_idle"
     }
   ],
   "web_accessible_resources": [
     {
-      "resources": [
-        "page-bridge.js"
-      ],
-      "matches": [
-        "https://little-plane-test.pages.dev/*",
-        "http://localhost/*",
-        "http://127.0.0.1/*"
-      ]
+      "resources": ["page-bridge.js"],
+      "matches": ["https://little-plane.cezaraugust76.workers.dev/*", "https://little-plane-test.pages.dev/*", "http://localhost/*", "http://127.0.0.1/*"]
     }
   ]
 }
