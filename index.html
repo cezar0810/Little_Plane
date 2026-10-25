@@ -4004,7 +4004,7 @@
             available: false, isPlaying: false, title: '', artist: '', source: 'RÁDIO DO PC',
             coverUrl: '', renderedCoverUrl: '', position: 0, duration: 0, playbackRate: 1, updatedAt: 0
         };
-        let pcRadioCoverToken = 0, pcRadioPollTimer = null;
+        let pcRadioCoverToken = 0, pcRadioPollTimer = null, pcRadioPollInFlight = false;
 
         function isDesktopRadioDevice() {
             return !!window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches
@@ -4108,9 +4108,11 @@
 
         async function pollPcRadioBridge() {
             const bridge = window.LittlePlaneMediaBridge;
-            if (!isDesktopRadioDevice() || !bridge || typeof bridge.getState !== 'function') return;
+            if (!isDesktopRadioDevice() || !bridge || typeof bridge.getState !== 'function' || pcRadioPollInFlight) return;
+            pcRadioPollInFlight = true;
             try { setPcRadioState(await bridge.getState()) }
             catch (error) { console.warn('Ponte do rádio indisponível:', error) }
+            finally { pcRadioPollInFlight = false }
         }
 
         function invokePcRadioAction(action) {
@@ -4133,7 +4135,7 @@
             document.getElementById('pcRadioToggle')?.addEventListener('click', () => invokePcRadioAction('toggle'));
             document.getElementById('pcRadioNext')?.addEventListener('click', () => invokePcRadioAction('next'));
             pollPcRadioBridge();
-            pcRadioPollTimer = setInterval(pollPcRadioBridge, 400)
+            pcRadioPollTimer = setInterval(pollPcRadioBridge, 500)
         }
 
         function clampMusicNumber(value, min, max, fallback) {
