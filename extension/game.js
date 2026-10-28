@@ -11,6 +11,11 @@
     script.id = "little-plane-page-bridge";
     script.src = chrome.runtime.getURL("page-bridge.js");
     script.onload = () => script.remove();
+    script.onerror = () => {
+      script.remove();
+      // Retry if the page CSP or a transient load issue blocks the bridge.
+      setTimeout(injectPageBridge, 1000);
+    };
     (document.head || document.documentElement).appendChild(script);
   }
 
@@ -45,9 +50,9 @@
   }
 
   function sendState(state) {
-    const key = JSON.stringify(state);
-    if (key === lastStateKey) return;
-    lastStateKey = key;
+    // Always repeat the latest state: the page-world bridge may load after
+    // the first poll, and deduplication could otherwise leave it disconnected.
+    lastStateKey = JSON.stringify(state);
     window.postMessage({channel:CHANNEL,type:"STATE",state}, "*");
   }
 
