@@ -1,10 +1,11 @@
 {
   "manifest_version": 3,
   "name": "Little Plane — Rádio do YouTube",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Conecta a rádio do Little Plane à aba aberta do YouTube ou YouTube Music.",
   "permissions": [
-    "tabs"
+    "tabs",
+    "scripting"
   ],
   "host_permissions": [
     "https://www.youtube.com/*",
@@ -39,19 +40,6 @@
         "game.js"
       ],
       "run_at": "document_idle"
-    }
-  ],
-  "web_accessible_resources": [
-    {
-      "resources": [
-        "page-bridge.js"
-      ],
-      "matches": [
-        "https://little-plane.cezaraugust76.workers.dev/*",
-        "https://little-plane-test.pages.dev/*",
-        "http://localhost/*",
-        "http://127.0.0.1/*"
-      ]
     }
   ],
   "icons": {
