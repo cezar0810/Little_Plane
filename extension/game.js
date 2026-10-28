@@ -2,21 +2,22 @@
   if (window.__littlePlaneExtensionInstalled) return;
   window.__littlePlaneExtensionInstalled = true;
   const CHANNEL = "LITTLE_PLANE_YT_EXTENSION";
-  let lastStateKey = "";
-  let pollTimer = null;
+  let bridgeInstallInFlight = false;
 
-  function injectPageBridge() {
-    if (document.getElementById("little-plane-page-bridge")) return;
-    const script = document.createElement("script");
-    script.id = "little-plane-page-bridge";
-    script.src = chrome.runtime.getURL("page-bridge.js");
-    script.onload = () => script.remove();
-    script.onerror = () => {
-      script.remove();
-      // Retry if the page CSP or a transient load issue blocks the bridge.
-      setTimeout(injectPageBridge, 1000);
-    };
-    (document.head || document.documentElement).appendChild(script);
+  function installPageBridge() {
+    if (bridgeInstallInFlight) return;
+    bridgeInstallInFlight = true;
+    chrome.runtime.sendMessage({type:"LP_GAME_INSTALL_BRIDGE"}, result => {
+      bridgeInstallInFlight = false;
+      if (chrome.runtime.lastError || !result?.ok) {
+        const reason = chrome.runtime.lastError?.message || result?.reason || "Falha ao instalar a ponte.";
+        console.warn("[Little Plane Rádio] Ponte principal não instalada:", reason);
+        setTimeout(installPageBridge, 2000);
+        return;
+      }
+      // Re-read the current song after the page-side bridge is ready.
+      poll();
+    });
   }
 
   function ensureLobbyNotice() {
@@ -50,10 +51,7 @@
   }
 
   function sendState(state) {
-    // Always repeat the latest state: the page-world bridge may load after
-    // the first poll, and deduplication could otherwise leave it disconnected.
-    lastStateKey = JSON.stringify(state);
-    window.postMessage({channel:CHANNEL,type:"STATE",state}, "*");
+    window.postMessage({channel:CHANNEL,type:"STATE",state}, location.origin);
   }
 
   function poll() {
@@ -73,10 +71,10 @@
     });
   });
 
-  injectPageBridge();
+  installPageBridge();
   ensureLobbyNotice();
   poll();
-  pollTimer = setInterval(() => {
+  setInterval(() => {
     ensureLobbyNotice();
     poll();
   }, 1800);
