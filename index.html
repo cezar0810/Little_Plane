@@ -2116,6 +2116,20 @@
         #flightMoment.show {opacity:1;transform:translate(-50%,0)}
         #flightMoment strong {display:block;font-size:16px;letter-spacing:.12em;color:#f3d49a}
         #flightMoment span {display:block;font-size:14px;margin-top:4px}
+        .graphics-settings-backdrop { position:absolute; inset:0; z-index:95; display:none; align-items:center; justify-content:center; padding:18px; box-sizing:border-box; background:rgba(2,6,23,.76); backdrop-filter:blur(12px); font-family:system-ui,sans-serif }
+        .graphics-settings-card { width:min(520px,100%); max-height:min(88vh,760px); overflow:auto; box-sizing:border-box; padding:24px; border:1px solid rgba(125,211,252,.22); border-radius:24px; color:#f8fafc; background:linear-gradient(155deg,rgba(15,23,42,.98),rgba(8,18,35,.98)); box-shadow:0 28px 100px rgba(0,0,0,.6),0 0 36px rgba(56,189,248,.08) }
+        .graphics-settings-kicker { color:#7dd3fc; font-size:10px; font-weight:900; letter-spacing:.18em; text-transform:uppercase }
+        .graphics-settings-title { margin:5px 0 5px; font-size:clamp(24px,4vw,32px); font-weight:950; line-height:1.05 }
+        .graphics-settings-copy { margin:0 0 20px; color:#94a3b8; font-size:12px; line-height:1.55 }
+        .graphics-setting-row { display:grid; grid-template-columns:minmax(0,1fr) minmax(150px,46%); align-items:center; gap:12px; padding:13px 0; border-top:1px solid rgba(148,163,184,.13) }
+        .graphics-setting-row strong { display:block; font-size:13px; font-weight:900 }
+        .graphics-setting-row small { display:block; margin-top:4px; color:#94a3b8; font-size:10px; line-height:1.45 }
+        .graphics-setting-select { width:100%; min-width:0; padding:11px 12px; border:1px solid rgba(125,211,252,.24); border-radius:12px; color:#e0f2fe; background:#0b1728; font-size:12px; font-weight:800; outline:none }
+        .graphics-setting-select:focus-visible { border-color:#67e8f9; box-shadow:0 0 0 3px rgba(103,232,249,.14) }
+        .graphics-settings-actions { display:flex; gap:10px; margin-top:20px }
+        .graphics-settings-btn { flex:1; min-height:44px; border:1px solid rgba(255,255,255,.1); border-radius:12px; color:#cbd5e1; background:rgba(255,255,255,.055); font-size:12px; font-weight:900; cursor:pointer }
+        .graphics-settings-btn.primary { border:0; color:#071521; background:linear-gradient(135deg,#67e8f9,#a5f3fc) }
+        @media(max-width:520px) { .graphics-settings-card{padding:18px;border-radius:20px}.graphics-setting-row{grid-template-columns:1fr;gap:8px}.graphics-settings-actions{flex-direction:column-reverse} }
         .battle-control-hint {font-size:12px;letter-spacing:0}
         .battle-health-label {font-size:12px}
         @media(prefers-reduced-motion:reduce){#flightMoment{transition:none}}
@@ -2203,6 +2217,9 @@
             <button id="btnMissions" class="lobby-side-action">
                 <span class="lobby-side-icon">📋<span id="missionBadge" class="mission-badge">0</span></span><span class="lobby-side-label" id="missionsLabel">Missões</span>
             </button>
+            <button id="btnGraphics" class="lobby-side-action" onclick="openGraphicsSettings()" aria-label="Configurações gráficas">
+                <span class="lobby-side-icon">▧</span><span class="lobby-side-label" id="graphicsLabel">Gráficos</span>
+            </button>
         </div>
         <button onclick="showGlobalRanking()" class="absolute text-white flex flex-col items-center gap-1 active:scale-95 transition-all" style="right:6px;top:50%;transform:translateY(-50%);z-index:2;background:transparent;border:none;cursor:pointer">
             <div style="background:rgba(15,23,42,.7);backdrop-filter:blur(8px);border-radius:1rem;width:56px;height:56px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.12);margin-bottom:4px"><span style="font-size:1.55rem">🌍</span></div>
@@ -2237,6 +2254,35 @@
                 <div id="rankRecentRuns" class="rank-recent-runs"></div>
                 <div id="rankLadder" class="rank-ladder"></div>
                 <button id="rankModalCloseBtn" onclick="closeRankModal()" class="mt-4 w-full py-2.5 rounded-xl bg-amber-500 text-slate-950 font-black">Entendi</button>
+            </div>
+        </div>
+        <div id="graphicsSettings" class="graphics-settings-backdrop" role="dialog" aria-modal="true" aria-labelledby="graphicsSettingsTitle">
+            <div class="graphics-settings-card">
+                <div class="graphics-settings-kicker" id="graphicsSettingsKicker">AJUSTE A EXPERIÊNCIA</div>
+                <h2 class="graphics-settings-title" id="graphicsSettingsTitle">Gráficos e renderização</h2>
+                <p class="graphics-settings-copy" id="graphicsSettingsCopy">Aumente a distância para enxergar mais cenário e sombras projetadas no terreno. Configurações mais altas exigem mais da GPU.</p>
+                <label class="graphics-setting-row" for="graphicsQualitySelect">
+                    <span><strong id="graphicsQualityTitle">Qualidade gráfica</strong><small id="graphicsQualityHint">Controla a resolução e a suavidade das sombras.</small></span>
+                    <select id="graphicsQualitySelect" class="graphics-setting-select">
+                        <option value="low">Baixo</option><option value="medium">Médio</option><option value="high">Alto</option><option value="ultra">Ultra</option>
+                    </select>
+                </label>
+                <label class="graphics-setting-row" for="graphicsResolutionSelect">
+                    <span><strong id="graphicsResolutionTitle">Resolução de renderização</strong><small id="graphicsResolutionHint">Controla a resolução interna do jogo.</small></span>
+                    <select id="graphicsResolutionSelect" class="graphics-setting-select">
+                        <option value="0.5">50%</option><option value="0.75">75%</option><option value="1">100%</option><option value="1.25">125%</option>
+                    </select>
+                </label>
+                <label class="graphics-setting-row" for="graphicsDistanceSelect">
+                    <span><strong id="graphicsDistanceTitle">Distância de renderização</strong><small id="graphicsDistanceHint">Cada chunk corresponde a cerca de 100 unidades de percurso.</small></span>
+                    <select id="graphicsDistanceSelect" class="graphics-setting-select">
+                        <option value="10">10 chunks</option><option value="14">14 chunks</option><option value="18">18 chunks</option><option value="24">24 chunks</option><option value="30">30 chunks</option>
+                    </select>
+                </label>
+                <div class="graphics-settings-actions">
+                    <button type="button" id="graphicsCancelBtn" class="graphics-settings-btn" onclick="closeGraphicsSettings()">Cancelar</button>
+                    <button type="button" id="graphicsApplyBtn" class="graphics-settings-btn primary" onclick="saveGraphicsSettings()">Aplicar configurações</button>
+                </div>
             </div>
         </div>
     </div>
@@ -2891,6 +2937,9 @@
                 version: 5,
                 lastPlayed: null,
                 language: 'pt',
+                graphicsQuality: 'high',
+                graphicsResolution: 1,
+                renderChunks: 18,
                 nick: '',
                 playerId: ''
             }
@@ -2942,6 +2991,129 @@
                     .setItem(SAVE_KEY, j);
                 localStorage.setItem(SAVE_KEY, j)
             } catch (e) { console.warn('Erro save:', e) }
+        }
+
+        const GRAPHICS_QUALITY = {
+            low: { shadowMapSize: 512, fogScale: .82, shadowExtentScale: .9 },
+            medium: { shadowMapSize: 1024, fogScale: 1, shadowExtentScale: .94 },
+            high: { shadowMapSize: 2048, fogScale: 1.25, shadowExtentScale: 1 },
+            ultra: { shadowMapSize: 4096, fogScale: 1.5, shadowExtentScale: 1.05 }
+        };
+        const GRAPHICS_RESOLUTION_OPTIONS = [.5, .75, 1, 1.25],
+            GRAPHICS_CHUNK_OPTIONS = [10, 14, 18, 24, 30];
+        let activeGraphicsSettings = null;
+
+        function getGraphicsSettings(save = loadSave()) {
+            const quality = GRAPHICS_QUALITY[save.graphicsQuality] ? save.graphicsQuality : 'high',
+                renderChunks = GRAPHICS_CHUNK_OPTIONS.includes(Number(save.renderChunks)) ? Number(save.renderChunks) : 18,
+                resolution = GRAPHICS_RESOLUTION_OPTIONS.includes(Number(save.graphicsResolution)) ?
+                    Number(save.graphicsResolution) : 1;
+            return { quality, renderChunks, resolution }
+        }
+
+        function getGraphicsRenderDistance(settings = activeGraphicsSettings || getGraphicsSettings()) {
+            return Math.max(1000, Math.min(3000, settings.renderChunks * 100))
+        }
+
+        function applyGraphicsSettingsRuntime(settings = getGraphicsSettings()) {
+            activeGraphicsSettings = { ...settings };
+            const profile = GRAPHICS_QUALITY[settings.quality] || GRAPHICS_QUALITY.high,
+                renderDistance = getGraphicsRenderDistance(settings),
+                shadowExtent = Math.max(650, Math.round(settings.renderChunks * 100 * profile.shadowExtentScale));
+            if (renderer) {
+                const pixelRatio = Math.max(.5, Math.min(2, (window.devicePixelRatio || 1) * settings.resolution));
+                renderer.setPixelRatio(pixelRatio);
+                renderer.setSize(innerWidth, innerHeight);
+                renderer.shadowMap.enabled = true;
+                renderer.shadowMap.type = THREE.PCFSoftShadowMap
+            }
+            if (sunLight) {
+                sunLight.castShadow = true;
+                sunLight.shadow.mapSize.set(profile.shadowMapSize, profile.shadowMapSize);
+                sunLight.shadow.radius = settings.quality === 'ultra' ? 4 : settings.quality === 'high' ? 3 : 2;
+                Object.assign(sunLight.shadow.camera, {
+                    near: 1, far: Math.max(2200, renderDistance * 2 + 200),
+                    left: -shadowExtent, right: shadowExtent, top: shadowExtent, bottom: -shadowExtent
+                });
+                sunLight.shadow.camera.updateProjectionMatrix();
+                sunLight.shadow.needsUpdate = true
+            }
+            if (camera) {
+                camera.far = Math.max(4000, renderDistance + 1200);
+                camera.updateProjectionMatrix()
+            }
+            if (scene?.fog && dayNightManager?.interpolatedState) {
+                scene.fog.near = dayNightManager.interpolatedState.fogNear * profile.fogScale;
+                scene.fog.far = dayNightManager.interpolatedState.fogFar * profile.fogScale
+            }
+        }
+
+        function syncGraphicsSettingsLanguage() {
+            const en = currentLanguage === 'en',
+                labels = {
+                    graphicsSettingsKicker: en ? 'TUNE YOUR EXPERIENCE' : 'AJUSTE A EXPERIÊNCIA',
+                    graphicsSettingsTitle: en ? 'Graphics & rendering' : 'Gráficos e renderização',
+                    graphicsSettingsCopy: en ? 'Increase render distance to see more scenery and ground shadows. Higher settings need more GPU power.' :
+                        'Aumente a distância para enxergar mais cenário e sombras projetadas no terreno. Configurações mais altas exigem mais da GPU.',
+                    graphicsQualityTitle: en ? 'Graphics quality' : 'Qualidade gráfica',
+                    graphicsQualityHint: en ? 'Controls shadow-map resolution and softness.' : 'Controla a resolução e a suavidade das sombras.',
+                    graphicsResolutionTitle: en ? 'Render resolution' : 'Resolução de renderização',
+                    graphicsResolutionHint: en ? 'Controls the internal render resolution.' : 'Controla a resolução interna do jogo.',
+                    graphicsDistanceTitle: en ? 'Render distance' : 'Distância de renderização',
+                    graphicsDistanceHint: en ? 'Each chunk represents about 100 units of flight distance.' :
+                        'Cada chunk corresponde a cerca de 100 unidades de percurso.',
+                    graphicsCancelBtn: en ? 'Cancel' : 'Cancelar',
+                    graphicsApplyBtn: en ? 'Apply settings' : 'Aplicar configurações',
+                    graphicsLabel: en ? 'Graphics' : 'Gráficos'
+                };
+            Object.entries(labels).forEach(([id,value]) => {
+                const el = document.getElementById(id);
+                if (el) el.textContent = value
+            });
+            const quality = document.getElementById('graphicsQualitySelect');
+            if (quality) {
+                const names = en ? ['Low','Medium','High','Ultra'] : ['Baixo','Médio','Alto','Ultra'];
+                Array.from(quality.options).forEach((option,i) => { option.textContent = names[i] || option.textContent })
+            }
+            const distance = document.getElementById('graphicsDistanceSelect');
+            if (distance) Array.from(distance.options).forEach(option => { option.textContent = option.value + ' chunks' })
+        }
+
+        function openGraphicsSettings() {
+            const settings = getGraphicsSettings();
+            document.getElementById('graphicsQualitySelect').value = settings.quality;
+            document.getElementById('graphicsResolutionSelect').value = String(settings.resolution);
+            document.getElementById('graphicsDistanceSelect').value = String(settings.renderChunks);
+            syncGraphicsSettingsLanguage();
+            document.getElementById('graphicsSettings').style.display = 'flex';
+            document.getElementById('graphicsQualitySelect').focus()
+        }
+
+        function closeGraphicsSettings() {
+            const panel = document.getElementById('graphicsSettings');
+            if (panel) panel.style.display = 'none'
+        }
+
+        function saveGraphicsSettings() {
+            const save = loadSave(), previous = getGraphicsSettings(save),
+                qualitySelect = document.getElementById('graphicsQualitySelect'),
+                resolutionSelect = document.getElementById('graphicsResolutionSelect'),
+                distanceSelect = document.getElementById('graphicsDistanceSelect'),
+                quality = GRAPHICS_QUALITY[qualitySelect?.value] ? qualitySelect.value : 'high',
+                resolution = GRAPHICS_RESOLUTION_OPTIONS.includes(Number(resolutionSelect?.value)) ?
+                    Number(resolutionSelect.value) : 1,
+                renderChunks = GRAPHICS_CHUNK_OPTIONS.includes(Number(distanceSelect?.value)) ?
+                    Number(distanceSelect.value) : 18;
+            save.graphicsQuality = quality;
+            save.graphicsResolution = resolution;
+            save.renderChunks = renderChunks;
+            writeSave(save);
+            applyGraphicsSettingsRuntime({ quality, resolution, renderChunks });
+            closeGraphicsSettings();
+            if (scene && renderer && !gameActive && !mpActive && previous.renderChunks !== renderChunks) {
+                rebuildWorld(() => { if (renderer && scene && camera) renderer.render(scene, camera) })
+            } else if (renderer && scene && camera) renderer.render(scene, camera);
+            showFeedback(currentLanguage === 'en' ? 'Graphics settings saved' : 'Configurações gráficas salvas', true)
         }
 
         // ==================== MISSÕES DIÁRIAS (20 arquétipos × 5 níveis = 100) ====================
@@ -5586,7 +5758,8 @@
 
         // Bounded, shared geometry: upper clouds and wind cost two draw calls.
         const flightAtmosphere = { root: null, clouds: null, banks: [], wind: null, time: 0,
-            event: null, eventTime: 0, eventRoot: null, eventWave: 0, collected: false, chirpAt: 0 };
+            event: null, eventTime: 0, eventRoot: null, eventWave: 0, birdImpactCooldown: 0,
+            birdDropTimer: 0, collected: false, chirpAt: 0 };
 
         function disposeFlightGroup(root) {
             if (!root) return;
@@ -5623,7 +5796,8 @@
             disposeFlightGroup(flightAtmosphere.root);
             disposeFlightGroup(flightAtmosphere.eventRoot);
             Object.assign(flightAtmosphere, { root: null, clouds: null, banks: [], wind: null,
-                event: null, eventRoot: null, eventWave: 0, time: 0, eventTime: 0, collected: false });
+                event: null, eventRoot: null, eventWave: 0, birdImpactCooldown: 0, birdDropTimer: 0,
+                time: 0, eventTime: 0, collected: false });
             document.getElementById('flightMoment')?.classList.remove('show')
         }
 
@@ -5823,34 +5997,51 @@
             }
         }
 
+        function applyGullCollision(a) {
+            if (!airplane || a.birdImpactCooldown > 0) return;
+            const shieldFactor = shieldActive ? .35 : 1,
+                altitudeLoss = 27 * shieldFactor;
+            targetY = Math.max(5, targetY - altitudeLoss);
+            airplane.position.y = Math.max(3.5, airplane.position.y - altitudeLoss * .34);
+            a.birdDropTimer = Math.max(a.birdDropTimer || 0, shieldActive ? .32 : .88);
+            a.birdImpactCooldown = .72;
+            pitchAngle = Math.min(.52, pitchAngle + .24);
+            const lostMeters = Math.round(altitudeLoss * 3),
+                shieldText = shieldActive ? (currentLanguage === 'en' ? ' (shield reduced)' : ' (escudo reduziu)') : '';
+            showFeedback(currentLanguage === 'en' ?
+                'Bird collision! Altitude lost: ' + lostMeters + ' m' + shieldText :
+                'Colisão com gaivota! -' + lostMeters + ' m de altitude' + shieldText, false);
+            _tone('triangle', 190, 62, .26, .08);
+            playAirNoise(.35, .12, 720, 0)
+        }
+
         function updateGullFlock(a, dt) {
             const root = a.eventRoot, p = airplane.position;
             root.position.z += dt * GULL_SPEED;
             const ahead = p.z - root.position.z;
-            // Enquanto está longe, a revoada acompanha a altura e a posição do jogador para vir direto nele
-            if (ahead > 170) {
-                const k = Math.min(1, 1.5 * dt);
-                root.position.x += (p.x - root.position.x) * k;
-                root.position.y += (Math.max(30, Math.min(150, p.y)) - root.position.y) * k
-            }
-            let nearest = 1e9;
+            let nearest = 1e9, collided = false;
             root.children.forEach(bird => {
-                const u = bird.userData, wx = root.position.x + u.ox - p.x, wy = root.position.y + u.oy - p.y,
-                    dzb = p.z - (root.position.z + u.oz),
-                    t = Math.max(0, Math.min(1, 1 - (dzb - 25) / 120)), pf = t * t * (3 - 2 * t),
-                    dirX = wx === 0 ? u.side : Math.sign(wx), dirY = wy >= 0 ? 1 : -1,
-                    // Perto do avião, as gaivotas abrem para os lados (passam rente, sem acertar)
-                    pushX = Math.abs(wx) < 26 ? dirX * (26 - Math.abs(wx)) * pf : 0,
-                    pushY = Math.abs(wy) < 16 ? dirY * (16 - Math.abs(wy)) * .6 * pf : 0,
-                    flap = a.time * 7.5 + u.phase;
-                bird.position.set(u.ox + pushX, u.oy + pushY + Math.sin(a.time * 1.4 + u.phase) * 1.2, u.oz);
-                bird.rotation.set(0, (pushX / 26) * .4, -(pushX / 26) * .5);
+                const u = bird.userData, flap = a.time * 7.5 + u.phase;
+                // Trajetória fixa: só o jogador pode desviar do bando.
+                bird.position.set(u.ox, u.oy + Math.sin(a.time * 1.4 + u.phase) * 1.2, u.oz);
+                bird.rotation.set(0, 0, 0);
                 u.wings.forEach(w => {
                     w.shoulder.rotation.z = w.w * (Math.sin(flap) * .55 + .08);
-                    // o cotovelo fica dentro do ombro espelhado, então usa o mesmo sinal nas duas asas
                     w.elbow.rotation.z = Math.sin(flap - .9) * .45 - .1
                 });
-                nearest = Math.min(nearest, Math.abs(dzb))
+                const dx = root.position.x + bird.position.x - p.x,
+                    dy = root.position.y + bird.position.y - p.y,
+                    dz = root.position.z + bird.position.z - p.z,
+                    scaleX = Math.max(12, (airplaneColliderHalfWidth || 8) + 8),
+                    scaleY = 11,
+                    scaleZ = Math.max(12, (airplaneColliderHalfLength || 8) + 5),
+                    hit = dx * dx / (scaleX * scaleX) + dy * dy / (scaleY * scaleY) +
+                        dz * dz / (scaleZ * scaleZ) < 1;
+                nearest = Math.min(nearest, Math.abs(p.z - (root.position.z + u.oz)));
+                if (hit && !collided && a.birdImpactCooldown <= 0) {
+                    collided = true;
+                    applyGullCollision(a)
+                }
             });
             const closeness = Math.max(0, Math.min(1, 1 - Math.abs(ahead) / 650));
             if (a.eventTime > a.chirpAt && engineRunning && ahead > -120) {
@@ -5870,6 +6061,8 @@
             const a = flightAtmosphere;
             a.event = type; a.eventTime = 0; a.collected = false; a.chirpAt = 0;
             a.eventWave = type === 'migration' ? 1 : 0;
+            a.birdImpactCooldown = 0;
+            a.birdDropTimer = 0;
             a.duration = type === 'hurricane' ? 10 + Math.random() * 10 : type === 'migration' ? 45 : 0;
             specialEventDirector.activeType = type;
             specialEventDirector.lastType = type;
@@ -5939,6 +6132,11 @@
             }
             a.wind.geometry.attributes.position.needsUpdate=true;
             a.wind.material.opacity = selectedGameMode === 'music' ? .04 : .09 + Math.min(.07,flightSpeed/4000);
+            a.birdImpactCooldown = Math.max(0, (a.birdImpactCooldown || 0) - dt);
+            if (a.birdDropTimer > 0) {
+                a.birdDropTimer = Math.max(0, a.birdDropTimer - dt);
+                targetY = Math.max(5, targetY - 10 * dt)
+            }
             if (!a.eventRoot) return;
             a.eventTime += dt;
             if (a.eventTime > 6) document.getElementById('flightMoment').classList.remove('show');
@@ -7357,8 +7555,9 @@ const moonPos = new THREE.Vector3(0, moonY, moonZ);
 
         if (this.scene.fog) {
             this.scene.fog.color.copy(this.interpolatedState.fogColor);
-            this.scene.fog.near = this.interpolatedState.fogNear;
-            this.scene.fog.far = this.interpolatedState.fogFar;
+            const graphicsProfile = GRAPHICS_QUALITY[activeGraphicsSettings?.quality || 'high'] || GRAPHICS_QUALITY.high;
+            this.scene.fog.near = this.interpolatedState.fogNear * graphicsProfile.fogScale;
+            this.scene.fog.far = this.interpolatedState.fogFar * graphicsProfile.fogScale;
         }
 
         this.starsMaterial.opacity = this.interpolatedState.starsOpacity;
@@ -7466,6 +7665,7 @@ scene.add(sunLight.target);
 hemiLight = new THREE.HemisphereLight(0xffa060, 0x2d1b69, .5);
 scene.add(hemiLight);
 dayNightManager = new DayNightManager(scene, camera, renderer, sunLight, ambientLight, hemiLight, M.cloud, DAY_NIGHT_CYCLE_MINUTES);
+            applyGraphicsSettingsRuntime(getGraphicsSettings());
             window.addEventListener('resize', () => {
                 camera.aspect = innerWidth / innerHeight;
                 camera.updateProjectionMatrix();
@@ -8425,7 +8625,7 @@ function _obstacleMountainDims(b, central, rng) {
 
             nextSpawnZ = -200;
             let b = BIOMES[0],
-                total = 18,
+                total = Math.max(10, Math.min(30, getGraphicsSettings().renderChunks)),
                 gen = 0;
 
             function next() {
@@ -8488,7 +8688,8 @@ function _obstacleMountainDims(b, central, rng) {
         }
 
         function manageEnvironment(b) {
-            while (nextSpawnZ > airplane.position.z - 1800) {
+            const renderDistance = getGraphicsRenderDistance();
+            while (nextSpawnZ > airplane.position.z - renderDistance) {
                 spawnChunk(nextSpawnZ, b);
                 nextSpawnZ -= 100;
             }
@@ -12152,6 +12353,7 @@ function checkCollisions() {
             document.getElementById('shopLabel').innerText = t('shop');
             document.getElementById('controlsLabel').innerText = currentLanguage === 'en' ? 'Controls' : 'Controles';
             document.getElementById('missionsLabel').innerText = currentLanguage === 'en' ? 'Missions' : 'Missões';
+            syncGraphicsSettingsLanguage();
             document.getElementById('globalRankLabel').innerText = t('globalRank');
             document.getElementById('btnStartLabel').innerText = t('play');
             document.getElementById('finalScoreLabel').innerText = t('finalScore');

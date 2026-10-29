@@ -55,6 +55,31 @@ test('Aurora simulates and terminates cleanly',()=>{
  run("dayNightManager={currentTime:.94};startScenicEvent('aurora');for(let i=0;i<1200;i++)updateFlightAtmosphere(1/60,i);resetFlightAtmosphere()");
  assert.equal(run('flightAtmosphere.event'),null)
 });
+test('Gulls do not steer away from the player',()=>{
+ run("resetFlightAtmosphere();selectedGameMode='normal';mpActive=false;airplane.position.set(0,45,0);startScenicEvent('migration')");
+ run("airplane.position.x=130;const root=flightAtmosphere.eventRoot,bird=root.children[0],u=bird.userData;updateGullFlock(flightAtmosphere,.01)");
+ assert.equal(run('flightAtmosphere.eventRoot.position.x'),0);
+ assert.equal(run('flightAtmosphere.eventRoot.children[0].position.x'),run('flightAtmosphere.eventRoot.children[0].userData.ox'));
+ run('resetFlightAtmosphere()')
+});
+test('Gull collision reduces altitude and applies a short downward effect',()=>{
+ run("resetFlightAtmosphere();selectedGameMode='normal';mpActive=false;shieldActive=false;targetY=45;pitchAngle=0;airplane.position.set(0,45,0);startScenicEvent('migration')");
+ run("const a=flightAtmosphere,b=a.eventRoot.children[0],u=b.userData,dt=.01;a.eventRoot.position.z=airplane.position.z-u.oz-GULL_SPEED*dt;airplane.position.x=a.eventRoot.position.x+u.ox;airplane.position.y=a.eventRoot.position.y+u.oy+Math.sin(a.time*1.4+u.phase)*1.2;airplane.position.z=a.eventRoot.position.z+GULL_SPEED*dt+u.oz");
+ const before=run('targetY');
+ run('updateGullFlock(flightAtmosphere,.01)');
+ assert(run('targetY<'+before));
+ assert(run('flightAtmosphere.birdDropTimer>.8'));
+ assert(run('airplane.position.y<45'));
+ run('resetFlightAtmosphere()')
+});
+test('Graphics settings expose quality, resolution and chunk-distance presets',()=>{
+ const settings=run('getGraphicsSettings()');
+ assert.equal(settings.quality,'high');
+ assert.equal(settings.renderChunks,18);
+ assert.equal(settings.resolution,1);
+ assert(run('GRAPHICS_QUALITY.ultra.shadowMapSize > GRAPHICS_QUALITY.high.shadowMapSize'));
+ assert(run('getGraphicsRenderDistance({renderChunks:30}) > getGraphicsRenderDistance({renderChunks:10})'));
+});
 const base={protocol:3,matchId:'test-round',startAt:10000,players:{player1:{ready:true,started:true,connected:true,health:240},player2:{ready:true,started:true,connected:true,health:0}}};
 const battleResult={matchId:'test-round',startAt:10000,winner:'player1',reason:'destroyed'};
 ctx.testRoom=base;ctx.testResult=battleResult;
