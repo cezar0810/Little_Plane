@@ -2,22 +2,16 @@
   if (window.__littlePlaneExtensionInstalled) return;
   window.__littlePlaneExtensionInstalled = true;
   const CHANNEL = "LITTLE_PLANE_YT_EXTENSION";
-  let bridgeInstallInFlight = false;
+  let lastStateKey = "";
+  let pollTimer = null;
 
-  function installPageBridge() {
-    if (bridgeInstallInFlight) return;
-    bridgeInstallInFlight = true;
-    chrome.runtime.sendMessage({type:"LP_GAME_INSTALL_BRIDGE"}, result => {
-      bridgeInstallInFlight = false;
-      if (chrome.runtime.lastError || !result?.ok) {
-        const reason = chrome.runtime.lastError?.message || result?.reason || "Falha ao instalar a ponte.";
-        console.warn("[Little Plane Rádio] Ponte principal não instalada:", reason);
-        setTimeout(installPageBridge, 2000);
-        return;
-      }
-      // Re-read the current song after the page-side bridge is ready.
-      poll();
-    });
+  function injectPageBridge() {
+    if (document.getElementById("little-plane-page-bridge")) return;
+    const script = document.createElement("script");
+    script.id = "little-plane-page-bridge";
+    script.src = chrome.runtime.getURL("page-bridge.js");
+    script.onload = () => script.remove();
+    (document.head || document.documentElement).appendChild(script);
   }
 
   function ensureLobbyNotice() {
@@ -51,7 +45,10 @@
   }
 
   function sendState(state) {
-    window.postMessage({channel:CHANNEL,type:"STATE",state}, location.origin);
+    const key = JSON.stringify(state);
+    if (key === lastStateKey) return;
+    lastStateKey = key;
+    window.postMessage({channel:CHANNEL,type:"STATE",state}, "*");
   }
 
   function poll() {
@@ -71,10 +68,10 @@
     });
   });
 
-  installPageBridge();
+  injectPageBridge();
   ensureLobbyNotice();
   poll();
-  setInterval(() => {
+  pollTimer = setInterval(() => {
     ensureLobbyNotice();
     poll();
   }, 1800);
