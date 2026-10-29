@@ -2139,13 +2139,24 @@
         .game-mode-card {border-color:#b7cddd38;box-shadow:0 12px 26px #0003}
         .game-mode-card:focus-visible,button:focus-visible{outline:3px solid #8bdff7;outline-offset:4px}
     
-        /* ========== AVISO OPCIONAL: RÁDIO DO YOUTUBE ========== */
-        #littlePlaneRadioInstall{position:absolute;left:50%;top:27%;transform:translateX(-50%);z-index:80;display:flex;align-items:center;gap:11px;width:min(390px,calc(100vw - 28px));box-sizing:border-box;padding:11px 13px;border:1px solid #67e8f955;border-radius:17px;color:#eafaff;background:linear-gradient(120deg,#0b1728ee,#15223cee);box-shadow:0 12px 35px #0007,0 0 24px #22d3ee16;font-family:system-ui,sans-serif;backdrop-filter:blur(12px)}
-        .lp-radio-install-icon{flex:0 0 37px;width:37px;height:37px;display:grid;place-items:center;border-radius:12px;background:#22d3ee18;color:#67e8f9;font-size:24px;font-weight:900}
-        .lp-radio-install-copy{min-width:0;flex:1}.lp-radio-install-copy strong{display:block;font-size:10px;letter-spacing:.13em;color:#67e8f9}.lp-radio-install-copy span{display:block;margin-top:3px;font-size:11px;line-height:1.3;color:#cbd5e1}
-        #lpRadioInstallAction{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border:0;border-radius:10px;padding:9px 10px;background:#67e8f9;color:#082032;font-size:10px;font-weight:900;white-space:nowrap;cursor:pointer}
-        @media(max-width:520px){#littlePlaneRadioInstall{top:23%;gap:8px;padding:9px}.lp-radio-install-icon{display:none}#lpRadioInstallAction{font-size:9px;padding:8px}}
-        @media(max-height:620px){#littlePlaneRadioInstall{top:20%;transform:translateX(-50%) scale(.9);transform-origin:top center}}
+        /* ========== RÁDIO DO YOUTUBE: CARTÃO COMPACTO AO LADO DA PATENTE ========== */
+        #littlePlaneRadioInstall{position:absolute;right:calc(50% + 170px);left:auto;top:15px;transform:none;z-index:5;display:flex;align-items:center;gap:8px;width:min(220px,calc(50vw - 200px));min-width:185px;box-sizing:border-box;padding:8px 10px;border:1px solid rgba(125,211,252,.18);border-radius:15px;color:#eafaff;background:rgba(8,15,30,.72);box-shadow:0 6px 20px rgba(0,0,0,.2);font-family:system-ui,sans-serif;backdrop-filter:blur(10px);transition:border-color .18s,background .18s,box-shadow .18s}
+        .lp-radio-install-icon{flex:0 0 29px;width:29px;height:29px;display:grid;place-items:center;border-radius:9px;background:rgba(34,211,238,.1);color:#67e8f9;font-size:20px;font-weight:900}
+        .lp-radio-install-icon svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+        .lp-radio-install-copy{min-width:0;flex:1}.lp-radio-install-copy strong{display:block;font-size:8px;letter-spacing:.1em;color:#a5d8e5;font-weight:900}.lp-radio-install-copy span{display:block;overflow:hidden;margin-top:3px;font-size:10px;line-height:1.25;color:#cbd5e1;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow-wrap:anywhere}
+        #lpRadioInstallAction{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;text-decoration:none;border:1px solid rgba(125,211,252,.2);border-radius:8px;padding:7px 8px;background:rgba(103,232,249,.09);color:#bae6fd;font-size:8px;font-weight:900;white-space:nowrap;cursor:pointer}
+        #lpRadioInstallAction:hover{background:rgba(103,232,249,.17);border-color:rgba(103,232,249,.4)}
+        #littlePlaneRadioInstall[data-connected="true"]{width:min(220px,calc(50vw - 200px));border-color:rgba(52,211,153,.25);background:rgba(6,20,28,.74);box-shadow:0 5px 18px rgba(0,0,0,.18)}
+        #littlePlaneRadioInstall[data-connected="true"] .lp-radio-install-icon{color:#6ee7b7;background:rgba(52,211,153,.1)}
+        #littlePlaneRadioInstall[data-connected="true"] .lp-radio-install-copy strong{color:#6ee7b7}
+        #littlePlaneRadioInstall[data-connected="true"] #lpRadioInstallAction{display:none}
+        .lp-radio-guide-backdrop{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;padding:16px;box-sizing:border-box;background:rgba(2,6,23,.78);backdrop-filter:blur(12px);font-family:system-ui,sans-serif}
+        .lp-radio-guide-backdrop.show{display:flex}.lp-radio-guide-card{position:relative;width:min(510px,100%);max-height:min(90vh,780px);overflow:auto;box-sizing:border-box;padding:24px;border:1px solid rgba(125,211,252,.25);border-radius:22px;color:#f8fafc;background:linear-gradient(150deg,#0f1a2c,#081321);box-shadow:0 28px 90px rgba(0,0,0,.6)}
+        .lp-radio-guide-close{position:absolute;right:14px;top:12px;border:0;background:rgba(255,255,255,.07);border-radius:10px;color:#cbd5e1;width:34px;height:34px;font-size:23px;cursor:pointer}.lp-radio-guide-kicker{font-size:9px;font-weight:900;letter-spacing:.2em;color:#67e8f9}.lp-radio-guide-card h2{margin:6px 36px 7px 0;font-size:clamp(22px,4vw,29px);font-weight:950;line-height:1.1}.lp-radio-guide-lead{margin:0 0 15px;color:#9caec2;font-size:12px;line-height:1.55}
+        .lp-radio-guide-download{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border-radius:13px;color:#06202b;background:linear-gradient(120deg,#67e8f9,#a5f3fc);text-decoration:none;font-size:12px;font-weight:950}.lp-radio-guide-download small{flex-shrink:0;font-size:9px;opacity:.75}
+        .lp-radio-guide-steps{list-style:none;display:grid;gap:11px;margin:17px 0;padding:0}.lp-radio-guide-steps li{display:flex;align-items:flex-start;gap:11px}.lp-radio-guide-steps li>span{flex:0 0 26px;width:26px;height:26px;display:grid;place-items:center;border:1px solid rgba(103,232,249,.23);border-radius:9px;color:#67e8f9;background:rgba(34,211,238,.07);font-size:11px;font-weight:950}.lp-radio-guide-steps strong{display:block;font-size:12px;font-weight:850}.lp-radio-guide-steps small{display:block;margin-top:3px;color:#94a3b8;font-size:10px;line-height:1.5}.lp-radio-guide-steps code{padding:2px 4px;border-radius:5px;color:#bae6fd;background:#16263a;font-size:10px}.lp-radio-guide-note{padding:10px 12px;border-radius:10px;color:#a5b4c7;background:rgba(255,255,255,.035);font-size:10px;line-height:1.5}.lp-radio-guide-done{width:100%;margin-top:5px;padding:11px;border:0;border-radius:12px;color:#081622;background:#e0f2fe;font-size:11px;font-weight:950;cursor:pointer}
+        @media(max-width:1000px){#littlePlaneRadioInstall,#littlePlaneRadioInstall[data-connected="true"]{right:auto;left:50%;top:184px;transform:translateX(-50%);width:min(300px,calc(100vw - 24px));min-width:0}}
+        @media(max-width:700px){#littlePlaneRadioInstall,#littlePlaneRadioInstall[data-connected="true"]{top:184px;width:min(270px,calc(100vw - 24px));padding:7px 9px;gap:7px}.lp-radio-install-icon{flex-basis:25px;width:25px;height:25px}.lp-radio-install-copy span{font-size:9px}#lpRadioInstallAction{font-size:8px;padding:7px 6px}.lp-radio-guide-card{padding:19px}}
 
     </style>
 </head>
@@ -2179,13 +2190,10 @@
         <canvas id="lobbyBgCanvas" class="absolute inset-0 w-full h-full" style="filter:blur(4px) brightness(0.3) saturate(0.55)"></canvas>
         <canvas id="lobbyPlaneCanvas" class="absolute inset-0 w-full h-full pointer-events-none"></canvas>
         <div id="lobbyBannerContainer"></div>
-        <aside id="littlePlaneRadioInstall" aria-label="Rádio do YouTube">
+        <aside id="littlePlaneRadioInstall" data-connected="false" aria-label="Rádio do YouTube">
             <div class="lp-radio-install-icon" aria-hidden="true">♫</div>
-            <div class="lp-radio-install-copy">
-                <strong>RÁDIO DO YOUTUBE</strong>
-                <span id="lpRadioInstallText">Quer ouvir sua própria música durante o voo? Instale a extensão gratuita.</span>
-            </div>
-            <a id="lpRadioInstallAction" href="https://github.com/cezar0810/Little_Plane/tree/main/extension" target="_blank" rel="noopener noreferrer">COMO ATIVAR</a>
+            <div class="lp-radio-install-copy"><strong id="lpRadioInstallTitle">RÁDIO DO YOUTUBE</strong><span id="lpRadioInstallText">Não conectado · abra uma aba do YouTube para usar sua música durante o voo.</span></div>
+            <button id="lpRadioInstallAction" type="button">COMO CONECTAR</button>
         </aside>
         <div id="lobbyLogo"><img src="logo.png" alt="Logo" style="width:100%" onerror="this.style.display='none'"></div>
         <div class="absolute top-3 left-3 z-2">
@@ -2555,7 +2563,7 @@
             <div id="meteorIndicator"><span>☄️</span><span id="meteorTimerText">CHUVA DE METEOROS</span></div>
         </div>
         <div id="pcRadioPlayer" aria-live="polite">
-            <canvas id="pcRadioCover" width="300" height="300" aria-label="Capa da música atual"></canvas>
+            <canvas id="pcRadioCover" width="250" height="250" aria-label="Capa da música atual"></canvas>
             <div class="pc-radio-main">
                 <div class="pc-radio-top"><span id="pcRadioSource">RÁDIO DO PC</span><svg class="pc-radio-status-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10v4m4-7v10m4-13v16m4-12v8m4-5v2"/></svg></div>
                 <span id="pcRadioTitle">Música atual</span><span id="pcRadioArtist">Artista</span>
@@ -4298,9 +4306,49 @@
             } catch (error) { console.warn('Controle do rádio falhou:', error) }
         }
 
+        function showPcRadioConnectionGuide() {
+            const downloadUrl = 'https://github.com/cezar0810/Little_Plane/raw/refs/heads/main/downloads/little-plane-radio-extension-1.1.4.zip';
+            let modal = document.getElementById('lpRadioConnectionGuide');
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = 'lpRadioConnectionGuide';
+                modal.className = 'lp-radio-guide-backdrop';
+                modal.innerHTML = `
+                    <div class="lp-radio-guide-card" role="dialog" aria-modal="true" aria-labelledby="lpRadioGuideTitle">
+                        <button class="lp-radio-guide-close" id="lpRadioGuideClose" type="button" aria-label="Fechar guia">×</button>
+                        <div class="lp-radio-guide-kicker">LITTLE PLANE · RÁDIO</div>
+                        <h2 id="lpRadioGuideTitle">Conecte o YouTube ao jogo</h2>
+                        <p class="lp-radio-guide-lead">A extensão conecta a música que já está tocando no YouTube ou YouTube Music ao player do Little Plane. Ela não pede sua senha.</p>
+                        <a class="lp-radio-guide-download" href="${downloadUrl}" target="_blank" rel="noopener noreferrer">↓ Baixar extensão para Chrome <small>ZIP · versão 1.1.4</small></a>
+                        <ol class="lp-radio-guide-steps">
+                            <li><span>1</span><div><strong>Baixe e extraia o ZIP</strong><small>Extraia a pasta compactada para um local fácil de encontrar.</small></div></li>
+                            <li><span>2</span><div><strong>Abra as extensões do Chrome</strong><small>Digite <code>chrome://extensions</code> na barra de endereços.</small></div></li>
+                            <li><span>3</span><div><strong>Ative o Modo do desenvolvedor</strong><small>Clique em “Carregar sem compactação”.</small></div></li>
+                            <li><span>4</span><div><strong>Selecione a pasta <code>extension</code></strong><small>Escolha a pasta chamada <code>extension</code> dentro do ZIP extraído.</small></div></li>
+                            <li><span>5</span><div><strong>Reproduza uma música e volte ao jogo</strong><small>Abra o YouTube numa aba normal do Chrome e atualize o Little Plane com F5.</small></div></li>
+                        </ol>
+                        <p class="lp-radio-guide-note">Após conectar, o player aparece durante o Voo Livre em computadores.</p>
+                        <button class="lp-radio-guide-done" id="lpRadioGuideDone" type="button">Entendi</button>
+                    </div>`;
+                document.body.appendChild(modal);
+                const close = () => modal.classList.remove('show');
+                modal.querySelector('#lpRadioGuideClose')?.addEventListener('click', close);
+                modal.querySelector('#lpRadioGuideDone')?.addEventListener('click', close);
+                modal.addEventListener('click', event => { if (event.target === modal) close() });
+                document.addEventListener('keydown', event => { if (event.key === 'Escape') close() })
+            }
+            modal.classList.add('show');
+            modal.querySelector('#lpRadioGuideClose')?.focus()
+        }
+
         function setupPcRadioIntegration() {
             if (pcRadioPollTimer) return;
             drawRadioPlaceholder();
+            const guideButton = document.getElementById('lpRadioInstallAction');
+            if (guideButton && !guideButton.dataset.lpRadioGuideBound) {
+                guideButton.dataset.lpRadioGuideBound = 'true';
+                guideButton.addEventListener('click', event => { event.preventDefault(); showPcRadioConnectionGuide() })
+            }
             window.LittlePlaneRadio = { updateState: setPcRadioState };
             window.addEventListener('littleplane:media-state', event => setPcRadioState(event.detail));
             document.getElementById('pcRadioPrevious')?.addEventListener('click', () => invokePcRadioAction('previous'));
@@ -8392,9 +8440,11 @@ function _obstacleMountainDims(b, central, rng) {
             let tail = new THREE.Mesh(new THREE.SphereGeometry(12, 6, 5), M.blimp);
             tail.position.x = -27;
             g.add(tail);
-            let car = new THREE.Mesh(new THREE.BoxGeometry(18, 5, 7), M.blimpCar);
-            car.position.set(0, -16, 0);
-            g.add(car);
+            let carRig = new THREE.Group(),
+                car = new THREE.Mesh(new THREE.BoxGeometry(18, 5, 7), M.blimpCar);
+            carRig.position.set(0, -16, 0);
+            carRig.add(car);
+            g.add(carRig);
             [-20, 20].forEach(px => { let f = new THREE.Mesh(new THREE.BoxGeometry(.6, 10, 14), M.blimp);
                 f.position.set(px, 0, 0);
                 g.add(f) });
@@ -8405,10 +8455,16 @@ function _obstacleMountainDims(b, central, rng) {
             g.position.set(x, y, z);
             g.rotation.y = rng() * Math.PI * 2;
             scene.add(g);
-            activeEntities.push({ type: 'blimp', mesh: g, driftAmp: 40 + rng() * 40, driftSpeed: .05 + rng() * .05,
-                driftPhase: rng() * Math.PI * 2, baseX: x, wobbleSpeedP: .3 + rng() * .2, wobbleAmpP: .04,
-                wobbleSpeedR: .25 + rng() * .2, wobbleAmpR: .06, wobblePhaseP: rng() * Math.PI * 2,
-                wobblePhaseR: rng() * Math.PI * 2, colRadius: 14 })
+            activeEntities.push({ type: 'blimp', mesh: g, carRig, baseX: x, baseY: y, baseZ: z,
+                baseRotationY: g.rotation.y, driftAmp: 13 + rng() * 10, driftSpeed: .07 + rng() * .05,
+                driftPhase: rng() * Math.PI * 2, windAmp: 3 + rng() * 4, windSpeed: .2 + rng() * .13,
+                windPhase: rng() * Math.PI * 2, driftZAmp: 3 + rng() * 4, driftZSpeed: .16 + rng() * .12,
+                bobAmp: 1.4 + rng() * 1.4, bobSpeed: .2 + rng() * .12,
+                wobbleSpeedP: .3 + rng() * .2, wobbleAmpP: .027,
+                wobbleSpeedR: .25 + rng() * .2, wobbleAmpR: .038,
+                wobblePhaseP: rng() * Math.PI * 2, wobblePhaseR: rng() * Math.PI * 2,
+                carSwaySpeed: .45 + rng() * .18, carSwayPhase: rng() * Math.PI * 2,
+                carSwayP: .022, carSwayR: .035, colRadius: 14 })
         }
         const BCOLS = [0xef4444, 0xf97316, 0xeab308, 0x22c55e, 0x3b82f6, 0xa855f7];
 
@@ -8430,24 +8486,31 @@ function _obstacleMountainDims(b, central, rng) {
                 s.position.set(Math.sin(i / 4 * Math.PI * 2) * 8, 0, Math.cos(i / 4 * Math.PI * 2) * 8);
                 g.add(s)
             }
+            const basketRig = new THREE.Group();
+            basketRig.position.y = -8;
             let bk = new THREE.Mesh(new THREE.BoxGeometry(7, 5, 7), M.basket);
-            bk.position.y = -19;
-            g.add(bk);
+            bk.position.y = -11;
+            basketRig.add(bk);
             [
                 [1, 1],
                 [1, -1],
                 [-1, 1],
                 [-1, -1]
             ].forEach(([sx, sz]) => { let r = new THREE.Mesh(new THREE.BoxGeometry(.4, 12, .4), M.trunk);
-                r.position.set(sx * 3, -12, sz * 3);
-                g.add(r) });
+                r.position.set(sx * 3, -4, sz * 3);
+                basketRig.add(r) });
+            g.add(basketRig);
             g.position.set(x, y, z);
             scene.add(g);
-            activeEntities.push({ type: 'balloon', mesh: g, bobAmp: 6 + rng() * 8, bobSpeed: .22 + rng() * .18,
-                bobPhase: rng() * Math.PI * 2, baseY: y, driftAmp: 18 + rng() * 25, driftSpeed: .07 + rng() * .09,
-                driftPhase: rng() * Math.PI * 2, baseX: x, wobbleSpeedP: .28 + rng() * .18, wobbleAmpP: .05,
-                wobbleSpeedR: .22 + rng() * .15, wobbleAmpR: .07, wobblePhaseP: rng() * Math.PI * 2,
-                wobblePhaseR: rng() * Math.PI * 2, colRadius: 14 })
+            activeEntities.push({ type: 'balloon', mesh: g, basketRig, baseX: x, baseY: y, baseZ: z,
+                bobAmp: 3.5 + rng() * 2.5, bobSpeed: .2 + rng() * .14, bobPhase: rng() * Math.PI * 2,
+                driftAmp: 10 + rng() * 9, driftSpeed: .07 + rng() * .07, driftPhase: rng() * Math.PI * 2,
+                windAmp: 3 + rng() * 4, windSpeed: .24 + rng() * .14, windPhase: rng() * Math.PI * 2,
+                driftZAmp: 2.5 + rng() * 3.5, driftZSpeed: .17 + rng() * .13,
+                wobbleSpeedP: .28 + rng() * .18, wobbleAmpP: .032, wobbleSpeedR: .22 + rng() * .15,
+                wobbleAmpR: .045, wobblePhaseP: rng() * Math.PI * 2, wobblePhaseR: rng() * Math.PI * 2,
+                basketSwaySpeed: .4 + rng() * .2, basketSwayPhase: rng() * Math.PI * 2,
+                basketSwayP: .022, basketSwayR: .033, colRadius: 14 })
         }
 
         function _spawnTower(z, x) {
@@ -8710,15 +8773,33 @@ function _obstacleMountainDims(b, central, rng) {
                 if (e.type === 'cloud') e.mesh.position.x = e.baseX + Math.sin(t * e.driftSpeed + e.driftPhase) * e
                     .driftAmp;
                 if (e.type === 'blimp') {
-                    e.mesh.position.x = e.baseX + Math.sin(t * e.driftSpeed + e.driftPhase) * e.driftAmp;
-                    e.mesh.rotation.x = Math.sin(t * e.wobbleSpeedP + e.wobblePhaseP) * e.wobbleAmpP;
-                    e.mesh.rotation.z = Math.sin(t * e.wobbleSpeedR + e.wobblePhaseR) * e.wobbleAmpR;
+                    const crosswind = Math.sin(t * e.windSpeed + e.windPhase),
+                        depthWind = Math.sin(t * e.driftZSpeed + e.windPhase);
+                    e.mesh.position.x = e.baseX + Math.sin(t * e.driftSpeed + e.driftPhase) * e.driftAmp + crosswind * e.windAmp;
+                    e.mesh.position.y = e.baseY + Math.sin(t * e.bobSpeed + e.driftPhase) * e.bobAmp;
+                    e.mesh.position.z = e.baseZ + depthWind * e.driftZAmp;
+                    e.mesh.rotation.x = Math.sin(t * e.wobbleSpeedP + e.wobblePhaseP) * e.wobbleAmpP + crosswind * .009;
+                    e.mesh.rotation.z = Math.sin(t * e.wobbleSpeedR + e.wobblePhaseR) * e.wobbleAmpR + crosswind * .012;
+                    e.mesh.rotation.y = e.baseRotationY + crosswind * .026;
+                    if (e.carRig) {
+                        const carSway = Math.sin(t * e.carSwaySpeed + e.carSwayPhase);
+                        e.carRig.rotation.x = carSway * e.carSwayP;
+                        e.carRig.rotation.z = Math.sin(t * e.carSwaySpeed * .83 + e.carSwayPhase + .8) * e.carSwayR
+                    }
                 }
                 if (e.type === 'balloon') {
-                    e.mesh.position.x = e.baseX + Math.sin(t * e.driftSpeed + e.driftPhase) * e.driftAmp;
+                    const crosswind = Math.sin(t * e.windSpeed + e.windPhase),
+                        depthWind = Math.sin(t * e.driftZSpeed + e.windPhase);
+                    e.mesh.position.x = e.baseX + Math.sin(t * e.driftSpeed + e.driftPhase) * e.driftAmp + crosswind * e.windAmp;
                     e.mesh.position.y = e.baseY + Math.sin(t * e.bobSpeed + e.bobPhase) * e.bobAmp;
-                    e.mesh.rotation.x = Math.sin(t * e.wobbleSpeedP + e.wobblePhaseP) * e.wobbleAmpP;
-                    e.mesh.rotation.z = Math.sin(t * e.wobbleSpeedR + e.wobblePhaseR) * e.wobbleAmpR;
+                    e.mesh.position.z = e.baseZ + depthWind * e.driftZAmp;
+                    e.mesh.rotation.x = Math.sin(t * e.wobbleSpeedP + e.wobblePhaseP) * e.wobbleAmpP + crosswind * .012;
+                    e.mesh.rotation.z = Math.sin(t * e.wobbleSpeedR + e.wobblePhaseR) * e.wobbleAmpR + crosswind * .016;
+                    if (e.basketRig) {
+                        const basketSway = Math.sin(t * e.basketSwaySpeed + e.basketSwayPhase);
+                        e.basketRig.rotation.x = basketSway * e.basketSwayP;
+                        e.basketRig.rotation.z = Math.sin(t * e.basketSwaySpeed * .86 + e.basketSwayPhase + .9) * e.basketSwayR
+                    }
                 }
                 // Formações de cânion podem ter centenas de unidades de profundidade. Só recicla
                 // a entidade depois que a extremidade traseira inteira já saiu da área visível.

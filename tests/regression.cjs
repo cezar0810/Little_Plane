@@ -80,6 +80,17 @@ test('Graphics settings expose quality, resolution and chunk-distance presets',(
  assert(run('GRAPHICS_QUALITY.ultra.shadowMapSize > GRAPHICS_QUALITY.high.shadowMapSize'));
  assert(run('getGraphicsRenderDistance({renderChunks:30}) > getGraphicsRenderDistance({renderChunks:10})'));
 });
+test('Balloons and blimps have low-amplitude wind and independent basket sway',()=>{
+ assert.match(html,/e\.carRig\.rotation\.z/);
+ assert.match(html,/e\.basketRig\.rotation\.z/);
+ assert.match(html,/driftZAmp/);
+ assert.match(html,/width="250" height="250"/);
+});
+test('Radio card offers direct extension download and setup steps',()=>{
+ assert.match(html,/little-plane-radio-extension-1\.1\.4\.zip/);
+ assert.match(html,/Selecione a pasta <code>extension<\/code>/);
+ assert.match(html,/id="lpRadioInstallAction" type="button"/);
+});
 const base={protocol:3,matchId:'test-round',startAt:10000,players:{player1:{ready:true,started:true,connected:true,health:240},player2:{ready:true,started:true,connected:true,health:0}}};
 const battleResult={matchId:'test-round',startAt:10000,winner:'player1',reason:'destroyed'};
 ctx.testRoom=base;ctx.testResult=battleResult;
