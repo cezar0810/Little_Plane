@@ -2155,6 +2155,7 @@
         .lp-radio-guide-close{position:absolute;right:14px;top:12px;border:0;background:rgba(255,255,255,.07);border-radius:10px;color:#cbd5e1;width:34px;height:34px;font-size:23px;cursor:pointer}.lp-radio-guide-kicker{font-size:9px;font-weight:900;letter-spacing:.2em;color:#67e8f9}.lp-radio-guide-card h2{margin:6px 36px 7px 0;font-size:clamp(22px,4vw,29px);font-weight:950;line-height:1.1}.lp-radio-guide-lead{margin:0 0 15px;color:#9caec2;font-size:12px;line-height:1.55}
         .lp-radio-guide-download{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border-radius:13px;color:#06202b;background:linear-gradient(120deg,#67e8f9,#a5f3fc);text-decoration:none;font-size:12px;font-weight:950}.lp-radio-guide-download small{flex-shrink:0;font-size:9px;opacity:.75}
         .lp-radio-guide-steps{list-style:none;display:grid;gap:11px;margin:17px 0;padding:0}.lp-radio-guide-steps li{display:flex;align-items:flex-start;gap:11px}.lp-radio-guide-steps li>span{flex:0 0 26px;width:26px;height:26px;display:grid;place-items:center;border:1px solid rgba(103,232,249,.23);border-radius:9px;color:#67e8f9;background:rgba(34,211,238,.07);font-size:11px;font-weight:950}.lp-radio-guide-steps strong{display:block;font-size:12px;font-weight:850}.lp-radio-guide-steps small{display:block;margin-top:3px;color:#94a3b8;font-size:10px;line-height:1.5}.lp-radio-guide-steps code{padding:2px 4px;border-radius:5px;color:#bae6fd;background:#16263a;font-size:10px}.lp-radio-guide-note{padding:10px 12px;border-radius:10px;color:#a5b4c7;background:rgba(255,255,255,.035);font-size:10px;line-height:1.5}.lp-radio-guide-done{width:100%;margin-top:5px;padding:11px;border:0;border-radius:12px;color:#081622;background:#e0f2fe;font-size:11px;font-weight:950;cursor:pointer}
+        @media(min-width:1001px) and (max-width:1150px){#littlePlaneRadioInstall,#littlePlaneRadioInstall[data-connected="true"]{right:auto;left:50%;top:110px;transform:translateX(-50%);width:min(300px,calc(100vw - 24px));min-width:0}}
         @media(max-width:1000px){#littlePlaneRadioInstall,#littlePlaneRadioInstall[data-connected="true"]{right:auto;left:50%;top:184px;transform:translateX(-50%);width:min(300px,calc(100vw - 24px));min-width:0}}
         @media(max-width:700px){#littlePlaneRadioInstall,#littlePlaneRadioInstall[data-connected="true"]{top:184px;width:min(270px,calc(100vw - 24px));padding:7px 9px;gap:7px}.lp-radio-install-icon{flex-basis:25px;width:25px;height:25px}.lp-radio-install-copy span{font-size:9px}#lpRadioInstallAction{font-size:8px;padding:7px 6px}.lp-radio-guide-card{padding:19px}}
 
@@ -8445,6 +8446,11 @@ function _obstacleMountainDims(b, central, rng) {
                 car = new THREE.Mesh(new THREE.BoxGeometry(18, 5, 7), M.blimpCar);
             carRig.position.set(0, -16, 0);
             carRig.add(car);
+            [-6, 6].forEach(px => {
+                const hanger = new THREE.Mesh(new THREE.BoxGeometry(.35, 3.5, .35), M.blimpCar);
+                hanger.position.set(px, 1.8, 0);
+                carRig.add(hanger)
+            });
             g.add(carRig);
             [-20, 20].forEach(px => { let f = new THREE.Mesh(new THREE.BoxGeometry(.6, 10, 14), M.blimp);
                 f.position.set(px, 0, 0);
