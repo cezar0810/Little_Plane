@@ -1,22 +1,34 @@
 (() => {
   if (window.__littlePlaneExtensionInstalled) return;
   window.__littlePlaneExtensionInstalled = true;
+
   const CHANNEL = "LITTLE_PLANE_YT_EXTENSION";
-  let lastStateKey = "";
+  let bridgeInstallInFlight = false;
   let pollTimer = null;
 
-  function injectPageBridge() {
-    if (document.getElementById("little-plane-page-bridge")) return;
-    const script = document.createElement("script");
-    script.id = "little-plane-page-bridge";
-    script.src = chrome.runtime.getURL("page-bridge.js");
-    script.onload = () => script.remove();
-    (document.head || document.documentElement).appendChild(script);
+  function installPageBridge() {
+    if (bridgeInstallInFlight) return;
+    bridgeInstallInFlight = true;
+
+    chrome.runtime.sendMessage({type: "LP_GAME_INSTALL_BRIDGE"}, result => {
+      bridgeInstallInFlight = false;
+
+      if (chrome.runtime.lastError || !result?.ok) {
+        const reason = chrome.runtime.lastError?.message || result?.reason || "Falha ao instalar a ponte.";
+        console.warn("[Little Plane Rádio] Ponte principal não instalada:", reason);
+        setTimeout(installPageBridge, 2000);
+        return;
+      }
+
+      // Envia o estado novamente depois que a ponte estiver pronta.
+      poll();
+    });
   }
 
   function ensureLobbyNotice() {
     const lobby = document.getElementById("lobbyScreen");
     if (!lobby || document.getElementById("littlePlaneRadioInstall")) return;
+
     const notice = document.createElement("aside");
     notice.id = "littlePlaneRadioInstall";
     notice.innerHTML = `
@@ -26,6 +38,7 @@
         <span id="lpRadioInstallText">Conecte sua música e jogue ouvindo sua playlist.</span>
       </div>
       <button id="lpRadioInstallAction" type="button">COMO ATIVAR</button>`;
+
     const style = document.createElement("style");
     style.id = "littlePlaneRadioInstallStyle";
     style.textContent = `
@@ -37,42 +50,55 @@
       @media(max-height:620px){#littlePlaneRadioInstall{top:9%;transform:translateX(-50%) scale(.9);transform-origin:top center}}`;
     (document.head || document.documentElement).appendChild(style);
     lobby.appendChild(notice);
+
     notice.querySelector("#lpRadioInstallAction").addEventListener("click", () => {
-      const text = "Para ativar a Rádio do YouTube no Little Plane:\n1. Baixe o repositório do jogo pelo GitHub (Code > Download ZIP).\n2. Extraia o ZIP.\n3. No Chrome, abra chrome://extensions e ative o Modo do desenvolvedor.\n4. Clique em Carregar sem compactação e selecione a pasta extension dentro do projeto.\n5. Recarregue o Little Plane e deixe uma aba do YouTube aberta.\n\nProjeto: https://github.com/cezar0810/Little_Plane/tree/main/extension";
+      const text = "Para ativar a Rádio do YouTube no Little Plane:\n1. Baixe o repositório do jogo pelo GitHub (Code > Download ZIP).\n2. Extraia o ZIP.\n3. No Chrome, abra chrome://extensions e ative o Modo do desenvolvedor.\n4. Clique em Carregar sem compactação e selecione a pasta extension dentro do projeto.\n5. Recarregue o Little Plane e a aba do YouTube.\n\nProjeto: https://github.com/cezar0810/Little_Plane/tree/main/extension";
       window.open("https://github.com/cezar0810/Little_Plane/tree/main/extension", "_blank", "noopener");
       alert(text);
     });
   }
 
+  // Não deduplicar mensagens: uma resposta enviada antes da injeção da ponte
+  // poderia ser descartada e deixar o player desconectado até o estado mudar.
   function sendState(state) {
-    const key = JSON.stringify(state);
-    if (key === lastStateKey) return;
-    lastStateKey = key;
-    window.postMessage({channel:CHANNEL,type:"STATE",state}, "*");
+    window.postMessage({channel: CHANNEL, type: "STATE", state: state || {available: false, source: "YouTube"}}, location.origin);
   }
 
   function poll() {
-    chrome.runtime.sendMessage({type:"LP_GAME_GET_STATE"}, state => {
+    chrome.runtime.sendMessage({type: "LP_GAME_GET_STATE"}, state => {
       if (chrome.runtime.lastError) return;
-      sendState(state || {available:false,source:"YouTube"});
+
+      const currentState = state || {available: false, source: "YouTube"};
+      sendState(currentState);
+
       const label = document.getElementById("lpRadioInstallText");
-      if (label && state?.available) label.textContent = "Conectado: " + state.title + " — a rádio aparece durante o Voo Livre.";
-      else if (label) label.textContent = "Abra uma aba do YouTube ou YouTube Music para conectar sua música.";
+      if (label && currentState.available) {
+        label.textContent = "Conectado: " + currentState.title + " — a rádio aparece durante o Voo Livre.";
+      } else if (label) {
+        label.textContent = "Abra uma aba do YouTube ou YouTube Music para conectar sua música.";
+      }
     });
   }
 
   window.addEventListener("message", event => {
     if (event.source !== window || event.data?.channel !== CHANNEL || event.data.type !== "ACTION") return;
-    chrome.runtime.sendMessage({type:"LP_GAME_ACTION",action:event.data.action}, result => {
-      window.postMessage({channel:CHANNEL,type:"ACTION_RESULT",id:event.data.id,result:result || {ok:false}}, "*");
+
+    chrome.runtime.sendMessage({type: "LP_GAME_ACTION", action: event.data.action}, result => {
+      window.postMessage({
+        channel: CHANNEL,
+        type: "ACTION_RESULT",
+        id: event.data.id,
+        result: result || {ok: false}
+      }, location.origin);
     });
   });
 
-  injectPageBridge();
   ensureLobbyNotice();
+  installPageBridge();
   poll();
   pollTimer = setInterval(() => {
     ensureLobbyNotice();
     poll();
+    if (!window.LittlePlaneMediaBridge) installPageBridge();
   }, 1800);
 })();
