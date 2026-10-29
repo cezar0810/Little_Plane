@@ -42,8 +42,18 @@ test('Thermal crossing rewards only once, event disposes cleanly',()=>{
  run("airplane.position.set(0,45,0);fuel=30;startScenicEvent('thermal');airplane.position.z=-620;updateFlightAtmosphere(.1,620)");assert.equal(run('fuel'),55);
  run('updateFlightAtmosphere(.1,620)');assert.equal(run('fuel'),55);run('resetFlightAtmosphere()')
 });
-test('Bird migration and aurora simulate and terminate',()=>{
- run("dayNightManager={currentTime:.94};for(const type of ['migration','aurora']){startScenicEvent(type);for(let i=0;i<1200;i++)updateFlightAtmosphere(1/60,i);resetFlightAtmosphere()}");assert.equal(run('flightAtmosphere.event'),null)
+test('Bird migration renders outlined gulls and completes three distant waves',()=>{
+ run("dayNightManager={currentTime:.94};selectedGameMode='normal';mpActive=false;airplane.position.set(0,45,0);startScenicEvent('migration')");
+ assert.equal(run('flightAtmosphere.eventWave'),1);
+ assert(run("flightAtmosphere.eventRoot.children[0].children.some(part=>part.children.some(child=>child.userData.gullOutline))"));
+ run("for(let i=0;i<3000&&flightAtmosphere.event==='migration';i++){airplane.position.z-=3;updateFlightAtmosphere(1/60,i*3)}");
+ assert.equal(run('flightAtmosphere.event'),null);
+ assert.equal(run('flightAtmosphere.eventWave'),3);
+ run('resetFlightAtmosphere()')
+});
+test('Aurora simulates and terminates cleanly',()=>{
+ run("dayNightManager={currentTime:.94};startScenicEvent('aurora');for(let i=0;i<1200;i++)updateFlightAtmosphere(1/60,i);resetFlightAtmosphere()");
+ assert.equal(run('flightAtmosphere.event'),null)
 });
 const base={protocol:3,matchId:'test-round',startAt:10000,players:{player1:{ready:true,started:true,connected:true,health:240},player2:{ready:true,started:true,connected:true,health:0}}};
 const battleResult={matchId:'test-round',startAt:10000,winner:'player1',reason:'destroyed'};

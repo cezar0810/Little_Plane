@@ -5586,7 +5586,7 @@
 
         // Bounded, shared geometry: upper clouds and wind cost two draw calls.
         const flightAtmosphere = { root: null, clouds: null, banks: [], wind: null, time: 0,
-            event: null, eventTime: 0, eventRoot: null, collected: false, chirpAt: 0 };
+            event: null, eventTime: 0, eventRoot: null, eventWave: 0, collected: false, chirpAt: 0 };
 
         function disposeFlightGroup(root) {
             if (!root) return;
@@ -5600,11 +5600,30 @@
             materials.forEach(m => { if (m !== M.cloud) m.dispose() })
         }
 
+        // Ative sombras nos modelos opacos recém-gerados sem percorrer toda a cena por quadro.
+        function enableGameShadows(root) {
+            if (!root?.traverse) return;
+            root.traverse(part => {
+                if (!part.isMesh || !part.geometry || part.userData?.skipGameShadows) return;
+                const materials = (Array.isArray(part.material) ? part.material : [part.material]).filter(Boolean),
+                    opaqueLit = materials.some(m => (m.isMeshStandardMaterial || m.isMeshLambertMaterial ||
+                        m.isMeshPhongMaterial) && !m.transparent && (m.opacity ?? 1) >= .95);
+                if (!opaqueLit) return;
+                part.castShadow = true;
+                part.receiveShadow = true
+            })
+        }
+
+        function enableSceneShadowsFrom(firstChildIndex) {
+            if (!scene) return;
+            scene.children.slice(firstChildIndex).forEach(enableGameShadows)
+        }
+
         function resetFlightAtmosphere() {
             disposeFlightGroup(flightAtmosphere.root);
             disposeFlightGroup(flightAtmosphere.eventRoot);
             Object.assign(flightAtmosphere, { root: null, clouds: null, banks: [], wind: null,
-                event: null, eventRoot: null, time: 0, eventTime: 0, collected: false });
+                event: null, eventRoot: null, eventWave: 0, time: 0, eventTime: 0, collected: false });
             document.getElementById('flightMoment')?.classList.remove('show')
         }
 
@@ -5743,7 +5762,7 @@
         }
 
         // ==================== EVENTO: REVOADA DE GAIVOTAS (antiga rota migratória) ====================
-        const GULL_SPEED = 70, GULL_COUNT = 17;
+        const GULL_SPEED = 82, GULL_COUNT = 17;
 
         function buildGullFlock(root) {
             const makeWing = (verts, cols, tris) => {
@@ -5764,7 +5783,17 @@
                 bodyMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: .9, flatShading: true }),
                 beakMat = new THREE.MeshStandardMaterial({ color: 0xfbbf24, roughness: .7, flatShading: true }),
                 bodyGeo = new THREE.SphereGeometry(1, 7, 5), headGeo = new THREE.SphereGeometry(.75, 6, 5),
-                beakGeo = new THREE.ConeGeometry(.28, 1.2, 4), tailGeo = new THREE.ConeGeometry(.95, 2.4, 3);
+                beakGeo = new THREE.ConeGeometry(.28, 1.2, 4), tailGeo = new THREE.ConeGeometry(.95, 2.4, 3),
+                outlineMaterial = new THREE.MeshBasicMaterial({ color: 0x111827, side: THREE.BackSide, toneMapped: false });
+            function outlineGullMesh(mesh) {
+                const shell = new THREE.Mesh(mesh.geometry, outlineMaterial);
+                shell.scale.setScalar(1.16);
+                shell.userData.gullOutline = true;
+                shell.castShadow = false;
+                shell.receiveShadow = false;
+                mesh.add(shell);
+                return mesh
+            }
             for (let i = 0; i < GULL_COUNT; i++) {
                 const row = Math.ceil(i / 2), side = i % 2 ? -1 : 1, bird = new THREE.Group(),
                     body = new THREE.Mesh(bodyGeo, bodyMat), head = new THREE.Mesh(headGeo, bodyMat),
@@ -5773,14 +5802,15 @@
                 head.position.set(0, .4, 2.9);
                 beak.rotation.x = Math.PI / 2; beak.position.set(0, .3, 4.1);
                 tail.rotation.x = -Math.PI / 2; tail.scale.set(1.3, 1, .3); tail.position.set(0, .1, -3.5);
+                [body, head, beak, tail].forEach(outlineGullMesh);
                 bird.add(body, head, beak, tail);
                 const wings = [1, -1].map(w => {
                     const shoulder = new THREE.Group(), elbow = new THREE.Group();
                     shoulder.position.set(w * .7, .3, .2);
                     shoulder.scale.x = w;
-                    shoulder.add(new THREE.Mesh(inner, wingMat));
+                    shoulder.add(outlineGullMesh(new THREE.Mesh(inner, wingMat)));
                     elbow.position.x = 3.6;
-                    elbow.add(new THREE.Mesh(outer, wingMat));
+                    elbow.add(outlineGullMesh(new THREE.Mesh(outer, wingMat)));
                     shoulder.add(elbow);
                     bird.add(shoulder);
                     return { shoulder, elbow, w }
@@ -5838,12 +5868,13 @@
             if (mpActive || selectedGameMode === 'music' || !scene || !airplane || flightAtmosphere.event) return;
             if (type === 'aurora' && getAircraftNightFactor() < .45) type = 'migration';
             const a = flightAtmosphere;
-            a.event = type; a.eventTime = 0; a.collected = false; a.chirpAt=0;
-            a.duration = type === 'hurricane' ? 10 + Math.random() * 10 : 0;
+            a.event = type; a.eventTime = 0; a.collected = false; a.chirpAt = 0;
+            a.eventWave = type === 'migration' ? 1 : 0;
+            a.duration = type === 'hurricane' ? 10 + Math.random() * 10 : type === 'migration' ? 45 : 0;
             specialEventDirector.activeType = type;
             specialEventDirector.lastType = type;
             a.eventRoot = new THREE.Group();
-            a.eventRoot.position.z = airplane.position.z - (type === 'hurricane' ? 700 : type === 'migration' ? 650 : 800);
+            a.eventRoot.position.z = airplane.position.z - (type === 'hurricane' ? 700 : type === 'migration' ? 1600 : 800);
             const en = currentLanguage === 'en';
             let title, copy;
             if (type === 'hurricane') {
@@ -5920,9 +5951,23 @@
                     ribbon.position.y=Math.sin(a.time*.3+i)*14
                 })
             }
-            if(a.eventTime>(a.duration||18) || (a.event !== 'aurora' && a.event !== 'hurricane' && a.eventRoot.position.z>airplane.position.z+260)) {
-                const type=a.event; disposeFlightGroup(a.eventRoot); a.eventRoot=null; a.event=null;
-                scheduleNextSpecialEvent(type,distance,true)
+            const eventPassed = a.event !== 'aurora' && a.event !== 'hurricane' &&
+                a.eventRoot.position.z > airplane.position.z + 260;
+            if (a.event === 'migration' && eventPassed && a.eventWave < 3) {
+                disposeFlightGroup(a.eventRoot);
+                a.eventWave += 1;
+                a.eventRoot = new THREE.Group();
+                a.eventRoot.position.set(airplane.position.x,
+                    Math.max(30, Math.min(150, airplane.position.y)), airplane.position.z - 1600);
+                buildGullFlock(a.eventRoot);
+                scene.add(a.eventRoot)
+            } else if (a.eventTime > (a.duration || 18) || eventPassed) {
+                const type = a.event;
+                disposeFlightGroup(a.eventRoot);
+                a.eventRoot = null;
+                a.event = null;
+                document.getElementById('flightMoment')?.classList.remove('show');
+                scheduleNextSpecialEvent(type, distance, true)
             }
         }
 
@@ -7407,13 +7452,15 @@ const moonPos = new THREE.Vector3(0, moonY, moonZ);
             renderer.shadowMap.enabled = true;
             renderer.shadowMap.type = THREE.PCFSoftShadowMap;
             document.body.appendChild(renderer.domElement);
-           ambientLight = new THREE.AmbientLight(0xffd4a0, .65);
-scene.add(ambientLight);
-sunLight = new THREE.DirectionalLight(0xff8c40, 1.15);
-sunLight.castShadow = true;
-sunLight.shadow.mapSize.set(1024, 1024);
-Object.assign(sunLight.shadow.camera, { near: 1, far: 800, left: -300, right: 300, top: 300, bottom: -300 });
-sunLight.shadow.bias = -.0005;
+            ambientLight = new THREE.AmbientLight(0xffd4a0, .65);
+            scene.add(ambientLight);
+            sunLight = new THREE.DirectionalLight(0xff8c40, 1.15);
+            sunLight.castShadow = true;
+            sunLight.shadow.mapSize.set(2048, 2048);
+            sunLight.shadow.radius = 3;
+            Object.assign(sunLight.shadow.camera, { near: 1, far: 1000, left: -260, right: 260, top: 260, bottom: -260 });
+            sunLight.shadow.bias = -.0002;
+            sunLight.shadow.normalBias = .025;
 scene.add(sunLight);
 scene.add(sunLight.target);
 hemiLight = new THREE.HemisphereLight(0xffa060, 0x2d1b69, .5);
@@ -8275,12 +8322,14 @@ function _obstacleMountainDims(b, central, rng) {
 
         // Gera o mesmo bloco para os dois pilotos quando há uma corrida em preparação ou ativa.
         function spawnChunk(z, b) {
-            const rng = getRng(z);
+            const shadowStartIndex = scene ? scene.children.length : 0,
+                rng = getRng(z);
             // As áreas dos vulcões e da chegada ficam livres de obstáculos aleatórios. O cenário
             // lateral continua visível, mas a passagem depende apenas dos marcos compartilhados.
             if (isMultiplayerReservedChunk(z)) {
                 if (rng() < .65) _spawnCloud(z + (rng() - .5) * 70, (rng() - .5) * 700);
                 if (b.river) _spawnRiverSeg(z);
+                enableSceneShadowsFrom(shadowStartIndex);
                 return
             }
             // Escolhe a função de montanha correta com base no bioma
@@ -8359,6 +8408,7 @@ function _obstacleMountainDims(b, central, rng) {
                 let cx = safeX(z, -200, 200, 30);
                 if (cx !== null) _spawnCamp(z + (rng() - .5) * 40, cx);
             }
+            enableSceneShadowsFrom(shadowStartIndex);
         }
 
         // ==================== GERAÇÃO INICIAL DO MUNDO ====================
@@ -8521,6 +8571,9 @@ function _obstacleMountainDims(b, central, rng) {
                 planeDef = getPlaneById(planeId);
             selectedPlaneId = planeId;
             propellerHub = planeDef.buildFn(planeColor, airplane);
+            airplane.traverse(part => {
+                if (part.isMesh) { part.castShadow = true; part.receiveShadow = true }
+            });
             airplane.rotation.y = Math.PI;
             airplane.position.set(0, 45, 0);
             scene.add(airplane);
