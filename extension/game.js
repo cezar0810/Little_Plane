@@ -4,6 +4,7 @@
 
   const CHANNEL = "LITTLE_PLANE_YT_EXTENSION";
   let bridgeInstallInFlight = false;
+  let bridgeInstalled = false;
   let pollTimer = null;
 
   function installPageBridge() {
@@ -20,6 +21,7 @@
         return;
       }
 
+      bridgeInstalled = true;
       // Envia o estado novamente depois que a ponte estiver pronta.
       poll();
     });
@@ -99,6 +101,6 @@
   pollTimer = setInterval(() => {
     ensureLobbyNotice();
     poll();
-    if (!window.LittlePlaneMediaBridge) installPageBridge();
+    if (!bridgeInstalled) installPageBridge();
   }, 1800);
 })();
