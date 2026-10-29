@@ -27,23 +27,6 @@ async function readYouTubeState() {
 }
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message?.type === "LP_GAME_INSTALL_BRIDGE") {
-    const tabId = sender.tab?.id;
-    if (tabId == null || !sender.url || !GAME_MATCHES.some(re => re.test(sender.url))) {
-      sendResponse({ok:false, reason:"Solicitação fora da página do jogo."});
-      return false;
-    }
-    chrome.scripting.executeScript({
-      target: {tabId},
-      files: ["page-bridge.js"],
-      world: "MAIN"
-    }).then(() => {
-      sendResponse({ok:true});
-    }).catch(error => {
-      sendResponse({ok:false, reason:error?.message || String(error)});
-    });
-    return true;
-  }
   if (message?.type === "LP_GAME_GET_STATE") {
     readYouTubeState().then(sendResponse).catch(() => sendResponse({available:false,source:"YouTube"}));
     return true;
