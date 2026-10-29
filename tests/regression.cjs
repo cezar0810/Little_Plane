@@ -57,14 +57,14 @@ test('Aurora simulates and terminates cleanly',()=>{
 });
 test('Gulls do not steer away from the player',()=>{
  run("resetFlightAtmosphere();selectedGameMode='normal';mpActive=false;airplane.position.set(0,45,0);startScenicEvent('migration')");
- run("airplane.position.x=130;const root=flightAtmosphere.eventRoot,bird=root.children[0],u=bird.userData;updateGullFlock(flightAtmosphere,.01)");
+ run("{airplane.position.x=130;const root=flightAtmosphere.eventRoot,bird=root.children[0],u=bird.userData;updateGullFlock(flightAtmosphere,.01)}");
  assert.equal(run('flightAtmosphere.eventRoot.position.x'),0);
  assert.equal(run('flightAtmosphere.eventRoot.children[0].position.x'),run('flightAtmosphere.eventRoot.children[0].userData.ox'));
  run('resetFlightAtmosphere()')
 });
 test('Gull collision reduces altitude and applies a short downward effect',()=>{
  run("resetFlightAtmosphere();selectedGameMode='normal';mpActive=false;shieldActive=false;targetY=45;pitchAngle=0;airplane.position.set(0,45,0);startScenicEvent('migration')");
- run("const a=flightAtmosphere,b=a.eventRoot.children[0],u=b.userData,dt=.01;a.eventRoot.position.z=airplane.position.z-u.oz-GULL_SPEED*dt;airplane.position.x=a.eventRoot.position.x+u.ox;airplane.position.y=a.eventRoot.position.y+u.oy+Math.sin(a.time*1.4+u.phase)*1.2;airplane.position.z=a.eventRoot.position.z+GULL_SPEED*dt+u.oz");
+ run("{const a=flightAtmosphere,b=a.eventRoot.children[0],u=b.userData,dt=.01;a.eventRoot.position.z=airplane.position.z-u.oz-GULL_SPEED*dt;airplane.position.x=a.eventRoot.position.x+u.ox;airplane.position.y=a.eventRoot.position.y+u.oy+Math.sin(a.time*1.4+u.phase)*1.2;airplane.position.z=a.eventRoot.position.z+GULL_SPEED*dt+u.oz}");
  const before=run('targetY');
  run('updateGullFlock(flightAtmosphere,.01)');
  assert(run('targetY<'+before));
