@@ -4344,6 +4344,7 @@
         function setupPcRadioIntegration() {
             if (pcRadioPollTimer) return;
             drawRadioPlaceholder();
+            window.addEventListener('littleplane:open-radio-guide', showPcRadioConnectionGuide);
             const guideButton = document.getElementById('lpRadioInstallAction');
             if (guideButton && !guideButton.dataset.lpRadioGuideBound) {
                 guideButton.dataset.lpRadioGuideBound = 'true';
