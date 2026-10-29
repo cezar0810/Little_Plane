@@ -1,5 +1,4 @@
 const GAME_MATCHES = [
-  /^https:\/\/little-plane\.cezaraugust76\.workers\.dev\//,
   /^https:\/\/little-plane-test\.pages\.dev\//,
   /^http:\/\/localhost(?::\d+)?\//,
   /^http:\/\/127\.0\.0\.1(?::\d+)?\//
@@ -11,6 +10,7 @@ async function findYouTubeTab() {
     "https://music.youtube.com/*"
   ]});
   if (!tabs.length) return null;
+  // Prefer the tab that is currently active; otherwise use the most recently updated candidate.
   const active = tabs.find(tab => tab.active);
   return active || tabs.sort((a, b) => (b.lastAccessed || 0) - (a.lastAccessed || 0))[0];
 }
@@ -43,6 +43,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.status === "complete" && tab.url && GAME_MATCHES.some(re => re.test(tab.url))) {
-    // O script do jogo consulta o estado da mídia periodicamente.
+    // The game's content script polls for media state; no unsolicited tab broadcasts needed.
   }
 });
