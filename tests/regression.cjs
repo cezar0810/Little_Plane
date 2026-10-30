@@ -147,27 +147,44 @@ test('Lake reservations are removed when the chunk is cleared',()=>{
  run("clearWorld()");
  assert.equal(run("spawnedLakes.length"),0);
 });
-test('Every biome generates mountain meshes on both outer terrain edges',()=>{
- assert.match(html,/const flankRange = \{/);
- assert.match(html,/const innerOffset = b\.mountLateral \+ 105 \+ rng\(\) \* 22/);
- assert.match(html,/const outerOffset = b\.mountLateral \+ 220 \+ rng\(\) \* 28/);
- assert.match(html,/spawnMtn\(innerZ, side \* innerOffset, flankRange, false\)/);
- assert.match(html,/spawnMtn\(outerZ, side \* outerOffset, flankRange, false\)/);
+test('Every biome keeps two side mountain layers without adding border rows',()=>{
+ assert.match(html,/const innerFlankRange = \{/);
+ assert.match(html,/const outerFlankRange = \{/);
+ assert.match(html,/mountH: \[b\.mountH\[0\] \* \.86, b\.mountH\[1\] \* \.96\]/);
+ assert.match(html,/mountR: \[b\.mountR\[0\] \* 1\.02, b\.mountR\[1\] \* 1\.08\]/);
+ assert.match(html,/spawnMtn\(innerZ, side \* innerOffset, innerFlankRange, false\)/);
+ assert.match(html,/spawnMtn\(outerZ, side \* outerOffset, outerFlankRange, false\)/);
+ assert.doesNotMatch(html,/spawnOuterDecorativeMountains|790 \+ rng\(\)|965 \+ rng\(\)/);
  for(const biome of ['campos','floresta','montanhas','canions','tempestades','arquipelago']){
-  run("scene=new THREE.Scene();activeEntities.length=0;spawnedMountains.length=0;spawnedLakes.length=0;selectedGameMode='normal';spawnChunk(-90000,BIOMES.find(b=>b.id==='"+biome+"'))");
-  assert(run("activeEntities.some(e=>e.type==='mountain'&&e.mesh.position.x < -330)"),biome+' left');
-  assert(run("activeEntities.some(e=>e.type==='mountain'&&e.mesh.position.x > 330)"),biome+' right');
-  assert(run("activeEntities.filter(e=>e.type==='mountain'&&e.decorative&&e.collidable===false&&Math.abs(e.mesh.position.x)>900).length>=2"),biome+' decorative edge ranges');
+  ctx.testBiome=biome;
+  run("scene=new THREE.Scene();activeEntities.length=0;spawnedMountains.length=0;spawnedLakes.length=0;selectedGameMode='normal';spawnChunk(-90000,BIOMES.find(b=>b.id===testBiome))");
+  assert(run("activeEntities.some(e=>e.type==='mountain'&&e.mesh.position.x < -330)"),biome+' left outer row');
+  assert(run("activeEntities.some(e=>e.type==='mountain'&&e.mesh.position.x > 330)"),biome+' right outer row');
+  assert.equal(run("activeEntities.some(e=>e.type==='mountain'&&Math.abs(e.mesh.position.x)>700)"),false,biome+' no border row');
  }
  assert.match(html,/patchCount = b\.id === 'canions' \? 9 : b\.id === 'tempestades' \? 38 :\s*b\.id === 'montanhas' \? 24 : 29/);
 });
-test('First-person flight uses a cockpit panel and pilot camera position',()=>{
+test('Tempestades contains denser, larger gray mountain obstacles',()=>{
+ const biome=run("BIOMES.find(b=>b.id==='tempestades')");
+ assert.equal(biome.mountCentralChance,.22);
+ assert.deepEqual(Array.from(biome.mountH),[180,295]);
+ assert.deepEqual(Array.from(biome.mountR),[58,102]);
+ run("scene=new THREE.Scene();activeEntities.length=0;spawnedMountains.length=0;spawnedLakes.length=0;selectedGameMode='normal';spawnChunk(-91000,BIOMES.find(b=>b.id==='tempestades'))");
+ assert(run("activeEntities.some(e=>e.type==='mountain'&&e.mesh.position.x>285&&e.mesh.position.x<331)"),'right inner ridge');
+ assert(run("activeEntities.some(e=>e.type==='mountain'&&e.mesh.position.x< -285&&e.mesh.position.x> -331)"),'left inner ridge');
+});
+test('First-person view follows the aircraft from inside the cockpit and restores chase distance',()=>{
  assert.match(html,/function createFlightCockpit\(\)/);
  assert.match(html,/LittlePlaneFirstPersonCockpit/);
- assert.match(html,/camPos\.y \+= 3\.8/);
- assert.match(html,/camPos\.z \+= 9\.5/);
- assert.match(html,/cameraLookTarget\.z -= 130/);
- assert.match(html,/if \(flightCockpit\) flightCockpit\.visible = gameActive && worldReady/);
+ assert.match(html,/function setFlightCameraMode\(firstPerson\)/);
+ assert.match(html,/airplane\.add\(camera\)/);
+ assert.match(html,/camera\.position\.set\(0, 2\.65, -\.55\)/);
+ assert.match(html,/camera\.rotation\.set\(0, Math\.PI, 0\)/);
+ assert.match(html,/e\.key\.toLowerCase\(\) === 'v'/);
+ assert.match(html,/camPos\.y \+= 7/);
+ assert.match(html,/camPos\.z \+= 30/);
+ assert.match(html,/cameraLookTarget\.z -= 40/);
+ assert.match(html,/if \(camera\.parent !== airplane\) setFlightCameraMode\(true\)/);
 });
 test('Horizon objects use a progressive distance fade and release cloned materials',()=>{
  assert.match(html,/function prepareEntityDistanceFade\(/);
@@ -177,13 +194,12 @@ test('Horizon objects use a progressive distance fade and release cloned materia
  assert.match(html,/if \(e\.fadeMaterials\) updateEntityDistanceFade\(e\)/);
  assert.match(html,/disposeEntityFadeMaterials\(e\)/);
 });
-test('Outer mountain lines extend near both terrain edges and never collide',()=>{
- assert.match(html,/function spawnOuterDecorativeMountains\(/);
- assert.match(html,/790 \+ rng\(\) \* 42/);
- assert.match(html,/965 \+ rng\(\) \* 28/);
- assert.match(html,/collidable: !decorative, decorative/);
- assert.match(html,/if \(!e\.mesh \|\| e\.collidable === false\) continue/);
- assert.match(html,/spawnOuterDecorativeMountains\(nextSpawnZ, b, rng, spawnMtn\)/);
+test('Only the outer flank layer is enlarged and there are no extra border mountains',()=>{
+ assert.match(html,/const outerFlankRange = \{/);
+ assert.match(html,/mountH: \[b\.mountH\[0\] \* \.86, b\.mountH\[1\] \* \.96\]/);
+ assert.match(html,/mountR: \[b\.mountR\[0\] \* 1\.02, b\.mountR\[1\] \* 1\.08\]/);
+ assert.doesNotMatch(html,/spawnOuterDecorativeMountains/);
+ assert.doesNotMatch(html,/790 \+ rng\(\)|965 \+ rng\(\)/);
 });
 test('Blimps and balloons have visibly stronger drift, bob and suspension sway',()=>{
  assert.match(html,/driftAmp: 20 \+ rng\(\) \* 16/);
