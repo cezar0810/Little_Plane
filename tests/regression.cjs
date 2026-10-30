@@ -10,7 +10,7 @@ vm.runInNewContext(threeSource,threeContext);const THREE=threeContext.module.exp
 const html=fs.readFileSync(__dirname+'/../index.html','utf8');
 const code=[...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)].map(m=>m[1]).filter(s=>s.trim()).join('\n');
 const elements=new Map();
-function element(id=''){return {id,nodeType:1,nodeValue:'',style:{setProperty(){}},dataset:{},children:[],classList:{add(){},remove(){},toggle(){},contains(){return false}},appendChild(){},append(){},remove(){},setAttribute(){},getAttribute(){return null},addEventListener(){},querySelectorAll(){return []},closest(){return null},getContext(){return null},textContent:'',innerText:'',innerHTML:'',value:'',getBoundingClientRect(){return {left:0,top:0,width:1280,height:720}},focus(){}}}
+function element(id=''){return {id,nodeType:1,nodeValue:'',style:{setProperty(){}},dataset:{},children:[],classList:{add(){},remove(){},toggle(){},contains(){return false}},appendChild(node){this.children.push(node)},append(...nodes){this.children.push(...nodes)},remove(){this.removed=true},setAttribute(){},getAttribute(){return null},addEventListener(){},querySelectorAll(){return []},closest(){return null},getContext(){return null},textContent:'',innerText:'',innerHTML:'',value:'',getBoundingClientRect(){return {left:0,top:0,width:1280,height:720}},focus(){}}}
 const document={body:element('body'),hidden:false,getElementById(id){if(!elements.has(id))elements.set(id,element(id));return elements.get(id)},querySelectorAll(){return []},querySelector(){return null},createElement:element,createElementNS:(_,tag)=>element(tag),createTextNode:t=>({nodeType:3,nodeValue:t}),createDocumentFragment:()=>element(),createTreeWalker:()=>({nextNode(){return false}}),addEventListener(){}};
 const timers=new Map();let nextTimer=0;
 const fakeRef={child(){return this},on(){},off(){},get:async()=>({val:()=>null}),set:async()=>{},update:async()=>{},onDisconnect(){return {remove:async()=>{},cancel:async()=>{},update:async()=>{},set:async()=>{}}}};
@@ -248,6 +248,22 @@ test('Radio card offers direct extension download and setup steps',()=>{
  assert.match(html,/Selecione a pasta <code>extension<\/code>/);
  assert.match(html,/id="lpRadioInstallAction" type="button"/);
 });
+test('Fatal aircraft collisions create a positioned comic-style BOOM explosion',()=>{
+ assert.match(html,/function playCartoonCrashExplosion\(\)/);
+ assert.match(html,/#lpCrashExplosion/);
+ assert.match(html,/@keyframes lpCrashPop/);
+ assert.match(html,/playCartoonCrashExplosion\(\);\s*if \(mpActive\)/);
+ run(`scene=new THREE.Scene();airplane=new THREE.Group();airplane.position.set(0,12,-20);scene.add(airplane);
+ camera=new THREE.PerspectiveCamera(60,1280/720,.1,1000);camera.position.set(0,12,40);camera.lookAt(0,12,-20);camera.updateMatrixWorld(true);mpActive=false;`);
+ run('playCartoonCrashExplosion()');
+ const explosion=document.body.children.find(node=>node.id==='lpCrashExplosion');
+ assert(explosion,'explosion element is added to the game screen');
+ assert.match(explosion.innerHTML,/BOOM!/);
+ assert.match(explosion.style.left,/px$/);
+ assert.match(explosion.style.top,/px$/);
+ assert.match(html,/gameOverScreen\.classList\.add\('lp-crash-pending'\)/);
+});
+
 const base={protocol:3,matchId:'test-round',startAt:10000,players:{player1:{ready:true,started:true,connected:true,health:240},player2:{ready:true,started:true,connected:true,health:0}}};
 const battleResult={matchId:'test-round',startAt:10000,winner:'player1',reason:'destroyed'};
 ctx.testRoom=base;ctx.testResult=battleResult;
