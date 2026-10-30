@@ -107,12 +107,13 @@ test('Balloons and blimps have gentle motion and independent basket sway',()=>{
  assert.match(html,/driftZAmp/);
  assert.match(html,/width="250" height="250"/);
 });
-test('Gray penultimate mountain biome has a clear flight corridor without changing the snowy mountain biome',()=>{
+test('All biomes use continuous side mountain ranges and retain their own route settings',()=>{
  const grayBiome=run("BIOMES.find(b=>b.id==='tempestades')");
  assert(grayBiome.mountLateral>=230);assert(grayBiome.mountCentralChance<=.1);
  const snowyBiome=run("BIOMES.find(b=>b.id==='montanhas')");
  assert.equal(snowyBiome.mountLateral,190);assert.equal(snowyBiome.mountCentralChance,.22);
- assert.match(html,/extraSideMountainChance = b\.id === 'tempestades' \? \.62 : \.45/);
+ assert.match(html,/Cordilheiras contínuas em TODO o mapa/);
+ assert.match(html,/mountH: \[b\.mountH\[0\] \* \.72, b\.mountH\[1\] \* \.84\]/);
 });
 test('Grass appears as chunk geometry and is removed shortly after passing',()=>{
  run("scene=new THREE.Scene();activeEntities.length=0;spawnedMountains.length=0;spawnedLakes.length=0;_spawnGrass(-1200,BIOMES[0],getRng(-1200))");
@@ -124,7 +125,11 @@ test('Lake water is animated, irregular and scales detail with graphics quality'
  const lake=run("activeEntities.find(e=>e.type==='lake')");
  assert(lake);assert.equal(lake.quality,'ultra');
  assert(lake.waterMesh.geometry.attributes.position.count>350);
+ assert(lake.radiusX>100&&lake.radiusZ>75);
  assert.match(html,/new THREE\.RingGeometry\(\.86, 1, profile\.segments\)/);
+ assert.match(html,/radiusX = bw \* 1\.12/);
+ assert.match(html,/shoreX = bw \* 1\.24/);
+ assert.match(html,/reservationRadius = Math\.max\(shoreX, shoreZ\) \+ 24/);
  const before=Array.from(lake.waterMesh.geometry.attributes.position.array);
  run("updateLakeAnimation(activeEntities.find(e=>e.type==='lake'),3.7)");
  const after=Array.from(lake.waterMesh.geometry.attributes.position.array);
@@ -142,19 +147,18 @@ test('Lake reservations are removed when the chunk is cleared',()=>{
  run("clearWorld()");
  assert.equal(run("spawnedLakes.length"),0);
 });
-test('Gray penultimate biome has continuous mountain ranges on both sides of the terrain',()=>{
- assert.match(html,/const flankRange = \{ \.\.\.b, mountH: \[145, 220\], mountR: \[42, 68\] \}/);
- assert.match(html,/const innerOffset = b\.mountLateral \+ 100 \+ rng\(\) \* 18/);
- assert.match(html,/const outerOffset = b\.mountLateral \+ 205 \+ rng\(\) \* 22/);
- assert.match(html,/for \(const side of \[-1, 1\]\)/);
+test('Every biome generates mountain meshes on both outer terrain edges',()=>{
+ assert.match(html,/const flankRange = \{/);
+ assert.match(html,/const innerOffset = b\.mountLateral \+ 105 \+ rng\(\) \* 22/);
+ assert.match(html,/const outerOffset = b\.mountLateral \+ 220 \+ rng\(\) \* 28/);
  assert.match(html,/spawnMtn\(innerZ, side \* innerOffset, flankRange, false\)/);
  assert.match(html,/spawnMtn\(outerZ, side \* outerOffset, flankRange, false\)/);
+ for(const biome of ['campos','floresta','montanhas','canions','tempestades','arquipelago']){
+  run("scene=new THREE.Scene();activeEntities.length=0;spawnedMountains.length=0;spawnedLakes.length=0;selectedGameMode='normal';spawnChunk(-90000,BIOMES.find(b=>b.id==='"+biome+"'))");
+  assert(run("activeEntities.some(e=>e.type==='mountain'&&e.mesh.position.x < -330)"),biome+' left');
+  assert(run("activeEntities.some(e=>e.type==='mountain'&&e.mesh.position.x > 330)"),biome+' right');
+ }
  assert.match(html,/patchCount = b\.id === 'canions' \? 9 : b\.id === 'tempestades' \? 38 :\s*b\.id === 'montanhas' \? 24 : 29/);
-});
-test('Gray biome generates mountain meshes on left and right outer terrain edges',()=>{
- run("scene=new THREE.Scene();activeEntities.length=0;spawnedMountains.length=0;spawnedLakes.length=0;selectedGameMode='normal';spawnChunk(-90000,BIOMES.find(b=>b.id==='tempestades'))");
- assert(run("activeEntities.some(e=>e.type==='mountain'&&e.mesh.position.x < -330)"));
- assert(run("activeEntities.some(e=>e.type==='mountain'&&e.mesh.position.x > 330)"));
 });
 test('Blimps and balloons have visibly stronger drift, bob and suspension sway',()=>{
  assert.match(html,/driftAmp: 20 \+ rng\(\) \* 16/);
