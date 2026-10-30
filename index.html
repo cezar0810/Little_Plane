@@ -5565,6 +5565,7 @@
             airplane.updateMatrixWorld(true);
             const inverseRoot = new THREE.Matrix4().copy(airplane.matrixWorld).invert(),
                 uniquePoints = new Map(),
+                cockpitCandidates = [],
                 colliderBounds = new THREE.Box3();
 
             function registerPoint(point) {
@@ -5580,7 +5581,8 @@
                 if (!part.geometry.boundingBox) part.geometry.computeBoundingBox();
                 const box = part.geometry.boundingBox;
                 if (!box || box.isEmpty()) return;
-                const size = new THREE.Vector3();
+                const size = new THREE.Vector3(),
+                    localPartBounds = new THREE.Box3();
                 box.getSize(size);
                 const divisionsX = Math.max(1, Math.min(7, Math.ceil(size.x / 4))),
                     divisionsY = Math.max(1, Math.min(4, Math.ceil(size.y / 3))),
@@ -5601,6 +5603,24 @@
                         }
                     }
                 }
+                const materials = Array.isArray(part.material) ? part.material : [part.material],
+                    isTransparentCockpitGlass = materials.some(material =>
+                        material?.transparent && (material.opacity ?? 1) >= .45);
+                if (isTransparentCockpitGlass) {
+                    const corners = [
+                        [box.min.x, box.min.y, box.min.z], [box.min.x, box.min.y, box.max.z],
+                        [box.min.x, box.max.y, box.min.z], [box.min.x, box.max.y, box.max.z],
+                        [box.max.x, box.min.y, box.min.z], [box.max.x, box.min.y, box.max.z],
+                        [box.max.x, box.max.y, box.min.z], [box.max.x, box.max.y, box.max.z]
+                    ];
+                    for (const corner of corners)
+                        localPartBounds.expandByPoint(new THREE.Vector3(...corner).applyMatrix4(toPlane));
+                    const glassSize = new THREE.Vector3(),
+                        glassCenter = new THREE.Vector3();
+                    localPartBounds.getSize(glassSize);
+                    localPartBounds.getCenter(glassCenter);
+                    cockpitCandidates.push({ center: glassCenter, size: glassSize })
+                }
             });
 
             if (!uniquePoints.size) {
@@ -5611,6 +5631,38 @@
             worldColliderPoints = localColliders.map(() => new THREE.Vector3());
             airplaneColliderHalfLength = Math.max(Math.abs(colliderBounds.min.z), Math.abs(colliderBounds.max.z)) + .5;
             airplaneColliderHalfWidth = Math.max(Math.abs(colliderBounds.min.x), Math.abs(colliderBounds.max.x)) + .5;
+            // Cada modelo tem cabine em um ponto diferente. Prioriza o vidro transparente
+            // mais alto e mais à frente no eixo longitudinal da aeronave.
+            const aircraftSize = new THREE.Vector3(),
+                aircraftCenter = new THREE.Vector3();
+            colliderBounds.getSize(aircraftSize);
+            colliderBounds.getCenter(aircraftCenter);
+            let cockpitAnchor = null;
+            if (cockpitCandidates.length) {
+                cockpitAnchor = cockpitCandidates.map(candidate => {
+                    const forwardness = (candidate.center.z - colliderBounds.min.z) / Math.max(1, aircraftSize.z),
+                        height = (candidate.center.y - colliderBounds.min.y) / Math.max(1, aircraftSize.y),
+                        centered = 1 - Math.min(1, Math.abs(candidate.center.x - aircraftCenter.x) /
+                            Math.max(1, aircraftSize.x * .5));
+                    return { ...candidate, score: forwardness * 2 + height * .65 + centered * .25 }
+                }).sort((a, b) => b.score - a.score)[0]
+            }
+            if (cockpitAnchor) {
+                const glass = cockpitAnchor.size;
+                airplane.userData.cockpitCameraOffset = cockpitAnchor.center.clone().add(new THREE.Vector3(
+                    0,
+                    Math.max(.08, Math.min(.28, glass.y * .09)),
+                    -Math.max(.12, Math.min(.42, glass.z * .10))
+                ));
+            } else {
+                // Reserva adaptativa para modelos sem vidro transparente identificável.
+                airplane.userData.cockpitCameraOffset = new THREE.Vector3(
+                    aircraftCenter.x,
+                    colliderBounds.min.y + aircraftSize.y * .68,
+                    colliderBounds.min.z + aircraftSize.z * .57
+                )
+            }
+            airplane.userData.aircraftBounds = { min: colliderBounds.min.clone(), max: colliderBounds.max.clone() };
             airplane.userData.colliderPointCount = localColliders.length;
             airplane.userData.hitboxWidth = airplaneColliderHalfWidth * 2;
             airplane.userData.hitboxLength = airplaneColliderHalfLength * 2
@@ -7818,7 +7870,8 @@ function setFlightCameraMode(firstPerson) {
             if (firstPersonFlightView) {
                 // A câmera passa a ser filha do avião: herda posição, inclinação, guinada e rolagem.
                 airplane.add(camera);
-                camera.position.set(0, 2.65, -.55);
+                camera.position.copy(airplane.userData.cockpitCameraOffset ||
+                    new THREE.Vector3(0, 2.65, -.55));
                 camera.rotation.set(0, Math.PI, 0);
                 camera.up.set(0, 1, 0);
                 camera.updateMatrixWorld(true);
@@ -8857,7 +8910,8 @@ function _obstacleMountainDims(b, central, rng) {
             glint.position.set(0, .46, 0);
             g.add(glint);
 
-            g.position.set(x, 0, z);
+            // Água e margem levemente elevadas para não se misturarem ao plano do terreno.
+            g.position.set(x, .22, z);
             g.rotation.y = rng() * Math.PI;
             scene.add(g);
             const entity = {
@@ -9664,13 +9718,19 @@ function _obstacleMountainDims(b, central, rng) {
                 pitchInput = goD ? -1 : (effectiveGoU ? 1 : 0); }
             targetX = Math.max(-140, Math.min(140, targetX));
             targetY = Math.max(5, Math.min(180, targetY));
-            if (!rollLocked) bankAngle += (bankInput * 1.15 * agi - bankAngle) * Math.min(1, 4.5 * dt);
-            else bankAngle += (rollAngle - bankAngle) * Math.min(1, 10 * dt);
-            pitchAngle += (-pitchInput * .45 * agi - pitchAngle) * Math.min(1, 4 * dt);
+            // Respostas exponenciais independentes do FPS deixam curvas e mudanças de altitude
+            // mais progressivas, sem os pequenos trancos causados pela resposta linear.
+            const bankResponse = 1 - Math.exp(-3.6 * dt),
+                rollResponse = 1 - Math.exp(-7.2 * dt),
+                pitchResponse = 1 - Math.exp(-3.2 * dt);
+            if (!rollLocked) bankAngle += (bankInput * 1.15 * agi - bankAngle) * bankResponse;
+            else bankAngle += (rollAngle - bankAngle) * rollResponse;
+            pitchAngle += (-pitchInput * .45 * agi - pitchAngle) * pitchResponse;
             let dx = targetX - airplane.position.x,
                 dy = targetY - airplane.position.y;
-            airplane.position.x += dx * 5 * dt * agi;
-            airplane.position.y += dy * 5 * dt * agi;
+            const positionResponse = 1 - Math.exp(-4.2 * agi * dt);
+            airplane.position.x += dx * positionResponse;
+            airplane.position.y += dy * positionResponse;
             airplane.position.z -= flightSpeed * dt;
             if (mpActive && mpTryFinish(Math.abs(airplane.position.z))) return;
             updateVolcanoEvent(dt, dist);
@@ -9705,8 +9765,9 @@ function _obstacleMountainDims(b, central, rng) {
             updatePcRadioPlayer(dt);
             if (firstPersonFlightView && !battleActive) {
                 if (camera.parent !== airplane) setFlightCameraMode(true);
-                // A perspectiva é calculada no referencial local do avião, não por aproximação externa.
-                camera.position.set(0, 2.65, -.55);
+                // Usa o para-brisa do modelo ativo para impedir que a fuselagem cubra a câmera.
+                camera.position.copy(airplane.userData.cockpitCameraOffset ||
+                    new THREE.Vector3(0, 2.65, -.55));
                 camera.rotation.set(0, Math.PI, 0);
                 if (alienEvent.active && alienEvent.interference > .02) {
                     camera.position.x += Math.sin(alienEvent.totalTimer * 39) * 1.5 * alienEvent.interference;
