@@ -8611,11 +8611,12 @@ function _obstacleMountainDims(b, central, rng) {
                 profile = LAKE_QUALITY[quality] || LAKE_QUALITY.high,
                 bw = 40 + rng() * 50,
                 bd = 28 + rng() * 38,
-                radiusX = bw * .76,
-                radiusZ = bd * .76,
-                shoreX = bw * .88,
-                shoreZ = bd * .88,
-                reservationRadius = Math.max(shoreX, shoreZ) + 8;
+                // Água e margem mais largas para evitar interferência visual da grama.
+                radiusX = bw * 1.12,
+                radiusZ = bd * 1.12,
+                shoreX = bw * 1.24,
+                shoreZ = bd * 1.24,
+                reservationRadius = Math.max(shoreX, shoreZ) + 24;
             if (lakeHasGroundOverlap(x, z, reservationRadius)) return;
 
             const g = new THREE.Group(),
@@ -8986,21 +8987,20 @@ function _obstacleMountainDims(b, central, rng) {
 
             spawnMtn(z, -b.mountLateral - rng() * 50, b, false);
             spawnMtn(z, b.mountLateral + rng() * 50, b, false);
-            if (b.id === 'tempestades') {
-                // Cordilheiras contínuas dos dois lados: duas fileiras adicionais por chunk
-                // fecham visualmente as laterais sem invadir o corredor central de voo.
-                const flankRange = { ...b, mountH: [145, 220], mountR: [42, 68] };
-                for (const side of [-1, 1]) {
-                    const innerOffset = b.mountLateral + 100 + rng() * 18,
-                        outerOffset = b.mountLateral + 205 + rng() * 22,
-                        innerZ = z + (rng() - .5) * 34,
-                        outerZ = z + (rng() - .5) * 48;
-                    spawnMtn(innerZ, side * innerOffset, flankRange, false);
-                    spawnMtn(outerZ, side * outerOffset, flankRange, false);
-                }
-            } else if (rng() < .45) {
-                spawnMtn(z, -b.mountLateral - 60 - rng() * 60, b, false);
-                spawnMtn(z, b.mountLateral + 60 + rng() * 60, b, false);
+            // Cordilheiras contínuas em TODO o mapa: duas fileiras extras em cada lateral.
+            // Mantêm a identidade visual do bioma e deixam o corredor central livre.
+            const flankRange = {
+                ...b,
+                mountH: [b.mountH[0] * .72, b.mountH[1] * .84],
+                mountR: [b.mountR[0] * .88, b.mountR[1] * .94]
+            };
+            for (const side of [-1, 1]) {
+                const innerOffset = b.mountLateral + 105 + rng() * 22,
+                    outerOffset = b.mountLateral + 220 + rng() * 28,
+                    innerZ = z + (rng() - .5) * 34,
+                    outerZ = z + (rng() - .5) * 48;
+                spawnMtn(innerZ, side * innerOffset, flankRange, false);
+                spawnMtn(outerZ, side * outerOffset, flankRange, false);
             }
             if (b.lakes && rng() < b.lakeChance) {
                 const lx = safeX(z, -185, 185, 55);
