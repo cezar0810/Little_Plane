@@ -144,6 +144,7 @@ test('Ground objects and grass are kept out of reserved lake water',()=>{
 test('Lake reservations are removed when the chunk is cleared',()=>{
  run("scene=new THREE.Scene();activeEntities.length=0;spawnedMountains.length=0;spawnedLakes.length=0;activeGraphicsSettings={quality:'low'};_spawnLake(-1200,0,'campos')");
  assert.equal(run("spawnedLakes.length"),1);
+ assert(run("spawnedLakes[0].entity.mesh.position.y >= .2"),'lake surface is slightly elevated');
  run("clearWorld()");
  assert.equal(run("spawnedLakes.length"),0);
 });
@@ -185,6 +186,32 @@ test('First-person view follows the aircraft from inside the cockpit and restore
  assert.match(html,/camPos\.z \+= 30/);
  assert.match(html,/cameraLookTarget\.z -= 40/);
  assert.match(html,/if \(camera\.parent !== airplane\) setFlightCameraMode\(true\)/);
+});
+test('First-person camera uses each aircraft transparent cockpit instead of a fixed offset',()=>{
+ assert.match(html,/cockpitCandidates = \[\]/);
+ assert.match(html,/isTransparentCockpitGlass/);
+ assert.match(html,/airplane\.userData\.cockpitCameraOffset = cockpitAnchor\.center\.clone\(\)/);
+ assert.match(html,/camera\.position\.copy\(airplane\.userData\.cockpitCameraOffset/);
+ run(`scene=new THREE.Scene();airplane=new THREE.Group();
+ const body=new THREE.Mesh(new THREE.BoxGeometry(4,2,14),new THREE.MeshStandardMaterial());
+ const rearGlass=new THREE.Mesh(new THREE.BoxGeometry(2,1,2),new THREE.MeshStandardMaterial({transparent:true,opacity:.7}));
+ rearGlass.position.set(0,-.4,-4);airplane.add(body,rearGlass);
+ const frontGlass=new THREE.Mesh(new THREE.BoxGeometry(2,1.5,3),new THREE.MeshStandardMaterial({transparent:true,opacity:.7}));
+ frontGlass.position.set(0,1.8,3);airplane.add(frontGlass);scene.add(airplane);
+ camera=new THREE.PerspectiveCamera(60,1,.1,1000);scene.add(camera);rebuildAirplaneCollider();setFlightCameraMode(true);`);
+ assert(run('airplane.userData.cockpitCameraOffset.y > 1'));
+ assert(run('airplane.userData.cockpitCameraOffset.z > 1'));
+ assert(run('camera.parent === airplane'));
+ assert(run('camera.position.distanceTo(airplane.userData.cockpitCameraOffset) < .001'));
+ run('setFlightCameraMode(false)');
+});
+test('Flight movement uses frame-independent easing for smoother bank, pitch and position',()=>{
+ assert.match(html,/Math\.exp\(-3\.6 \* dt\)/);
+ assert.match(html,/Math\.exp\(-7\.2 \* dt\)/);
+ assert.match(html,/Math\.exp\(-3\.2 \* dt\)/);
+ assert.match(html,/Math\.exp\(-4\.2 \* agi \* dt\)/);
+ assert.doesNotMatch(html,/airplane\.position\.x \+= dx \* 5 \* dt \* agi/);
+ assert.doesNotMatch(html,/airplane\.position\.y \+= dy \* 5 \* dt \* agi/);
 });
 test('Horizon objects use a progressive distance fade and release cloned materials',()=>{
  assert.match(html,/function prepareEntityDistanceFade\(/);
