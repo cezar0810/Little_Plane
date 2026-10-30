@@ -9254,7 +9254,6 @@ function _obstacleMountainDims(b, central, rng) {
                     _spawnGrass(nextSpawnZ, b, rng);
                     spawnMtn(nextSpawnZ, -b.mountLateral - 10 - rng() * 60, b, false);
                     spawnMtn(nextSpawnZ, b.mountLateral + 10 + rng() * 60, b, false);
-                    spawnOuterDecorativeMountains(nextSpawnZ, b, rng, spawnMtn);
                     if (selectedGameMode !== 'music' && (gen === 1 || gen === 3)) _spawnRing(nextSpawnZ, 0, 45);
                     _spawnCloud(nextSpawnZ, (rng() - .5) * 600);
                     nextSpawnZ -= 120;
