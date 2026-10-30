@@ -5423,17 +5423,17 @@
                 mountR: [52, 95], mountCentralChance: 0.18, mountCentralH: [120, 230], mountCentralR: [48, 88],
                 ringFreq: .62, ringExtra: .42, treeGroups: true, treeCount: [6, 12], treeDense: true, towers: false,
                 blimps: false, balloons: true, camps: false, campChance: 0, lakes: true, lakeChance: .25, river: false },
-            { id: 'montanhas', name: 'Montanhas', icon: '⛰️', startDist: 16000, mountLateral: 235, mountH: [120, 205],
-                mountR: [36, 68], mountCentralChance: 0.05, mountCentralH: [95, 155], mountCentralR: [30, 50],
-                ringFreq: .62, ringExtra: .38, treeGroups: true, treeCount: [2, 4], treeDense: false, towers: true,
+            { id: 'montanhas', name: 'Montanhas', icon: '⛰️', startDist: 16000, mountLateral: 190, mountH: [160, 300],
+                mountR: [45, 90], mountCentralChance: 0.22, mountCentralH: [140, 260], mountCentralR: [40, 80],
+                ringFreq: .55, ringExtra: .30, treeGroups: true, treeCount: [2, 4], treeDense: false, towers: true,
                 blimps: true, balloons: false, camps: false, campChance: 0, lakes: false, lakeChance: 0, river: false },
             { id: 'canions', name: 'Cânions', icon: '🏜️', startDist: 28000, mountLateral: 205, mountH: [240, 420],
                 mountR: [65, 130], mountCentralChance: 0.35, mountCentralH: [200, 380], mountCentralR: [60, 120],
                 ringFreq: .46, ringExtra: .22, treeGroups: false, treeCount: [0, 0], treeDense: false, towers: true,
                 blimps: false, balloons: false, camps: false, campChance: 0, lakes: false, lakeChance: 0, river: true },
-            { id: 'tempestades', name: 'Tempestades', icon: '⛈️', startDist: 44000, mountLateral: 130, mountH: [260,
-                    460], mountR: [70, 140], mountCentralChance: 0.40, mountCentralH: [220, 420], mountCentralR: [65,
-                    130], ringFreq: .40, ringExtra: .18, treeGroups: true, treeCount: [2, 4], treeDense: false,
+            { id: 'tempestades', name: 'Tempestades', icon: '⛈️', startDist: 44000, mountLateral: 245, mountH: [180, 275],
+                    mountR: [50, 90], mountCentralChance: 0.08, mountCentralH: [140, 220], mountCentralR: [40, 70],
+                    ringFreq: .40, ringExtra: .18, treeGroups: true, treeCount: [2, 4], treeDense: false,
                 towers: true, blimps: true, balloons: false, camps: false, campChance: 0, lakes: false, lakeChance: 0,
                 river: false },
             { id: 'arquipelago', name: 'Arquipélago', icon: '🏝️', startDist: 64000, mountLateral: 170, mountH: [70,
@@ -7915,8 +7915,8 @@ dayNightManager = new DayNightManager(scene, camera, renderer, sunLight, ambient
                 b.id === 'montanhas' ? [0x4f873e, 0x6e9d4c, 0x88a95b] :
                 b.id === 'floresta' ? [0x286c32, 0x397f37, 0x5d9940] :
                 [0x3f8a35, 0x65a844, 0x86b94f],
-                patchCount = b.id === 'canions' ? 9 : b.id === 'tempestades' ? 18 :
-                    b.id === 'montanhas' ? 38 : 29,
+                patchCount = b.id === 'canions' ? 9 : b.id === 'tempestades' ? 38 :
+                    b.id === 'montanhas' ? 24 : 29,
                 positions = [],
                 colors = [],
                 patchCenters = [];
@@ -8986,13 +8986,13 @@ function _obstacleMountainDims(b, central, rng) {
 
             spawnMtn(z, -b.mountLateral - rng() * 50, b, false);
             spawnMtn(z, b.mountLateral + rng() * 50, b, false);
-            const extraSideMountainChance = b.id === 'montanhas' ? .62 : .45;
+            const extraSideMountainChance = b.id === 'tempestades' ? .62 : .45;
             if (rng() < extraSideMountainChance) {
                 spawnMtn(z, -b.mountLateral - 60 - rng() * 60, b, false);
                 spawnMtn(z, b.mountLateral + 60 + rng() * 60, b, false);
             }
-            if (b.id === 'montanhas') {
-                const outerFlank = { ...b, mountH: [105, 165], mountR: [38, 56] };
+            if (b.id === 'tempestades') {
+                const outerFlank = { ...b, mountH: [120, 180], mountR: [36, 54] };
                 if (rng() < .48) {
                     const offset = b.mountLateral + 135 + rng() * 55;
                     _spawnMountain(z, -offset, outerFlank, false);
@@ -9003,7 +9003,7 @@ function _obstacleMountainDims(b, central, rng) {
                 const lx = safeX(z, -185, 185, 55);
                 if (lx !== null) _spawnLake(z + (rng() - .5) * 55, lx, b.id);
             }
-            if (b.id === 'montanhas') {
+            if (b.id === 'tempestades') {
                 for (const side of [-1, 1]) {
                     const count = 1 + Math.floor(rng() * 2);
                     for (let i = 0; i < count; i++) {

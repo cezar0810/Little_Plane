@@ -107,10 +107,12 @@ test('Balloons and blimps have gentle motion and independent basket sway',()=>{
  assert.match(html,/driftZAmp/);
  assert.match(html,/width="250" height="250"/);
 });
-test('Mountain biome keeps a wider flight corridor with fewer central mountains',()=>{
- const biome=run("BIOMES.find(b=>b.id==='montanhas')");
- assert(biome.mountLateral>=230);assert(biome.mountCentralChance<=.06);
- assert.match(html,/extraSideMountainChance = b\.id === 'montanhas' \? \.08 : \.45/);
+test('Gray penultimate mountain biome has a clear flight corridor without changing the snowy mountain biome',()=>{
+ const grayBiome=run("BIOMES.find(b=>b.id==='tempestades')");
+ assert(grayBiome.mountLateral>=230);assert(grayBiome.mountCentralChance<=.1);
+ const snowyBiome=run("BIOMES.find(b=>b.id==='montanhas')");
+ assert.equal(snowyBiome.mountLateral,190);assert.equal(snowyBiome.mountCentralChance,.22);
+ assert.match(html,/extraSideMountainChance = b\.id === 'tempestades' \? \.62 : \.45/);
 });
 test('Grass appears as chunk geometry and is removed shortly after passing',()=>{
  run("scene=new THREE.Scene();activeEntities.length=0;spawnedMountains.length=0;spawnedLakes.length=0;_spawnGrass(-1200,BIOMES[0],getRng(-1200))");
@@ -140,9 +142,11 @@ test('Lake reservations are removed when the chunk is cleared',()=>{
  run("clearWorld()");
  assert.equal(run("spawnedLakes.length"),0);
 });
-test('Mountain biome fills both outer flanks with peaks and trees',()=>{
- assert.match(html,/outerFlank = \{ \.\.\.b, mountH: \[105, 165\], mountR: \[38, 56\] \}/);
- assert.match(html,/extraSideMountainChance = b\.id === 'montanhas' \? \.62 : \.45/);
+test('Gray penultimate biome fills both outer flanks with peaks, trees and grass',()=>{
+ assert.match(html,/if \(b\.id === 'tempestades'\) \{\s*const outerFlank = \{ \.\.\.b, mountH: \[120, 180\], mountR: \[36, 54\] \}/);
+ assert.match(html,/extraSideMountainChance = b\.id === 'tempestades' \? \.62 : \.45/);
+ assert.match(html,/if \(b\.id === 'tempestades'\) \{\s*for \(const side of \[-1, 1\]\)/);
+ assert.match(html,/patchCount = b\.id === 'canions' \? 9 : b\.id === 'tempestades' \? 38 :\s*b\.id === 'montanhas' \? 24 : 29/);
  assert.match(html,/const count = 1 \+ Math\.floor\(rng\(\) \* 2\)/);
 });
 test('Blimps and balloons have visibly stronger drift, bob and suspension sway',()=>{
