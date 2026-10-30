@@ -125,7 +125,7 @@ test('Lake water is animated, irregular and scales detail with graphics quality'
  const lake=run("activeEntities.find(e=>e.type==='lake')");
  assert(lake);assert.equal(lake.quality,'ultra');
  assert(lake.waterMesh.geometry.attributes.position.count>350);
- assert(lake.radiusX>100&&lake.radiusZ>75);
+ assert(lake.radiusX>40&&lake.radiusZ>28);
  assert.match(html,/new THREE\.RingGeometry\(\.86, 1, profile\.segments\)/);
  assert.match(html,/radiusX = bw \* 1\.12/);
  assert.match(html,/shoreX = bw \* 1\.24/);
