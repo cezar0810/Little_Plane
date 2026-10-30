@@ -142,12 +142,19 @@ test('Lake reservations are removed when the chunk is cleared',()=>{
  run("clearWorld()");
  assert.equal(run("spawnedLakes.length"),0);
 });
-test('Gray penultimate biome fills both outer flanks with peaks, trees and grass',()=>{
- assert.match(html,/if \(b\.id === 'tempestades'\) \{\s*const outerFlank = \{ \.\.\.b, mountH: \[120, 180\], mountR: \[36, 54\] \}/);
- assert.match(html,/extraSideMountainChance = b\.id === 'tempestades' \? \.62 : \.45/);
- assert.match(html,/if \(b\.id === 'tempestades'\) \{\s*for \(const side of \[-1, 1\]\)/);
+test('Gray penultimate biome has continuous mountain ranges on both sides of the terrain',()=>{
+ assert.match(html,/const flankRange = \{ \.\.\.b, mountH: \[145, 220\], mountR: \[42, 68\] \}/);
+ assert.match(html,/const innerOffset = b\.mountLateral \+ 100 \+ rng\(\) \* 18/);
+ assert.match(html,/const outerOffset = b\.mountLateral \+ 205 \+ rng\(\) \* 22/);
+ assert.match(html,/for \(const side of \[-1, 1\]\)/);
+ assert.match(html,/spawnMtn\(innerZ, side \* innerOffset, flankRange, false\)/);
+ assert.match(html,/spawnMtn\(outerZ, side \* outerOffset, flankRange, false\)/);
  assert.match(html,/patchCount = b\.id === 'canions' \? 9 : b\.id === 'tempestades' \? 38 :\s*b\.id === 'montanhas' \? 24 : 29/);
- assert.match(html,/const count = 1 \+ Math\.floor\(rng\(\) \* 2\)/);
+});
+test('Gray biome generates mountain meshes on left and right outer terrain edges',()=>{
+ run("scene=new THREE.Scene();activeEntities.length=0;spawnedMountains.length=0;spawnedLakes.length=0;selectedGameMode='normal';spawnChunk(-90000,BIOMES.find(b=>b.id==='tempestades'))");
+ assert(run("activeEntities.some(e=>e.type==='mountain'&&e.mesh.position.x < -330)"));
+ assert(run("activeEntities.some(e=>e.type==='mountain'&&e.mesh.position.x > 330)"));
 });
 test('Blimps and balloons have visibly stronger drift, bob and suspension sway',()=>{
  assert.match(html,/driftAmp: 20 \+ rng\(\) \* 16/);

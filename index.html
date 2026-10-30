@@ -8986,18 +8986,21 @@ function _obstacleMountainDims(b, central, rng) {
 
             spawnMtn(z, -b.mountLateral - rng() * 50, b, false);
             spawnMtn(z, b.mountLateral + rng() * 50, b, false);
-            const extraSideMountainChance = b.id === 'tempestades' ? .62 : .45;
-            if (rng() < extraSideMountainChance) {
+            if (b.id === 'tempestades') {
+                // Cordilheiras contínuas dos dois lados: duas fileiras adicionais por chunk
+                // fecham visualmente as laterais sem invadir o corredor central de voo.
+                const flankRange = { ...b, mountH: [145, 220], mountR: [42, 68] };
+                for (const side of [-1, 1]) {
+                    const innerOffset = b.mountLateral + 100 + rng() * 18,
+                        outerOffset = b.mountLateral + 205 + rng() * 22,
+                        innerZ = z + (rng() - .5) * 34,
+                        outerZ = z + (rng() - .5) * 48;
+                    spawnMtn(innerZ, side * innerOffset, flankRange, false);
+                    spawnMtn(outerZ, side * outerOffset, flankRange, false);
+                }
+            } else if (rng() < .45) {
                 spawnMtn(z, -b.mountLateral - 60 - rng() * 60, b, false);
                 spawnMtn(z, b.mountLateral + 60 + rng() * 60, b, false);
-            }
-            if (b.id === 'tempestades') {
-                const outerFlank = { ...b, mountH: [120, 180], mountR: [36, 54] };
-                if (rng() < .48) {
-                    const offset = b.mountLateral + 135 + rng() * 55;
-                    _spawnMountain(z, -offset, outerFlank, false);
-                    _spawnMountain(z, offset, outerFlank, false)
-                }
             }
             if (b.lakes && rng() < b.lakeChance) {
                 const lx = safeX(z, -185, 185, 55);
