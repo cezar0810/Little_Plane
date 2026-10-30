@@ -204,6 +204,11 @@ test('First-person camera uses each aircraft transparent cockpit instead of a fi
  assert(run('camera.parent === airplane'));
  assert(run('camera.position.distanceTo(airplane.userData.cockpitCameraOffset) < .001'));
  run('setFlightCameraMode(false)');
+ for(const id of ['biplane','acrobatic','heli','ww2','jet','f22']){
+  ctx.testPlaneId=id;
+  run("scene=new THREE.Scene();airplane=new THREE.Group();PLANE_CATALOG.find(p=>p.id===testPlaneId).buildFn('#ef4444',airplane);scene.add(airplane);rebuildAirplaneCollider()");
+  assert(run("airplane.userData.cockpitCameraOffset && [airplane.userData.cockpitCameraOffset.x,airplane.userData.cockpitCameraOffset.y,airplane.userData.cockpitCameraOffset.z].every(Number.isFinite)"),id+' cockpit camera offset');
+ }
 });
 test('Flight movement uses frame-independent easing for smoother bank, pitch and position',()=>{
  assert.match(html,/Math\.exp\(-3\.6 \* dt\)/);
