@@ -5456,7 +5456,8 @@
             ambientLight, hemiLight, dayNightManager,
             ground;
         const activeEntities = [],
-            spawnedMountains = [];
+            spawnedMountains = [],
+            spawnedLakes = [];
         let nextSpawnZ = -200,
             currentBiome = BIOMES[0],
             lastBiomeId = '';
@@ -7895,8 +7896,16 @@ dayNightManager = new DayNightManager(scene, camera, renderer, sunLight, ambient
         function isInsideMountain(x, z, m = 20) { for (let a of spawnedMountains) { let dx = x - a.x,
                     dz = z - a.z; if (Math.sqrt(dx * dx + dz * dz) < a.radius + m) return true } return false }
 
+        function isInsideLake(x, z, margin = 0) {
+            for (const lake of spawnedLakes) {
+                const dx = x - lake.x, dz = z - lake.z;
+                if (Math.sqrt(dx * dx + dz * dz) < lake.radius + margin) return true
+            }
+            return false
+        }
+
         function safeX(z, minX, maxX, m = 20, t = 14) { const rng = getRng(z); for (let i = 0; i < t; i++) { let x =
-                    minX + rng() * (maxX - minX); if (!isInsideMountain(x, z, m)) return x } return null }
+                    minX + rng() * (maxX - minX); if (!isInsideMountain(x, z, m) && !isInsideLake(x, z, m)) return x } return null }
 
         // Vegetação leve por bloco: um único mesh por chunk, com as folhas agrupadas em geometria.
         // O mesh só nasce dentro da distância observável e é descartado logo após o avião passar.
@@ -7907,9 +7916,10 @@ dayNightManager = new DayNightManager(scene, camera, renderer, sunLight, ambient
                 b.id === 'floresta' ? [0x286c32, 0x397f37, 0x5d9940] :
                 [0x3f8a35, 0x65a844, 0x86b94f],
                 patchCount = b.id === 'canions' ? 9 : b.id === 'tempestades' ? 18 :
-                    b.id === 'montanhas' ? 24 : 29,
+                    b.id === 'montanhas' ? 38 : 29,
                 positions = [],
-                colors = [];
+                colors = [],
+                patchCenters = [];
             const addVertex = (x, y, localZ, color) => {
                 positions.push(x, y, localZ);
                 colors.push(color.r, color.g, color.b)
@@ -7917,7 +7927,9 @@ dayNightManager = new DayNightManager(scene, camera, renderer, sunLight, ambient
             for (let i = 0; i < patchCount; i++) {
                 const patchX = (rng() - .5) * 850,
                     patchZ = (rng() - .5) * 88;
-                if (isInsideMountain(patchX, z + patchZ, 20)) continue;
+                if (isInsideMountain(patchX, z + patchZ, 20) ||
+                    isInsideLake(patchX, z + patchZ, 18)) continue;
+                patchCenters.push({ x: patchX, z: z + patchZ, radius: 15 });
                 const bladeCount = 4 + Math.floor(rng() * 4),
                     spread = 3 + rng() * 6;
                 for (let j = 0; j < bladeCount; j++) {
@@ -7947,6 +7959,7 @@ dayNightManager = new DayNightManager(scene, camera, renderer, sunLight, ambient
             geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
             geometry.computeVertexNormals();
             const mesh = new THREE.Mesh(geometry, M.grass);
+            mesh.userData.grassPatches = patchCenters;
             mesh.position.set(0, .2, z);
             mesh.frustumCulled = true;
             mesh.castShadow = false;
@@ -8047,6 +8060,7 @@ function _obstacleMountainDims(b, central, rng) {
 
         // FUNÇÃO ORIGINAL DE MONTANHA (mantida sem alterações)
         function _spawnMountain(z, x, b, central = false) {
+    if (isInsideLake(x, z, 45)) return;
     const rng = getRng(z);
     let { h, baseRadius } = _obstacleMountainDims(b, central, rng);
     let col = MOUNT_COLS[b.id] || 0xb45309;
@@ -8259,6 +8273,7 @@ function _obstacleMountainDims(b, central, rng) {
         // Esta função faltava no arquivo. Sem ela, o primeiro chunk dos Cânions lançava
         // "ReferenceError: _spawnCanyonMountain is not defined" e interrompia o game loop.
         function _spawnCanyonMountain(z, x, b, central = false) {
+            if (isInsideLake(x, z, 60)) return;
             const rng = getRng(z);
             const radiusRange = central ? b.mountCentralR : b.mountR;
             const baseRadius = (radiusRange[0] + rng() * (radiusRange[1] - radiusRange[0])) *
@@ -8313,7 +8328,7 @@ function _obstacleMountainDims(b, central, rng) {
 
         // Demais funções de spawn
         function _spawnTree(z, x, id) {
-            if (isInsideMountain(x, z, 12)) return;
+            if (isInsideMountain(x, z, 12) || isInsideLake(x, z, 14)) return;
             const rng = getRng(z);
             let g = new THREE.Group();
             if (id === 'arquipelago') {
@@ -8367,6 +8382,7 @@ function _obstacleMountainDims(b, central, rng) {
         }
 
         function _spawnRing(z, x, y) {
+    if (isInsideLake(x, z, 10)) return;
     let g = new THREE.Group();
     g.add(new THREE.Mesh(G.ringGlow, M.ringGlow));
     g.add(new THREE.Mesh(G.ring, M.ring));
@@ -8377,6 +8393,7 @@ function _obstacleMountainDims(b, central, rng) {
 }
 
     function _spawnPowerRing(z, x, y, k) {
+    if (isInsideLake(x, z, 14)) return;
     const rng = getRng(z);
     let g = new THREE.Group(),
         isShield = k === 'shield',
@@ -8516,37 +8533,215 @@ function _obstacleMountainDims(b, central, rng) {
                 driftPhase: rng() * Math.PI * 2, baseX: x })
         }
 
+        const LAKE_QUALITY = {
+            low: { segments: 18, rings: 3, ripples: 1, wave: .12, shininess: 28, normalEvery: 6 },
+            medium: { segments: 26, rings: 4, ripples: 2, wave: .2, shininess: 48, normalEvery: 4 },
+            high: { segments: 36, rings: 6, ripples: 3, wave: .3, shininess: 76, normalEvery: 2 },
+            ultra: { segments: 48, rings: 8, ripples: 4, wave: .42, shininess: 105, normalEvery: 1 }
+        };
+
+        function lakeHasGroundOverlap(x, z, radius) {
+            for (const entity of activeEntities) {
+                if (!entity?.mesh) continue;
+                const isGroundObject = entity.type === 'mountain' || entity.type === 'tree' ||
+                    entity.type === 'tower' || entity.kind === 'camp';
+                if (isGroundObject) {
+                    const dx = entity.mesh.position.x - x, dz = entity.mesh.position.z - z,
+                        clearance = entity.type === 'mountain' ? (entity.radius || 48) * .72 :
+                            entity.type === 'tree' ? 13 : entity.type === 'tower' ? 20 : 22;
+                    if (Math.hypot(dx, dz) < radius + clearance) return true
+                }
+                if (entity.type === 'grass' && Array.isArray(entity.mesh.userData.grassPatches)) {
+                    for (const patch of entity.mesh.userData.grassPatches) {
+                        if (Math.hypot(patch.x - x, patch.z - z) < radius + (patch.radius || 15)) return true
+                    }
+                }
+            }
+            return false
+        }
+
+        function disposeLakeResources(entity) {
+            if (!entity?.mesh || entity.resourcesDisposed) return;
+            const geometries = new Set(), materials = new Set();
+            entity.mesh.traverse(part => {
+                if (part.geometry) geometries.add(part.geometry);
+                if (part.material) (Array.isArray(part.material) ? part.material : [part.material])
+                    .forEach(material => materials.add(material))
+            });
+            geometries.forEach(geometry => geometry.dispose());
+            materials.forEach(material => material.dispose());
+            entity.resourcesDisposed = true
+        }
+
+        function updateLakeAnimation(entity, time) {
+            const water = entity?.waterMesh,
+                geometry = water?.geometry,
+                attribute = geometry?.attributes?.position;
+            if (!attribute || !entity.basePositions) return;
+            const positions = attribute.array,
+                base = entity.basePositions,
+                phase = time * entity.waveSpeed + entity.phase,
+                amplitude = entity.waveAmplitude;
+            for (let i = 0; i < positions.length; i += 3) {
+                const x = base[i], z = base[i + 2];
+                positions[i + 1] = base[i + 1] +
+                    Math.sin(phase + x * .052 + z * .071) * amplitude +
+                    Math.cos(phase * .73 + x * .031 - z * .047) * amplitude * .36
+            }
+            attribute.needsUpdate = true;
+            entity.normalUpdateCounter = (entity.normalUpdateCounter || 0) + 1;
+            if (entity.normalUpdateCounter % entity.normalEvery === 0) geometry.computeVertexNormals();
+            for (const ripple of entity.ripples || []) {
+                const pulse = .82 + .18 * (.5 + .5 * Math.sin(time * .72 + ripple.phase));
+                ripple.mesh.scale.set(pulse, 1, pulse);
+                ripple.mesh.rotation.y = Math.sin(time * .3 + ripple.phase) * .08;
+                ripple.material.opacity = .12 + .22 * (.5 + .5 * Math.sin(time * .9 + ripple.phase))
+            }
+            if (entity.glint) {
+                entity.glint.position.x = Math.sin(time * .24 + entity.phase) * entity.radiusX * .22;
+                entity.glint.position.z = Math.cos(time * .19 + entity.phase) * entity.radiusZ * .17;
+                entity.glint.material.opacity = .12 + .22 * (.5 + .5 * Math.sin(time * 1.3 + entity.phase))
+            }
+        }
+
         function _spawnLake(z, x, id) {
-            if (isInsideMountain(x, z, 40)) return;
-            const rng = getRng(z);
-            let g = new THREE.Group(),
+            if (isInsideMountain(x, z, 40) || isInsideLake(x, z, 22)) return;
+            const rng = getRng(z),
+                quality = activeGraphicsSettings?.quality || getGraphicsSettings().quality,
+                profile = LAKE_QUALITY[quality] || LAKE_QUALITY.high,
                 bw = 40 + rng() * 50,
                 bd = 28 + rng() * 38,
-                isArch = id === 'arquipelago';
-            let shore = new THREE.Mesh(new THREE.CylinderGeometry(bw * .68 + 4, bw * .68 + 4, 1.5, 9),
-                new THREE.MeshStandardMaterial({ color: isArch ? 0xe8d5a3 : 0xa0875a, roughness: .95,
-                    flatShading: true }));
-            shore.scale.z = (bd + 10) / (bw + 10);
-            shore.position.y = -.3;
+                radiusX = bw * .76,
+                radiusZ = bd * .76,
+                shoreX = bw * .88,
+                shoreZ = bd * .88,
+                reservationRadius = Math.max(shoreX, shoreZ) + 8;
+            if (lakeHasGroundOverlap(x, z, reservationRadius)) return;
+
+            const g = new THREE.Group(),
+                shoreMaterial = new THREE.MeshStandardMaterial({
+                    color: id === 'arquipelago' ? 0xe8d5a3 : 0x9d895c,
+                    roughness: 1, metalness: 0, side: THREE.DoubleSide, flatShading: true
+                }),
+                shoreGeometry = new THREE.RingGeometry(.78, 1, profile.segments),
+                shore = new THREE.Mesh(shoreGeometry, shoreMaterial);
+            shore.rotation.x = -Math.PI / 2;
+            shore.scale.set(shoreX, shoreZ, 1);
+            shore.position.y = .12;
+            shore.castShadow = false;
+            shore.receiveShadow = true;
             g.add(shore);
-            let numL = 3 + Math.floor(rng() * 3);
-            for (let i = 0; i < numL; i++) {
-                let ang = i / numL * Math.PI * 2,
-                    lw = bw * .5 + rng() * bw * .3,
-                    ld = bd * .5 + rng() * bd * .3,
-                    lobe = new THREE.Mesh(new THREE.CylinderGeometry(lw * .48, lw * .48, 1.6, 9), M.water);
-                lobe.scale.z = ld / lw;
-                lobe.position.set(Math.cos(ang) * bw * .22, 0, Math.sin(ang) * bd * .22);
-                g.add(lobe)
+
+            const positions = [0, 0, 0],
+                colors = [],
+                indices = [],
+                centerColor = new THREE.Color(id === 'arquipelago' ? 0x0d6680 : 0x075b78),
+                edgeColor = new THREE.Color(0x55c8bd),
+                seed = z * 31.7 + x * 17.3,
+                segments = profile.segments,
+                rings = profile.rings;
+            colors.push(centerColor.r, centerColor.g, centerColor.b);
+            for (let ring = 1; ring <= rings; ring++) {
+                const radial = ring / rings;
+                for (let j = 0; j < segments; j++) {
+                    const angle = j / segments * Math.PI * 2,
+                        edgeNoise = 1 + Math.sin(angle * 3 + seed) * .045 +
+                            Math.cos(angle * 5 - seed * .7) * .025,
+                        px = Math.cos(angle) * radiusX * radial * edgeNoise,
+                        pz = Math.sin(angle) * radiusZ * radial * edgeNoise,
+                        color = centerColor.clone().lerp(edgeColor, Math.pow(radial, 1.35));
+                    positions.push(px, 0, pz);
+                    colors.push(color.r, color.g, color.b)
+                }
             }
-            let glint = new THREE.Mesh(new THREE.CylinderGeometry(bw * .16, bw * .16, .5, 7),
-                new THREE.MeshBasicMaterial({ color: 0xaaddff, transparent: true, opacity: .40, depthWrite: false }));
-            glint.position.set((rng() - .5) * 8, .1, (rng() - .5) * 6);
+            const firstRing = 1;
+            for (let j = 0; j < segments; j++) {
+                const next = (j + 1) % segments;
+                indices.push(0, firstRing * segments + next, firstRing * segments + j)
+            }
+            for (let ring = 1; ring < rings; ring++) {
+                const innerStart = 1 + (ring - 1) * segments,
+                    outerStart = 1 + ring * segments;
+                for (let j = 0; j < segments; j++) {
+                    const next = (j + 1) % segments;
+                    indices.push(innerStart + j, outerStart + next, outerStart + j);
+                    indices.push(innerStart + j, innerStart + next, outerStart + next)
+                }
+            }
+            const waterGeometry = new THREE.BufferGeometry();
+            waterGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+            waterGeometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+            waterGeometry.setIndex(indices);
+            waterGeometry.computeVertexNormals();
+            waterGeometry.computeBoundingSphere();
+            const waterMaterial = new THREE.MeshPhongMaterial({
+                color: 0xffffff, vertexColors: true, shininess: profile.shininess,
+                specular: new THREE.Color(0x9de9ff), side: THREE.DoubleSide
+            });
+            const water = new THREE.Mesh(waterGeometry, waterMaterial);
+            water.position.y = .34;
+            water.castShadow = false;
+            water.receiveShadow = true;
+            water.userData.basePositions = new Float32Array(positions);
+            g.add(water);
+
+            const foamPoints = [];
+            for (let j = 0; j < segments; j++) {
+                const angle = j / segments * Math.PI * 2,
+                    edgeNoise = 1 + Math.sin(angle * 3 + seed) * .045 +
+                        Math.cos(angle * 5 - seed * .7) * .025;
+                foamPoints.push(new THREE.Vector3(
+                    Math.cos(angle) * radiusX * edgeNoise * .99, .39,
+                    Math.sin(angle) * radiusZ * edgeNoise * .99
+                ))
+            }
+            const foam = new THREE.LineLoop(
+                new THREE.BufferGeometry().setFromPoints(foamPoints),
+                new THREE.LineBasicMaterial({ color: 0xb8f5ed, transparent: true, opacity: .38, depthWrite: false })
+            );
+            g.add(foam);
+
+            const ripples = [];
+            for (let i = 0; i < profile.ripples; i++) {
+                const phase = rng() * Math.PI * 2,
+                    factor = .25 + i * .13,
+                    points = [];
+                for (let j = 0; j <= 26; j++) {
+                    const angle = (j / 26) * Math.PI * 1.25 + phase,
+                        px = Math.cos(angle) * radiusX * factor,
+                        pz = Math.sin(angle) * radiusZ * factor;
+                    points.push(new THREE.Vector3(px, .43 + i * .006, pz))
+                }
+                const material = new THREE.LineBasicMaterial({
+                    color: i % 2 ? 0xd7ffff : 0xffffff, transparent: true,
+                    opacity: .2, depthWrite: false
+                });
+                const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints(points), material);
+                line.userData.phase = phase;
+                g.add(line);
+                ripples.push({ mesh: line, material, phase })
+            }
+            const glintMaterial = new THREE.MeshBasicMaterial({
+                color: 0xe0ffff, transparent: true, opacity: .2,
+                side: THREE.DoubleSide, depthWrite: false
+            }),
+                glint = new THREE.Mesh(new THREE.PlaneGeometry(radiusX * .25, Math.max(1.2, radiusZ * .045)), glintMaterial);
+            glint.rotation.x = -Math.PI / 2;
+            glint.position.set(0, .46, 0);
             g.add(glint);
+
             g.position.set(x, 0, z);
             g.rotation.y = rng() * Math.PI;
             scene.add(g);
-            activeEntities.push({ type: 'deco', mesh: g })
+            const entity = {
+                type: 'lake', mesh: g, waterMesh: water, ripples, glint,
+                radiusX, radiusZ, phase: rng() * Math.PI * 2,
+                waveAmplitude: profile.wave, waveSpeed: .85 + rng() * .35,
+                normalEvery: profile.normalEvery, basePositions: water.userData.basePositions,
+                radius: reservationRadius, quality, resourcesDisposed: false
+            };
+            activeEntities.push(entity);
+            spawnedLakes.push({ x, z, radius: reservationRadius, entity })
         }
 
         function _spawnRiverSeg(z) {
@@ -8563,7 +8758,7 @@ function _obstacleMountainDims(b, central, rng) {
         }
 
         function _spawnCamp(z, x) {
-            if (isInsideMountain(x, z, 25)) return;
+            if (isInsideMountain(x, z, 25) || isInsideLake(x, z, 24)) return;
             const rng = getRng(z);
             let g = new THREE.Group(),
                 numTents = 1 + Math.floor(rng() * 2);
@@ -8605,11 +8800,11 @@ function _obstacleMountainDims(b, central, rng) {
             g.position.set(x, 0, z);
             g.rotation.y = rng() * Math.PI * 2;
             scene.add(g);
-            activeEntities.push({ type: 'deco', mesh: g })
+            activeEntities.push({ type: 'deco', kind: 'camp', mesh: g })
         }
 
         function _spawnBlimp(z, x, y) {
-            if (isInsideMountain(x, z, 30)) return;
+            if (isInsideMountain(x, z, 30) || isInsideLake(x, z, 34)) return;
             const rng = getRng(z);
             let g = new THREE.Group(),
                 body = new THREE.Mesh(new THREE.CylinderGeometry(12, 12, 55, 8), M.blimp);
@@ -8643,20 +8838,20 @@ function _obstacleMountainDims(b, central, rng) {
             g.rotation.y = rng() * Math.PI * 2;
             scene.add(g);
             activeEntities.push({ type: 'blimp', mesh: g, carRig, baseX: x, baseY: y, baseZ: z,
-                baseRotationY: g.rotation.y, driftAmp: 13 + rng() * 10, driftSpeed: .07 + rng() * .05,
-                driftPhase: rng() * Math.PI * 2, windAmp: 3 + rng() * 4, windSpeed: .2 + rng() * .13,
-                windPhase: rng() * Math.PI * 2, driftZAmp: 3 + rng() * 4, driftZSpeed: .16 + rng() * .12,
-                bobAmp: 1.4 + rng() * 1.4, bobSpeed: .2 + rng() * .12,
-                wobbleSpeedP: .3 + rng() * .2, wobbleAmpP: .027,
-                wobbleSpeedR: .25 + rng() * .2, wobbleAmpR: .038,
+                baseRotationY: g.rotation.y, driftAmp: 20 + rng() * 16, driftSpeed: .22 + rng() * .16,
+                driftPhase: rng() * Math.PI * 2, windAmp: 6 + rng() * 5, windSpeed: .48 + rng() * .34,
+                windPhase: rng() * Math.PI * 2, driftZAmp: 6 + rng() * 5, driftZSpeed: .32 + rng() * .22,
+                bobAmp: 4.5 + rng() * 3, bobSpeed: .42 + rng() * .25,
+                wobbleSpeedP: .42 + rng() * .24, wobbleAmpP: .055,
+                wobbleSpeedR: .38 + rng() * .24, wobbleAmpR: .085,
                 wobblePhaseP: rng() * Math.PI * 2, wobblePhaseR: rng() * Math.PI * 2,
-                carSwaySpeed: .45 + rng() * .18, carSwayPhase: rng() * Math.PI * 2,
-                carSwayP: .022, carSwayR: .035, colRadius: 14 })
+                carSwaySpeed: .6 + rng() * .28, carSwayPhase: rng() * Math.PI * 2,
+                carSwayP: .048, carSwayR: .072, colRadius: 14 })
         }
         const BCOLS = [0xef4444, 0xf97316, 0xeab308, 0x22c55e, 0x3b82f6, 0xa855f7];
 
         function _spawnBalloon(z, x, y) {
-            if (isInsideMountain(x, z, 20)) return;
+            if (isInsideMountain(x, z, 20) || isInsideLake(x, z, 28)) return;
             const rng = getRng(z);
             let g = new THREE.Group(),
                 bMat = new THREE.MeshStandardMaterial({ color: BCOLS[Math.floor(rng() * BCOLS.length)],
@@ -8688,20 +8883,23 @@ function _obstacleMountainDims(b, central, rng) {
                 basketRig.add(r) });
             g.add(basketRig);
             g.position.set(x, y, z);
+            const baseRotationY = (rng() - .5) * .22;
+            g.rotation.y = baseRotationY;
             scene.add(g);
             activeEntities.push({ type: 'balloon', mesh: g, basketRig, baseX: x, baseY: y, baseZ: z,
-                bobAmp: 2 + rng() * 1.5, bobSpeed: .18 + rng() * .1, bobPhase: rng() * Math.PI * 2,
-                driftAmp: 7 + rng() * 6, driftSpeed: .055 + rng() * .045, driftPhase: rng() * Math.PI * 2,
-                windAmp: 1.5 + rng() * 2.5, windSpeed: .18 + rng() * .1, windPhase: rng() * Math.PI * 2,
-                driftZAmp: 1.5 + rng() * 2, driftZSpeed: .14 + rng() * .09,
-                wobbleSpeedP: .24 + rng() * .16, wobbleAmpP: .018, wobbleSpeedR: .2 + rng() * .12,
-                wobbleAmpR: .028, wobblePhaseP: rng() * Math.PI * 2, wobblePhaseR: rng() * Math.PI * 2,
-                basketSwaySpeed: .34 + rng() * .18, basketSwayPhase: rng() * Math.PI * 2,
-                basketSwayP: .014, basketSwayR: .022, colRadius: 14 })
+                baseRotationY,
+                bobAmp: 5 + rng() * 3, bobSpeed: .38 + rng() * .22, bobPhase: rng() * Math.PI * 2,
+                driftAmp: 16 + rng() * 12, driftSpeed: .18 + rng() * .16, driftPhase: rng() * Math.PI * 2,
+                windAmp: 5 + rng() * 4, windSpeed: .45 + rng() * .32, windPhase: rng() * Math.PI * 2,
+                driftZAmp: 4 + rng() * 4, driftZSpeed: .28 + rng() * .2,
+                wobbleSpeedP: .4 + rng() * .22, wobbleAmpP: .045, wobbleSpeedR: .36 + rng() * .2,
+                wobbleAmpR: .066, wobblePhaseP: rng() * Math.PI * 2, wobblePhaseR: rng() * Math.PI * 2,
+                basketSwaySpeed: .5 + rng() * .3, basketSwayPhase: rng() * Math.PI * 2,
+                basketSwayP: .04, basketSwayR: .058, colRadius: 14 })
         }
 
         function _spawnTower(z, x) {
-            if (isInsideMountain(x, z, 15)) return;
+            if (isInsideMountain(x, z, 15) || isInsideLake(x, z, 18)) return;
             const rng = getRng(z);
             let g = new THREE.Group(),
                 h = 130 + rng() * 50,
@@ -8788,10 +8986,32 @@ function _obstacleMountainDims(b, central, rng) {
 
             spawnMtn(z, -b.mountLateral - rng() * 50, b, false);
             spawnMtn(z, b.mountLateral + rng() * 50, b, false);
-            const extraSideMountainChance = b.id === 'montanhas' ? .08 : .45;
+            const extraSideMountainChance = b.id === 'montanhas' ? .62 : .45;
             if (rng() < extraSideMountainChance) {
                 spawnMtn(z, -b.mountLateral - 60 - rng() * 60, b, false);
                 spawnMtn(z, b.mountLateral + 60 + rng() * 60, b, false);
+            }
+            if (b.id === 'montanhas') {
+                const outerFlank = { ...b, mountH: [105, 165], mountR: [38, 56] };
+                if (rng() < .48) {
+                    const offset = b.mountLateral + 135 + rng() * 55;
+                    _spawnMountain(z, -offset, outerFlank, false);
+                    _spawnMountain(z, offset, outerFlank, false)
+                }
+            }
+            if (b.lakes && rng() < b.lakeChance) {
+                const lx = safeX(z, -185, 185, 55);
+                if (lx !== null) _spawnLake(z + (rng() - .5) * 55, lx, b.id);
+            }
+            if (b.id === 'montanhas') {
+                for (const side of [-1, 1]) {
+                    const count = 1 + Math.floor(rng() * 2);
+                    for (let i = 0; i < count; i++) {
+                        const tx = side * (b.mountLateral + 28 + rng() * 145),
+                            tz = z + (rng() - .5) * 72;
+                        _spawnTree(tz, tx, 'floresta')
+                    }
+                }
             }
             // No modo musical, 38% dos blocos deixam o corredor central livre. O cenário lateral,
             // rios, lagos, nuvens e biomas continuam presentes; só a pressão de obstáculos diminui.
@@ -8851,10 +9071,6 @@ function _obstacleMountainDims(b, central, rng) {
                 _spawnPowerRing(z, px, powerRingY, 'fuel');
             }
 
-            if (b.lakes && rng() < b.lakeChance) {
-                let lx = safeX(z, -185, 185, 50);
-                if (lx !== null) _spawnLake(z + (rng() - .5) * 55, lx, b.id);
-            }
             if (b.river) _spawnRiverSeg(z);
             if (b.camps && rng() < b.campChance) {
                 let cx = safeX(z, -200, 200, 30);
@@ -8874,6 +9090,7 @@ function _obstacleMountainDims(b, central, rng) {
                 new THREE.MeshStandardMaterial({ color: 0x65a30d, roughness: .95, flatShading: true }));
             ground.position.y = -10;
             ground.receiveShadow = true;
+            ground.castShadow = true;
             scene.add(ground);
 
             nextSpawnZ = -200;
@@ -8934,10 +9151,12 @@ function _obstacleMountainDims(b, central, rng) {
             resetMeteorEvent(false);
             activeEntities.forEach(e => {
                 scene.remove(e.mesh);
-                if (e.musicRing) disposeMusicRingEntity(e)
+                if (e.musicRing) disposeMusicRingEntity(e);
+                if (e.type === 'lake') disposeLakeResources(e)
             });
             activeEntities.length = 0;
             spawnedMountains.length = 0;
+            spawnedLakes.length = 0;
             if (ground) scene.remove(ground);
         }
 
@@ -8954,6 +9173,7 @@ function _obstacleMountainDims(b, central, rng) {
                 Math.max(0, (Date.now() + mpServerOffset - mpRaceStartAt) / 1000) : clock.elapsedTime;
             for (let i = activeEntities.length - 1; i >= 0; i--) {
                 let e = activeEntities[i];
+                if (e.type === 'lake') updateLakeAnimation(e, t);
                 if (e.type === 'ring' && !e.musicRing) e.mesh.rotation.y += .03;
                 if (e.type === 'powerRing') {
                     e.mesh.rotation.y += e.spinSpeed;
@@ -8967,29 +9187,35 @@ function _obstacleMountainDims(b, central, rng) {
                     const crosswind = Math.sin(t * e.windSpeed + e.windPhase),
                         depthWind = Math.sin(t * e.driftZSpeed + e.windPhase);
                     e.mesh.position.x = e.baseX + Math.sin(t * e.driftSpeed + e.driftPhase) * e.driftAmp + crosswind * e.windAmp;
-                    e.mesh.position.y = e.baseY + Math.sin(t * e.bobSpeed + e.driftPhase) * e.bobAmp;
+                    e.mesh.position.y = e.baseY + Math.sin(t * e.bobSpeed + e.driftPhase) * e.bobAmp +
+                        Math.cos(t * e.bobSpeed * .63 + e.driftPhase) * e.bobAmp * .16;
                     e.mesh.position.z = e.baseZ + depthWind * e.driftZAmp;
-                    e.mesh.rotation.x = Math.sin(t * e.wobbleSpeedP + e.wobblePhaseP) * e.wobbleAmpP + crosswind * .009;
-                    e.mesh.rotation.z = Math.sin(t * e.wobbleSpeedR + e.wobblePhaseR) * e.wobbleAmpR + crosswind * .012;
-                    e.mesh.rotation.y = e.baseRotationY + crosswind * .026;
+                    e.mesh.rotation.x = Math.sin(t * e.wobbleSpeedP + e.wobblePhaseP) * e.wobbleAmpP + crosswind * .025;
+                    e.mesh.rotation.z = Math.sin(t * e.wobbleSpeedR + e.wobblePhaseR) * e.wobbleAmpR + crosswind * .035;
+                    e.mesh.rotation.y = e.baseRotationY + crosswind * .085;
+                    e.mesh.rotation.y += Math.sin(t * .31 + e.driftPhase) * .035;
                     if (e.carRig) {
                         const carSway = Math.sin(t * e.carSwaySpeed + e.carSwayPhase);
                         e.carRig.rotation.x = carSway * e.carSwayP;
-                        e.carRig.rotation.z = Math.sin(t * e.carSwaySpeed * .83 + e.carSwayPhase + .8) * e.carSwayR
+                        e.carRig.rotation.z = Math.sin(t * e.carSwaySpeed * .83 + e.carSwayPhase + .8) * e.carSwayR;
+                        e.carRig.position.x = Math.sin(t * e.carSwaySpeed * .7 + e.carSwayPhase) * 1.35
                     }
                 }
                 if (e.type === 'balloon') {
                     const crosswind = Math.sin(t * e.windSpeed + e.windPhase),
                         depthWind = Math.sin(t * e.driftZSpeed + e.windPhase);
                     e.mesh.position.x = e.baseX + Math.sin(t * e.driftSpeed + e.driftPhase) * e.driftAmp + crosswind * e.windAmp;
-                    e.mesh.position.y = e.baseY + Math.sin(t * e.bobSpeed + e.bobPhase) * e.bobAmp;
+                    e.mesh.position.y = e.baseY + Math.sin(t * e.bobSpeed + e.bobPhase) * e.bobAmp +
+                        Math.cos(t * e.bobSpeed * .71 + e.bobPhase + .7) * e.bobAmp * .16;
                     e.mesh.position.z = e.baseZ + depthWind * e.driftZAmp;
-                    e.mesh.rotation.x = Math.sin(t * e.wobbleSpeedP + e.wobblePhaseP) * e.wobbleAmpP + crosswind * .012;
-                    e.mesh.rotation.z = Math.sin(t * e.wobbleSpeedR + e.wobblePhaseR) * e.wobbleAmpR + crosswind * .016;
+                    e.mesh.rotation.x = Math.sin(t * e.wobbleSpeedP + e.wobblePhaseP) * e.wobbleAmpP + crosswind * .024;
+                    e.mesh.rotation.z = Math.sin(t * e.wobbleSpeedR + e.wobblePhaseR) * e.wobbleAmpR + crosswind * .032;
+                    e.mesh.rotation.y = e.baseRotationY + Math.sin(t * e.driftSpeed * .62 + e.driftPhase) * .055;
                     if (e.basketRig) {
                         const basketSway = Math.sin(t * e.basketSwaySpeed + e.basketSwayPhase);
                         e.basketRig.rotation.x = basketSway * e.basketSwayP;
-                        e.basketRig.rotation.z = Math.sin(t * e.basketSwaySpeed * .86 + e.basketSwayPhase + .9) * e.basketSwayR
+                        e.basketRig.rotation.z = Math.sin(t * e.basketSwaySpeed * .86 + e.basketSwayPhase + .9) * e.basketSwayR;
+                        e.basketRig.position.x = Math.sin(t * e.basketSwaySpeed * .72 + e.basketSwayPhase + 1.1) * 1.15
                     }
                 }
                 // Formações de cânion podem ter centenas de unidades de profundidade. Só recicla
@@ -8999,6 +9225,11 @@ function _obstacleMountainDims(b, central, rng) {
                     Math.abs(Math.cos(e.mesh.rotation.y)) * e.mDepth * .5 : 0;
                 const behindLimit = e.type === 'grass' ? 45 : 200 + mountainRearExtent;
                 if (e.mesh.position.z > airplane.position.z + behindLimit) {
+                    if (e.type === 'lake') {
+                        const lakeIndex = spawnedLakes.findIndex(lake => lake.entity === e);
+                        if (lakeIndex >= 0) spawnedLakes.splice(lakeIndex, 1);
+                        disposeLakeResources(e)
+                    }
                     if (e.type === 'mountain') {
                         let idx = spawnedMountains.findIndex(m => m.x === e.mesh.position.x && m.z === e.mesh.position.z);
                         if (idx >= 0) spawnedMountains.splice(idx, 1)

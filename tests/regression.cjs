@@ -113,9 +113,46 @@ test('Mountain biome keeps a wider flight corridor with fewer central mountains'
  assert.match(html,/extraSideMountainChance = b\.id === 'montanhas' \? \.08 : \.45/);
 });
 test('Grass appears as chunk geometry and is removed shortly after passing',()=>{
- run("scene=new THREE.Scene();activeEntities.length=0;spawnedMountains.length=0;_spawnGrass(-1200,BIOMES[0],getRng(-1200))");
+ run("scene=new THREE.Scene();activeEntities.length=0;spawnedMountains.length=0;spawnedLakes.length=0;_spawnGrass(-1200,BIOMES[0],getRng(-1200))");
  assert(run("activeEntities.some(e=>e.type==='grass' && e.mesh.geometry.attributes.position.count>0)"));
  assert.match(html,/const behindLimit = e\.type === 'grass' \? 45 : 200 \+ mountainRearExtent/);
+});
+test('Lake water is animated, irregular and scales detail with graphics quality',()=>{
+ run("scene=new THREE.Scene();activeEntities.length=0;spawnedMountains.length=0;spawnedLakes.length=0;activeGraphicsSettings={quality:'ultra'};_spawnLake(-1200,0,'campos')");
+ const lake=run("activeEntities.find(e=>e.type==='lake')");
+ assert(lake);assert.equal(lake.quality,'ultra');
+ assert(lake.waterMesh.geometry.attributes.position.count>350);
+ const before=Array.from(lake.waterMesh.geometry.attributes.position.array);
+ run("updateLakeAnimation(activeEntities.find(e=>e.type==='lake'),3.7)");
+ const after=Array.from(lake.waterMesh.geometry.attributes.position.array);
+ assert(after.some((value,index)=>index%3===1&&Math.abs(value-before[index])>.01));
+ assert(run("LAKE_QUALITY.ultra.segments>LAKE_QUALITY.low.segments&&LAKE_QUALITY.ultra.ripples>LAKE_QUALITY.low.ripples"));
+});
+test('Ground objects and grass are kept out of reserved lake water',()=>{
+ run("scene=new THREE.Scene();activeEntities.length=0;spawnedMountains.length=0;spawnedLakes.length=0;activeGraphicsSettings={quality:'low'};_spawnLake(-1200,0,'campos');_spawnGrass(-1200,BIOMES[0],()=>.5);_spawnTree(-1200,0,'floresta')");
+ assert.equal(run("activeEntities.filter(e=>e.type==='lake').length"),1);
+ assert.equal(run("activeEntities.filter(e=>e.type==='grass'||e.type==='tree').length"),0);
+});
+test('Lake reservations are removed when the chunk is cleared',()=>{
+ run("scene=new THREE.Scene();activeEntities.length=0;spawnedMountains.length=0;spawnedLakes.length=0;activeGraphicsSettings={quality:'low'};_spawnLake(-1200,0,'campos')");
+ assert.equal(run("spawnedLakes.length"),1);
+ run("clearWorld()");
+ assert.equal(run("spawnedLakes.length"),0);
+});
+test('Mountain biome fills both outer flanks with peaks and trees',()=>{
+ assert.match(html,/outerFlank = \{ \.\.\.b, mountH: \[105, 165\], mountR: \[38, 56\] \}/);
+ assert.match(html,/extraSideMountainChance = b\.id === 'montanhas' \? \.62 : \.45/);
+ assert.match(html,/const count = 1 \+ Math\.floor\(rng\(\) \* 2\)/);
+});
+test('Blimps and balloons have visibly stronger drift, bob and suspension sway',()=>{
+ assert.match(html,/driftAmp: 20 \+ rng\(\) \* 16/);
+ assert.match(html,/bobAmp: 4\.5 \+ rng\(\) \* 3/);
+ assert.match(html,/driftAmp: 16 \+ rng\(\) \* 12/);
+ assert.match(html,/basketSwayP: \.04, basketSwayR: \.058/);
+ assert.match(html,/e\.carRig\.position\.x = Math\.sin/);
+});
+test('Ground casts shadows so terrain blocks sunlight reaching low aircraft',()=>{
+ assert.match(html,/ground\.castShadow = true/);
 });
 test('Radio card offers direct extension download and setup steps',()=>{
  assert.match(html,/little-plane-radio-extension-1\.1\.4\.zip/);
