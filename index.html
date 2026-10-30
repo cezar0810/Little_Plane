@@ -40,6 +40,71 @@
             touch-action: manipulation
         }
 
+        /* Explosão cartoonizada exibida antes do painel de fim de voo. */
+        #gameOverScreen { transition: background-color .22s ease; }
+        #gameOverScreen.lp-crash-pending {
+            background-color: transparent !important;
+            pointer-events: none;
+        }
+        #gameOverScreen.lp-crash-pending > .game-over-card {
+            opacity: 0;
+            transform: translateY(12px) scale(.94);
+        }
+        #gameOverScreen > .game-over-card {
+            transition: opacity .22s ease, transform .22s cubic-bezier(.2,.85,.25,1);
+        }
+        #lpCrashFlash {
+            position: fixed;
+            inset: 0;
+            z-index: 79;
+            pointer-events: none;
+            opacity: 0;
+            background: radial-gradient(circle at var(--crash-x,50%) var(--crash-y,50%),
+                rgba(255,255,255,.94) 0, rgba(254,240,138,.58) 13%,
+                rgba(249,115,22,.24) 36%, transparent 69%);
+            animation: lpCrashFlash .34s ease-out forwards;
+        }
+        #lpCrashExplosion {
+            position: fixed;
+            z-index: 81;
+            width: clamp(148px, 25vw, 276px);
+            aspect-ratio: 1;
+            pointer-events: none;
+            transform: translate(-50%,-50%) scale(.08) rotate(-22deg);
+            filter: drop-shadow(0 9px 10px rgba(30,12,4,.38));
+            animation: lpCrashPop .72s cubic-bezier(.17,.83,.26,1) forwards;
+        }
+        #lpCrashExplosion svg { display: block; width: 100%; height: 100%; overflow: visible; }
+        #lpCrashExplosion .lp-crash-rays {
+            transform-box: fill-box;
+            transform-origin: center;
+            animation: lpCrashSpin .72s ease-out forwards;
+        }
+        body.lp-crash-shake > canvas {
+            animation: lpCrashShake .22s ease-out;
+        }
+        @keyframes lpCrashPop {
+            0% { opacity: 0; transform: translate(-50%,-50%) scale(.08) rotate(-22deg); }
+            19% { opacity: 1; transform: translate(-50%,-50%) scale(1.16) rotate(7deg); }
+            43% { opacity: 1; transform: translate(-50%,-50%) scale(.94) rotate(-4deg); }
+            72% { opacity: 1; transform: translate(-50%,-50%) scale(1.04) rotate(2deg); }
+            100% { opacity: 0; transform: translate(-50%,-50%) scale(1.28) rotate(10deg); }
+        }
+        @keyframes lpCrashFlash {
+            0% { opacity: .9; }
+            100% { opacity: 0; }
+        }
+        @keyframes lpCrashSpin {
+            0% { transform: rotate(-12deg); }
+            100% { transform: rotate(12deg); }
+        }
+        @keyframes lpCrashShake {
+            0%,100% { transform: translate3d(0,0,0); }
+            25% { transform: translate3d(-5px,3px,0); }
+            55% { transform: translate3d(4px,-3px,0); }
+            78% { transform: translate3d(-2px,1px,0); }
+        }
+
         .dpad-btn {
             width: 70px;
             height: 70px;
@@ -9810,6 +9875,83 @@ function _obstacleMountainDims(b, central, rng) {
         }
         
 
+        // Desenha uma explosão vetorial em estilo de gibi na posição projetada do avião.
+        // O efeito é independente do loop de voo, que é interrompido após uma colisão fatal.
+        function playCartoonCrashExplosion() {
+            document.getElementById('lpCrashExplosion')?.remove();
+            document.getElementById('lpCrashFlash')?.remove();
+
+            let screenX = innerWidth * .5, screenY = innerHeight * .48;
+            if (airplane && camera && camera.parent !== airplane && typeof THREE !== 'undefined') {
+                try {
+                    airplane.updateMatrixWorld(true);
+                    camera.updateMatrixWorld(true);
+                    const impactPoint = new THREE.Vector3();
+                    airplane.getWorldPosition(impactPoint);
+                    impactPoint.project(camera);
+                    if (Number.isFinite(impactPoint.x) && Number.isFinite(impactPoint.y) &&
+                        impactPoint.z > -1 && impactPoint.z < 1 &&
+                        Math.abs(impactPoint.x) < 1.2 && Math.abs(impactPoint.y) < 1.2) {
+                        screenX = (impactPoint.x * .5 + .5) * innerWidth;
+                        screenY = (-impactPoint.y * .5 + .5) * innerHeight;
+                    }
+                } catch (error) {
+                    // Se a câmera ainda estiver mudando de modo, centraliza o efeito na tela.
+                }
+            }
+
+            const flash = document.createElement('div');
+            flash.id = 'lpCrashFlash';
+            flash.style.setProperty('--crash-x', screenX + 'px');
+            flash.style.setProperty('--crash-y', screenY + 'px');
+            flash.setAttribute('aria-hidden', 'true');
+
+            const explosion = document.createElement('div');
+            explosion.id = 'lpCrashExplosion';
+            explosion.style.left = Math.round(screenX) + 'px';
+            explosion.style.top = Math.round(screenY) + 'px';
+            explosion.setAttribute('aria-hidden', 'true');
+            explosion.innerHTML = `
+                <svg viewBox="0 0 240 240" role="presentation" xmlns="http://www.w3.org/2000/svg">
+                    <g class="lp-crash-rays">
+                        <path d="M120 7 139 48 170 20 171 62 215 48 195 91 235 112 196 133 218 177 173 168 161 220 127 188 104 234 88 190 43 213 55 167 8 158 45 126 6 93 57 84 40 39 83 58Z"
+                            fill="#dc2626" stroke="#7f1d1d" stroke-width="8" stroke-linejoin="round"/>
+                        <path d="m120 28 15 35 29-21-3 35 35-7-18 31 31 16-31 17 16 31-34-8-9 34-26-23-21 29-11-34-34 17 8-35-35-7 27-23-28-22 37-8-9-34 30 14Z"
+                            fill="#f97316" stroke="#9a3412" stroke-width="5" stroke-linejoin="round"/>
+                        <path d="m120 47 12 27 25-14-3 28 27-4-15 25 24 14-26 13 12 25-27-8-8 28-21-19-17 22-9-28-27 12 7-28-27-6 21-20-22-18 29-5-7-28 25 12Z"
+                            fill="#fde047" stroke="#fff7ed" stroke-width="5" stroke-linejoin="round"/>
+                    </g>
+                    <g fill="#fff7ed" stroke="#9a3412" stroke-width="3" stroke-linejoin="round">
+                        <path d="m25 48 7 14 15 2-12 10 3 15-13-8-13 8 3-15L3 64l15-2Z"/>
+                        <path d="m205 28 6 13 14 2-11 9 3 14-12-7-12 7 3-14-11-9 14-2Z"/>
+                        <path d="m216 169 6 12 13 2-10 9 2 13-11-7-12 7 3-13-10-9 13-2Z"/>
+                        <path d="m29 181 5 10 11 2-8 7 2 11-10-6-9 6 2-11-8-7 11-2Z"/>
+                    </g>
+                    <text x="120" y="137" text-anchor="middle" font-family="'Baloo 2',Arial,sans-serif"
+                        font-size="39" font-weight="900" letter-spacing="-2" fill="#7c2d12"
+                        stroke="#fff7ed" stroke-width="5" paint-order="stroke">BOOM!</text>
+                    <path d="m81 153 15 5m60-7 13-7M91 91l8 5m53-2 10-7" fill="none"
+                        stroke="#fff7ed" stroke-width="5" stroke-linecap="round"/>
+                </svg>`;
+
+            document.body.append(flash, explosion);
+            document.body.classList.add('lp-crash-shake');
+            setTimeout(() => {
+                explosion.remove();
+                flash.remove();
+                document.body.classList.remove('lp-crash-shake');
+            }, 760);
+
+            // Na campanha solo, deixa o cenário visível durante o impacto e revela o resultado logo depois.
+            if (!mpActive) {
+                const resultScreen = document.getElementById('gameOverScreen');
+                if (resultScreen) {
+                    resultScreen.classList.add('lp-crash-pending');
+                    setTimeout(() => resultScreen.classList.remove('lp-crash-pending'), 680);
+                }
+            }
+        }
+
         // Aplica a mesma regra de impacto a todos os obstáculos e limita avisos repetidos do escudo.
         function handleImpact(crashMsg) {
             if (shieldActive) {
@@ -9817,6 +9959,7 @@ function _obstacleMountainDims(b, central, rng) {
                     showFeedback('🛡️ Escudo protegeu!', true); }
                 return false;
             }
+            playCartoonCrashExplosion();
             if (mpActive) { mpHandleLocalCrash(); } else { triggerGameOver(crashMsg); }
             return true;
         }
