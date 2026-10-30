@@ -8623,7 +8623,7 @@ function _obstacleMountainDims(b, central, rng) {
                     color: id === 'arquipelago' ? 0xe8d5a3 : 0x9d895c,
                     roughness: 1, metalness: 0, side: THREE.DoubleSide, flatShading: true
                 }),
-                shoreGeometry = new THREE.RingGeometry(.78, 1, profile.segments),
+                shoreGeometry = new THREE.RingGeometry(.86, 1, profile.segments),
                 shore = new THREE.Mesh(shoreGeometry, shoreMaterial);
             shore.rotation.x = -Math.PI / 2;
             shore.scale.set(shoreX, shoreZ, 1);
