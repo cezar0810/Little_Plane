@@ -179,7 +179,7 @@ test('First-person view follows the aircraft from inside the cockpit and restore
  assert.match(html,/LittlePlaneFirstPersonCockpit/);
  assert.match(html,/function setFlightCameraMode\(firstPerson\)/);
  assert.match(html,/airplane\.add\(camera\)/);
- assert.match(html,/camera\.position\.set\(0, 2\.65, -\.55\)/);
+ assert.match(html,/camera\.position\.copy\(airplane\.userData\.cockpitCameraOffset/);
  assert.match(html,/camera\.rotation\.set\(0, Math\.PI, 0\)/);
  assert.match(html,/e\.key\.toLowerCase\(\) === 'v'/);
  assert.match(html,/camPos\.y \+= 7/);
