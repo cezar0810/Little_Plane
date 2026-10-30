@@ -157,8 +157,33 @@ test('Every biome generates mountain meshes on both outer terrain edges',()=>{
   run("scene=new THREE.Scene();activeEntities.length=0;spawnedMountains.length=0;spawnedLakes.length=0;selectedGameMode='normal';spawnChunk(-90000,BIOMES.find(b=>b.id==='"+biome+"'))");
   assert(run("activeEntities.some(e=>e.type==='mountain'&&e.mesh.position.x < -330)"),biome+' left');
   assert(run("activeEntities.some(e=>e.type==='mountain'&&e.mesh.position.x > 330)"),biome+' right');
+  assert(run("activeEntities.filter(e=>e.type==='mountain'&&e.decorative&&e.collidable===false&&Math.abs(e.mesh.position.x)>900).length>=2"),biome+' decorative edge ranges');
  }
  assert.match(html,/patchCount = b\.id === 'canions' \? 9 : b\.id === 'tempestades' \? 38 :\s*b\.id === 'montanhas' \? 24 : 29/);
+});
+test('First-person flight uses a cockpit panel and pilot camera position',()=>{
+ assert.match(html,/function createFlightCockpit\(\)/);
+ assert.match(html,/LittlePlaneFirstPersonCockpit/);
+ assert.match(html,/camPos\.y \+= 3\.8/);
+ assert.match(html,/camPos\.z \+= 9\.5/);
+ assert.match(html,/cameraLookTarget\.z -= 130/);
+ assert.match(html,/if \(flightCockpit\) flightCockpit\.visible = gameActive && worldReady/);
+});
+test('Horizon objects use a progressive distance fade and release cloned materials',()=>{
+ assert.match(html,/function prepareEntityDistanceFade\(/);
+ assert.match(html,/function updateEntityDistanceFade\(/);
+ assert.match(html,/fadeNear = Math\.max\(420, renderDistance \* \.50\)/);
+ assert.match(html,/fadeFar = Math\.max\(entity\.fadeNear \+ 180, renderDistance \* \.97\)/);
+ assert.match(html,/if \(e\.fadeMaterials\) updateEntityDistanceFade\(e\)/);
+ assert.match(html,/disposeEntityFadeMaterials\(e\)/);
+});
+test('Outer mountain lines extend near both terrain edges and never collide',()=>{
+ assert.match(html,/function spawnOuterDecorativeMountains\(/);
+ assert.match(html,/790 \+ rng\(\) \* 42/);
+ assert.match(html,/965 \+ rng\(\) \* 28/);
+ assert.match(html,/collidable: !decorative, decorative/);
+ assert.match(html,/if \(!e\.mesh \|\| e\.collidable === false\) continue/);
+ assert.match(html,/spawnOuterDecorativeMountains\(nextSpawnZ, b, rng, spawnMtn\)/);
 });
 test('Blimps and balloons have visibly stronger drift, bob and suspension sway',()=>{
  assert.match(html,/driftAmp: 20 \+ rng\(\) \* 16/);
