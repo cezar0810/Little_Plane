@@ -8130,11 +8130,10 @@ function _obstacleMountainDims(b, central, rng) {
 }
 
         // FUNÇÃO ORIGINAL DE MONTANHA (mantida sem alterações)
-        function _spawnMountain(z, x, b, central = false, decorative = false) {
+        function _spawnMountain(z, x, b, central = false) {
     if (isInsideLake(x, z, 45)) return;
     const rng = getRng(z);
     let { h, baseRadius } = _obstacleMountainDims(b, central, rng);
-    if (decorative) { h *= .72; baseRadius *= .84; }
     let col = MOUNT_COLS[b.id] || 0xb45309;
             const hasSnow = (b.id === 'montanhas' || b.id === 'tempestades') && h > 200;
             const mountainMesh = createLowPolyMountain({ width: baseRadius * 3, depth: baseRadius * 3, height: h,
@@ -8144,10 +8143,10 @@ function _obstacleMountainDims(b, central, rng) {
             mountainMesh.rotation.y = rng() * Math.PI;
             scene.add(mountainMesh);
             activeEntities.push({ type: 'mountain', shape: 'heightfield', mesh: mountainMesh, yBase: -5,
-                yApex: h - 5, height: h, radius: baseRadius * 1.1, collidable: !decorative, decorative,
+                yApex: h - 5, height: h, radius: baseRadius * 1.1,
                 heightGrid: mountainMesh.userData.heightGrid, gridSize: mountainMesh.userData.gridSize,
                 mWidth: mountainMesh.userData.mWidth, mDepth: mountainMesh.userData.mDepth });
-            if (!decorative) spawnedMountains.push({ x, z, radius: baseRadius * 1.1 })
+            spawnedMountains.push({ x, z, radius: baseRadius * 1.1 })
         }
 
         // Formação exclusiva dos Cânions. As três silhuetas são deliberadamente maiores,
@@ -8344,13 +8343,12 @@ function _obstacleMountainDims(b, central, rng) {
 
         // Esta função faltava no arquivo. Sem ela, o primeiro chunk dos Cânions lançava
         // "ReferenceError: _spawnCanyonMountain is not defined" e interrompia o game loop.
-        function _spawnCanyonMountain(z, x, b, central = false, decorative = false) {
+        function _spawnCanyonMountain(z, x, b, central = false) {
             if (isInsideLake(x, z, 60)) return;
             const rng = getRng(z);
             const radiusRange = central ? b.mountCentralR : b.mountR;
-            let baseRadius = (radiusRange[0] + rng() * (radiusRange[1] - radiusRange[0])) *
+            const baseRadius = (radiusRange[0] + rng() * (radiusRange[1] - radiusRange[0])) *
                 OBSTACLE_MOUNTAIN_SCALE;
-            if (decorative) baseRadius *= .84;
             const styleRoll = rng();
             const style = central ? (styleRoll < .62 ? 'butte' : (styleRoll < .84 ? 'mesa' : 'ridge')) :
                 (styleRoll < .46 ? 'ridge' : (styleRoll < .82 ? 'mesa' : 'butte'));
@@ -8368,8 +8366,7 @@ function _obstacleMountainDims(b, central, rng) {
             // O chão da formação está em y=-5; 178 resulta em ápice real de ~173,
             // ainda abaixo do teto de voo de 180.
             height = Math.min(178, height);
-            if (decorative) height *= .72;
-            const sizeScale = central ? .68 : decorative ? .78 : 1,
+            const sizeScale = central ? .68 : 1,
                 widthMultiplier = styleData.width[0] + rng() * (styleData.width[1] - styleData.width[0]),
                 depthMultiplier = styleData.depth[0] + rng() * (styleData.depth[1] - styleData.depth[0]);
             let width = baseRadius * widthMultiplier * sizeScale,
@@ -8379,7 +8376,7 @@ function _obstacleMountainDims(b, central, rng) {
             // As laterais podem ser enormes ao longo da rota, mas preservam um corredor central.
             // O cálculo considera até a pequena rotação aplicada ao mesh.
             if (!central) {
-                const maxHalfX = decorative ? Math.max(38, 1080 - Math.abs(x)) : Math.max(92, Math.abs(x) - 70),
+                const maxHalfX = Math.max(92, Math.abs(x) - 70),
                     depthContribution = Math.abs(Math.sin(rotation)) * depth * .5,
                     maxLocalHalfWidth = Math.max(80, (maxHalfX - depthContribution) /
                         Math.max(.25, Math.abs(Math.cos(rotation))));
@@ -8393,11 +8390,11 @@ function _obstacleMountainDims(b, central, rng) {
             canyonMesh.rotation.y = rotation;
             scene.add(canyonMesh);
             activeEntities.push({ type: 'mountain', shape: 'heightfield', biome: 'canions', canyonStyle: style,
-                mesh: canyonMesh, yBase: -5, yApex: height - 5, height, collidable: !decorative, decorative,
+                mesh: canyonMesh, yBase: -5, yApex: height - 5, height,
                 radius: Math.sqrt(width * width + depth * depth) * .5,
                 heightGrid: canyonMesh.userData.heightGrid, gridSize: canyonMesh.userData.gridSize,
                 mWidth: canyonMesh.userData.mWidth, mDepth: canyonMesh.userData.mDepth });
-            if (!decorative) spawnedMountains.push({ x, z, radius: Math.sqrt(width * width + depth * depth) * .5 })
+            spawnedMountains.push({ x, z, radius: Math.sqrt(width * width + depth * depth) * .5 })
         }
 
         // Demais funções de spawn
