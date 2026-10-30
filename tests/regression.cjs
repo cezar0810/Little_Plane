@@ -80,11 +80,42 @@ test('Graphics settings expose quality, resolution and chunk-distance presets',(
  assert(run('GRAPHICS_QUALITY.ultra.shadowMapSize > GRAPHICS_QUALITY.high.shadowMapSize'));
  assert(run('getGraphicsRenderDistance({renderChunks:30}) > getGraphicsRenderDistance({renderChunks:10})'));
 });
-test('Balloons and blimps have low-amplitude wind and independent basket sway',()=>{
+test('Touchscreen PCs stay in desktop mode while phones use mobile controls',()=>{
+ const pc=run("detectDeviceProfile('Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/156','Windows',10)");
+ assert.equal(pc.touch,true);assert.equal(pc.desktop,true);assert.equal(pc.mobile,false);
+ const android=run("detectDeviceProfile('Mozilla/5.0 (Linux; Android 14) AppleWebKit Mobile','Android',5)");
+ assert.equal(android.touch,true);assert.equal(android.mobile,true);
+ const ipad=run("detectDeviceProfile('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15) AppleWebKit','MacIntel',5)");
+ assert.equal(ipad.mobile,true);
+});
+test('Radio integration is restricted to desktop and hidden on mobile',()=>{
+ assert.match(html,/function isDesktopRadioDevice\(\)\s*\{\s*return DEVICE_PROFILE\.desktop/);
+ assert.match(html,/body\.touch-device #littlePlaneRadioInstall/);
+ assert.match(html,/if \(!isDesktopRadioDevice\(\) \|\| pcRadioPollTimer\) return/);
+});
+test('Sound effects volume supports live adjustment, persistence and mute',()=>{
+ run('setSoundEffectsVolume(.35,false)');assert.equal(run('soundEffectsVolume'),.35);
+ run('setSoundEffectsVolume(0,false)');assert.equal(run('soundEffectsVolume'),0);
+ assert.match(html,/id="sfxVolumeSlider" type="range"/);
+ assert.match(html,/sfxMasterGain\.gain\.setTargetAtTime/);
+});
+test('Balloons and blimps have gentle motion and independent basket sway',()=>{
  assert.match(html,/e\.carRig\.rotation\.z/);
  assert.match(html,/e\.basketRig\.rotation\.z/);
+ assert.match(html,/bobAmp: 2 \+ rng\(\) \* 1\.5/);
+ assert.match(html,/driftAmp: 7 \+ rng\(\) \* 6/);
  assert.match(html,/driftZAmp/);
  assert.match(html,/width="250" height="250"/);
+});
+test('Mountain biome keeps a wider flight corridor with fewer central mountains',()=>{
+ const biome=run("BIOMES.find(b=>b.id==='montanhas')");
+ assert(biome.mountLateral>=230);assert(biome.mountCentralChance<=.06);
+ assert.match(html,/extraSideMountainChance = b\.id === 'montanhas' \? \.08 : \.45/);
+});
+test('Grass appears as chunk geometry and is removed shortly after passing',()=>{
+ run("scene=new THREE.Scene();activeEntities.length=0;spawnedMountains.length=0;_spawnGrass(-1200,BIOMES[0],getRng(-1200))");
+ assert(run("activeEntities.some(e=>e.type==='grass' && e.mesh.geometry.attributes.position.count>0)"));
+ assert.match(html,/const behindLimit = e\.type === 'grass' \? 45 : 200 \+ mountainRearExtent/);
 });
 test('Radio card offers direct extension download and setup steps',()=>{
  assert.match(html,/little-plane-radio-extension-1\.1\.4\.zip/);
@@ -156,7 +187,8 @@ function client(database){
 })().catch(error=>{console.error(error);process.exitCode=1});
 test('Every biome generates finite geometry after mountain fix',()=>{
  run('selectedGameMode="normal";dayNightManager=null;clearWorld();for(let i=0;i<BIOMES.length;i++)spawnChunk(-1500-i*2000,BIOMES[i]);');
- assert(run(`scene.children.every(root=>{let valid=true;root.traverse(o=>{const p=o.geometry?.attributes.position?.array;if(p)for(const v of p)if(!Number.isFinite(v))valid=false});return valid})`));run('clearWorld()')
+ assert(run(`scene.children.every(root=>{let valid=true;root.traverse(o=>{const p=o.geometry?.attributes.position?.array;if(p)for(const v of p)if(!Number.isFinite(v))valid=false});return valid})`));
+ assert(run("activeEntities.some(e=>e.type==='grass'&&e.mesh.geometry.attributes.position.count>0)"));run('clearWorld()')
 });
 test('Battle arena and simulation initialize without early damage',()=>{
  run(`renderer={toneMappingExposure:1};scene.fog=new THREE.Fog(0xaaaaaa,350,1500);ambientLight=new THREE.AmbientLight();hemiLight=new THREE.HemisphereLight();sunLight=new THREE.DirectionalLight();battlePlayerId='player2';battleBuildWorld();battleActive=true;battleEnded=false;battleResultSubmitting=false;battleStarted=false;battleSpeed=112;for(let i=0;i<60;i++)battleSimulate(1/60);`);

@@ -527,6 +527,41 @@
             justify-content: center
         }
 
+        .pause-sound-setting {
+            display: block;
+            margin-top: 14px;
+            padding: 12px 13px;
+            border: 1px solid rgba(148,163,184,.22);
+            border-radius: 14px;
+            color: #e2e8f0;
+            background: rgba(30,41,59,.78);
+            text-align: left
+        }
+        .pause-sound-setting-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            font-size: .78rem;
+            font-weight: 900;
+            letter-spacing: .04em
+        }
+        #sfxVolumeValue { color: #fbbf24; font-variant-numeric: tabular-nums }
+        #sfxVolumeSlider {
+            display: block;
+            width: 100%;
+            height: 22px;
+            margin: 7px 0 3px;
+            accent-color: #f59e0b;
+            cursor: pointer
+        }
+        .pause-sound-caption {
+            display: block;
+            color: #94a3b8;
+            font-size: .65rem;
+            line-height: 1.35
+        }
+
         .countdown-overlay {
             position: absolute;
             inset: 0;
@@ -568,6 +603,16 @@
 
         body.touch-device #mobileControls {
             display: flex
+        }
+
+        body.desktop-device #mobileControls {
+            display: none !important
+        }
+
+        body.touch-device #pcRadioPlayer,
+        body.touch-device #littlePlaneRadioInstall,
+        body.touch-device .lp-radio-guide-backdrop {
+            display: none !important
         }
 
         #splashScreen {
@@ -1929,7 +1974,7 @@
             .game-mode-footer { align-items: flex-start; flex-direction: column }
             #headlightButton { width: 46px; min-height: 46px; border-radius: 14px }
             #headlightButton .headlight-key { display: none }
-            #pcRadioPlayer { display: none !important }
+            body.touch-device #pcRadioPlayer { display: none !important }
             #savedMusicList { grid-template-columns: 1fr }
         }
 
@@ -2594,6 +2639,15 @@
             <div class="pause-distance">📍 <span id="pauseDistance">0</span> m</div>
             <div class="pause-buttons"><button id="pauseResumeBtn" class="pause-btn pause-btn-resume">▶ VOLTAR</button><button id="pauseLobbyBtn" class="pause-btn pause-btn-lobby">🏠 LOBBY</button></div>
             <button id="pauseMuteBtn" class="pause-btn pause-mute-btn">🔊 MÚSICA</button>
+            <label class="pause-sound-setting" for="sfxVolumeSlider">
+                <span class="pause-sound-setting-head">
+                    <span id="sfxVolumeLabel">EFEITOS SONOROS</span>
+                    <output id="sfxVolumeValue" for="sfxVolumeSlider">72%</output>
+                </span>
+                <input id="sfxVolumeSlider" type="range" min="0" max="100" step="5" value="72"
+                    aria-label="Volume dos efeitos sonoros">
+                <span class="pause-sound-caption" id="sfxVolumeCaption">Ajuste o motor, o vento e os efeitos. 0% silencia tudo.</span>
+            </label>
         </div>
     </div>
     <div id="gameOverScreen" class="hidden absolute inset-0 z-50 flex flex-col items-center justify-center bg-slate-950/90 text-white px-4">
@@ -4188,7 +4242,7 @@
         let pcRadioCoverToken = 0, pcRadioPollTimer = null, pcRadioPollInFlight = false;
 
         function isDesktopRadioDevice() {
-            return !!window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches
+            return DEVICE_PROFILE.desktop
         }
 
         function isExternalMediaPlaying() { return pcRadioState.available }
@@ -4343,7 +4397,7 @@
         }
 
         function setupPcRadioIntegration() {
-            if (pcRadioPollTimer) return;
+            if (!isDesktopRadioDevice() || pcRadioPollTimer) return;
             drawRadioPlaceholder();
             window.addEventListener('littleplane:open-radio-guide', showPcRadioConnectionGuide);
             const guideButton = document.getElementById('lpRadioInstallAction');
@@ -5304,6 +5358,7 @@
         let clickCtx = null;
 
         function playClickSound() {
+            if (soundEffectsVolume <= 0) return;
             try {
                 if (!clickCtx) clickCtx = new(window.AudioContext || window.webkitAudioContext)();
                 const now = clickCtx.currentTime;
@@ -5311,7 +5366,7 @@
                     gain = clickCtx.createGain();
                 osc.type = 'sine';
                 osc.frequency.value = 880;
-                gain.gain.value = 0.08;
+                gain.gain.value = 0.08 * soundEffectsVolume;
                 osc.connect(gain);
                 gain.connect(clickCtx.destination);
                 osc.start();
@@ -5330,8 +5385,32 @@
             })
         }
 
-        const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-        if (isTouchDevice) document.body.classList.add('touch-device');
+        function detectDeviceProfile(userAgent = navigator.userAgent || '',
+            platform = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || '',
+            touchPoints = navigator.maxTouchPoints || 0) {
+            const ua = String(userAgent),
+                os = String(platform),
+                isAndroid = /Android/i.test(ua),
+                isIPadOS = /Macintosh|MacIntel/i.test(ua + ' ' + os) && Number(touchPoints) > 1,
+                desktopOS = !isAndroid && !isIPadOS &&
+                    /Windows|Win32|Win64|Macintosh|MacIntel|X11|Linux|CrOS|Chrome OS/i.test(ua + ' ' + os),
+                mobileUA = /Android|iPhone|iPad|iPod|Windows Phone|Mobile/i.test(ua) || isIPadOS,
+                mobile = !desktopOS && mobileUA;
+            return {
+                touch: Number(touchPoints) > 0 || ('ontouchstart' in window),
+                mobile,
+                desktop: !mobile
+            }
+        }
+
+        // Touch em notebooks/PCs Windows continua usando o layout de computador.
+        // O modo móvel é reservado a sistemas com identificação real de celular/tablet.
+        const DEVICE_PROFILE = detectDeviceProfile();
+        const isTouchDevice = DEVICE_PROFILE.mobile;
+        document.body.classList.toggle('touch-device', DEVICE_PROFILE.mobile);
+        document.body.classList.toggle('desktop-device', DEVICE_PROFILE.desktop);
+        document.body.dataset.hasTouch = String(DEVICE_PROFILE.touch);
+        document.body.dataset.inputProfile = DEVICE_PROFILE.mobile ? 'mobile' : 'desktop';
 
         let worldReady = false,
             isGeneratingWorld = false;
@@ -5344,9 +5423,9 @@
                 mountR: [52, 95], mountCentralChance: 0.18, mountCentralH: [120, 230], mountCentralR: [48, 88],
                 ringFreq: .62, ringExtra: .42, treeGroups: true, treeCount: [6, 12], treeDense: true, towers: false,
                 blimps: false, balloons: true, camps: false, campChance: 0, lakes: true, lakeChance: .25, river: false },
-            { id: 'montanhas', name: 'Montanhas', icon: '⛰️', startDist: 16000, mountLateral: 190, mountH: [160, 300],
-                mountR: [45, 90], mountCentralChance: 0.22, mountCentralH: [140, 260], mountCentralR: [40, 80],
-                ringFreq: .55, ringExtra: .30, treeGroups: true, treeCount: [2, 4], treeDense: false, towers: true,
+            { id: 'montanhas', name: 'Montanhas', icon: '⛰️', startDist: 16000, mountLateral: 235, mountH: [120, 205],
+                mountR: [36, 68], mountCentralChance: 0.05, mountCentralH: [95, 155], mountCentralR: [30, 50],
+                ringFreq: .62, ringExtra: .38, treeGroups: true, treeCount: [2, 4], treeDense: false, towers: true,
                 blimps: true, balloons: false, camps: false, campChance: 0, lakes: false, lakeChance: 0, river: false },
             { id: 'canions', name: 'Cânions', icon: '🏜️', startDist: 28000, mountLateral: 205, mountH: [240, 420],
                 mountR: [65, 130], mountCentralChance: 0.35, mountCentralH: [200, 380], mountCentralR: [60, 120],
@@ -5690,16 +5769,57 @@
 
         function getAgilityMultiplier() { return 0.7 + (currentPlaneStats.agility - 1) * 0.15 }
 
-        let audioCtx = null,
+        function readSoundEffectsVolume() {
+            try {
+                const saved = localStorage.getItem('littlePlaneSfxVolume');
+                if (saved === null) return .72;
+                const value = Number(saved);
+                return Number.isFinite(value) ? Math.max(0, Math.min(1, value)) : .72
+            } catch (error) { return .72 }
+        }
+
+        let soundEffectsVolume = readSoundEffectsVolume(),
+            sfxMasterGain = null,
+            audioCtx = null,
             engineGain = null,
             engineOsc = null,
             engineOsc2 = null,
             windGain = null,
             birdGain = null, engineRunning = false, propellerPulse = null, propellerDepth = null;
 
+        function updateSoundEffectsUI() {
+            const slider = document.getElementById('sfxVolumeSlider'),
+                value = document.getElementById('sfxVolumeValue'),
+                label = document.getElementById('sfxVolumeLabel'),
+                caption = document.getElementById('sfxVolumeCaption'),
+                percent = Math.round(soundEffectsVolume * 100),
+                english = currentLanguage === 'en';
+            if (slider) slider.value = String(percent);
+            if (value) value.textContent = percent === 0 ? (english ? 'MUTED' : 'MUDO') : percent + '%';
+            if (label) label.textContent = english ? 'SOUND EFFECTS' : 'EFEITOS SONOROS';
+            if (caption) caption.textContent = english
+                ? 'Adjust engine, wind and effects. 0% mutes all game sounds.'
+                : 'Ajuste o motor, o vento e os efeitos. 0% silencia todos os sons do jogo.'
+        }
+
+        function setSoundEffectsVolume(value, persist = true) {
+            const parsed = Number(value);
+            soundEffectsVolume = Math.max(0, Math.min(1, Number.isFinite(parsed) ? parsed : 0));
+            if (sfxMasterGain && audioCtx)
+                sfxMasterGain.gain.setTargetAtTime(soundEffectsVolume, audioCtx.currentTime, .08);
+            updateSoundEffectsUI();
+            if (persist) {
+                try { localStorage.setItem('littlePlaneSfxVolume', soundEffectsVolume.toFixed(2)) }
+                catch (error) {}
+            }
+        }
+
         function initSynth() {
             try {
                 audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+                sfxMasterGain = audioCtx.createGain();
+                sfxMasterGain.gain.value = soundEffectsVolume;
+                sfxMasterGain.connect(audioCtx.destination);
                 engineGain = audioCtx.createGain();
                 engineGain.gain.value = 0;
                 engineOsc = audioCtx.createOscillator();
@@ -5721,7 +5841,7 @@
                 engineOsc2.connect(g2);
                 g2.connect(lpf);
                 lpf.connect(engineGain);
-                engineGain.connect(audioCtx.destination);
+                engineGain.connect(sfxMasterGain);
                 engineOsc.start();
                 engineOsc2.start();
                 propellerPulse = audioCtx.createOscillator();
@@ -5756,11 +5876,11 @@
                 windSrc.connect(windHpf);
                 windHpf.connect(windLpf);
                 windLpf.connect(windGain);
-                windGain.connect(audioCtx.destination);
+                windGain.connect(sfxMasterGain);
                 windSrc.start();
                 birdGain = audioCtx.createGain();
                 birdGain.gain.value = 0;
-                birdGain.connect(audioCtx.destination)
+                birdGain.connect(sfxMasterGain)
             } catch (e) { console.warn(e) }
         }
 
@@ -5797,7 +5917,7 @@
                 g.gain.value = v;
                 g.gain.exponentialRampToValueAtTime(.01, audioCtx.currentTime + d);
                 o.connect(g);
-                g.connect(audioCtx.destination);
+                g.connect(sfxMasterGain || audioCtx.destination);
                 o.start();
                 o.stop(audioCtx.currentTime + d + .05) } catch (e) {}
         }
@@ -6230,8 +6350,9 @@
             gain.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+duration);
             src.connect(filter);filter.connect(gain);
             const stereo=audioCtx.createStereoPanner?.();
-            if(stereo){stereo.pan.value=Math.max(-1,Math.min(1,pan));gain.connect(stereo);stereo.connect(audioCtx.destination)}
-            else gain.connect(audioCtx.destination);
+            const output = sfxMasterGain || audioCtx.destination;
+            if(stereo){stereo.pan.value=Math.max(-1,Math.min(1,pan));gain.connect(stereo);stereo.connect(output)}
+            else gain.connect(output);
             src.onended=()=>{src.disconnect();filter.disconnect();gain.disconnect();stereo?.disconnect()};
             src.start();src.stop(audioCtx.currentTime+duration)
         }
@@ -7732,6 +7853,8 @@ dayNightManager = new DayNightManager(scene, camera, renderer, sunLight, ambient
             trunk: new THREE.MeshStandardMaterial({ color: dessat(0x451a03), flatShading: true }),
             leaves: new THREE.MeshStandardMaterial({ color: dessat(0x15803d), flatShading: true }),
             pine: new THREE.MeshStandardMaterial({ color: dessat(0x1b5e20), flatShading: true }),
+            grass: new THREE.MeshStandardMaterial({ color: 0xffffff, vertexColors: true, roughness: 1,
+                flatShading: true, side: THREE.DoubleSide }),
             cloud: new THREE.MeshStandardMaterial({ color: dessat(0xffe0b0), transparent: true, opacity: .42,
                 roughness: 1, flatShading: true, depthWrite: false }),
             ring: new THREE.MeshBasicMaterial({ color: dessat(0xf59e0b) }),
@@ -7774,6 +7897,63 @@ dayNightManager = new DayNightManager(scene, camera, renderer, sunLight, ambient
 
         function safeX(z, minX, maxX, m = 20, t = 14) { const rng = getRng(z); for (let i = 0; i < t; i++) { let x =
                     minX + rng() * (maxX - minX); if (!isInsideMountain(x, z, m)) return x } return null }
+
+        // Vegetação leve por bloco: um único mesh por chunk, com as folhas agrupadas em geometria.
+        // O mesh só nasce dentro da distância observável e é descartado logo após o avião passar.
+        function _spawnGrass(z, b, rng = getRng(z)) {
+            const palette = b.id === 'canions' ? [0xa58b4c, 0xb7a45d, 0x8d9a4b] :
+                b.id === 'tempestades' ? [0x456b3d, 0x5f8243, 0x71894b] :
+                b.id === 'montanhas' ? [0x4f873e, 0x6e9d4c, 0x88a95b] :
+                b.id === 'floresta' ? [0x286c32, 0x397f37, 0x5d9940] :
+                [0x3f8a35, 0x65a844, 0x86b94f],
+                patchCount = b.id === 'canions' ? 9 : b.id === 'tempestades' ? 18 :
+                    b.id === 'montanhas' ? 24 : 29,
+                positions = [],
+                colors = [];
+            const addVertex = (x, y, localZ, color) => {
+                positions.push(x, y, localZ);
+                colors.push(color.r, color.g, color.b)
+            };
+            for (let i = 0; i < patchCount; i++) {
+                const patchX = (rng() - .5) * 850,
+                    patchZ = (rng() - .5) * 88;
+                if (isInsideMountain(patchX, z + patchZ, 20)) continue;
+                const bladeCount = 4 + Math.floor(rng() * 4),
+                    spread = 3 + rng() * 6;
+                for (let j = 0; j < bladeCount; j++) {
+                    const angle = rng() * Math.PI * 2,
+                        offset = rng() * spread,
+                        centerX = patchX + Math.cos(angle) * offset,
+                        centerZ = patchZ + Math.sin(angle) * offset,
+                        direction = rng() * Math.PI * 2,
+                        dx = Math.cos(direction),
+                        dz = Math.sin(direction),
+                        halfWidth = .75 + rng() * .7,
+                        height = 4.5 + rng() * 6,
+                        lean = .7 + rng() * 2.2,
+                        perpendicularX = -dz,
+                        perpendicularZ = dx,
+                        baseColor = new THREE.Color(palette[Math.floor(rng() * palette.length)])
+                            .multiplyScalar(.82 + rng() * .32),
+                        tipColor = baseColor.clone().multiplyScalar(1.08);
+                    addVertex(centerX - perpendicularX * halfWidth, 0, centerZ - perpendicularZ * halfWidth, baseColor);
+                    addVertex(centerX + perpendicularX * halfWidth, 0, centerZ + perpendicularZ * halfWidth, baseColor);
+                    addVertex(centerX + dx * lean, height, centerZ + dz * lean, tipColor)
+                }
+            }
+            if (!positions.length) return;
+            const geometry = new THREE.BufferGeometry();
+            geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+            geometry.computeVertexNormals();
+            const mesh = new THREE.Mesh(geometry, M.grass);
+            mesh.position.set(0, .2, z);
+            mesh.frustumCulled = true;
+            mesh.castShadow = false;
+            mesh.receiveShadow = false;
+            scene.add(mesh);
+            activeEntities.push({ type: 'grass', mesh, chunkZ: z })
+        }
 
         // Função createLowPolyMountain (baixa, maciça, suave)
         function createLowPolyMountain({ width = 180, depth = 180, height = 70, segments = 18, color = 0x8b8b8b, snow = true,
@@ -8510,14 +8690,14 @@ function _obstacleMountainDims(b, central, rng) {
             g.position.set(x, y, z);
             scene.add(g);
             activeEntities.push({ type: 'balloon', mesh: g, basketRig, baseX: x, baseY: y, baseZ: z,
-                bobAmp: 3.5 + rng() * 2.5, bobSpeed: .2 + rng() * .14, bobPhase: rng() * Math.PI * 2,
-                driftAmp: 10 + rng() * 9, driftSpeed: .07 + rng() * .07, driftPhase: rng() * Math.PI * 2,
-                windAmp: 3 + rng() * 4, windSpeed: .24 + rng() * .14, windPhase: rng() * Math.PI * 2,
-                driftZAmp: 2.5 + rng() * 3.5, driftZSpeed: .17 + rng() * .13,
-                wobbleSpeedP: .28 + rng() * .18, wobbleAmpP: .032, wobbleSpeedR: .22 + rng() * .15,
-                wobbleAmpR: .045, wobblePhaseP: rng() * Math.PI * 2, wobblePhaseR: rng() * Math.PI * 2,
-                basketSwaySpeed: .4 + rng() * .2, basketSwayPhase: rng() * Math.PI * 2,
-                basketSwayP: .022, basketSwayR: .033, colRadius: 14 })
+                bobAmp: 2 + rng() * 1.5, bobSpeed: .18 + rng() * .1, bobPhase: rng() * Math.PI * 2,
+                driftAmp: 7 + rng() * 6, driftSpeed: .055 + rng() * .045, driftPhase: rng() * Math.PI * 2,
+                windAmp: 1.5 + rng() * 2.5, windSpeed: .18 + rng() * .1, windPhase: rng() * Math.PI * 2,
+                driftZAmp: 1.5 + rng() * 2, driftZSpeed: .14 + rng() * .09,
+                wobbleSpeedP: .24 + rng() * .16, wobbleAmpP: .018, wobbleSpeedR: .2 + rng() * .12,
+                wobbleAmpR: .028, wobblePhaseP: rng() * Math.PI * 2, wobblePhaseR: rng() * Math.PI * 2,
+                basketSwaySpeed: .34 + rng() * .18, basketSwayPhase: rng() * Math.PI * 2,
+                basketSwayP: .014, basketSwayR: .022, colRadius: 14 })
         }
 
         function _spawnTower(z, x) {
@@ -8599,6 +8779,7 @@ function _obstacleMountainDims(b, central, rng) {
             if (isMultiplayerReservedChunk(z)) {
                 if (rng() < .65) _spawnCloud(z + (rng() - .5) * 70, (rng() - .5) * 700);
                 if (b.river) _spawnRiverSeg(z);
+                _spawnGrass(z, b, rng);
                 enableSceneShadowsFrom(shadowStartIndex);
                 return
             }
@@ -8607,7 +8788,8 @@ function _obstacleMountainDims(b, central, rng) {
 
             spawnMtn(z, -b.mountLateral - rng() * 50, b, false);
             spawnMtn(z, b.mountLateral + rng() * 50, b, false);
-            if (rng() < .45) {
+            const extraSideMountainChance = b.id === 'montanhas' ? .08 : .45;
+            if (rng() < extraSideMountainChance) {
                 spawnMtn(z, -b.mountLateral - 60 - rng() * 60, b, false);
                 spawnMtn(z, b.mountLateral + 60 + rng() * 60, b, false);
             }
@@ -8678,6 +8860,7 @@ function _obstacleMountainDims(b, central, rng) {
                 let cx = safeX(z, -200, 200, 30);
                 if (cx !== null) _spawnCamp(z + (rng() - .5) * 40, cx);
             }
+            _spawnGrass(z, b, rng);
             enableSceneShadowsFrom(shadowStartIndex);
         }
 
@@ -8708,6 +8891,7 @@ function _obstacleMountainDims(b, central, rng) {
                 if (gen < 5) {
                     const rng = getRng(nextSpawnZ);
                     const spawnMtn = (b.id === "canions") ? _spawnCanyonMountain : _spawnMountain;
+                    _spawnGrass(nextSpawnZ, b, rng);
                     spawnMtn(nextSpawnZ, -b.mountLateral - 10 - rng() * 60, b, false);
                     spawnMtn(nextSpawnZ, b.mountLateral + 10 + rng() * 60, b, false);
                     if (selectedGameMode !== 'music' && (gen === 1 || gen === 3)) _spawnRing(nextSpawnZ, 0, 45);
@@ -8813,7 +8997,8 @@ function _obstacleMountainDims(b, central, rng) {
                 const mountainRearExtent = e.type === 'mountain' && e.mWidth && e.mDepth ?
                     Math.abs(Math.sin(e.mesh.rotation.y)) * e.mWidth * .5 +
                     Math.abs(Math.cos(e.mesh.rotation.y)) * e.mDepth * .5 : 0;
-                if (e.mesh.position.z > airplane.position.z + 200 + mountainRearExtent) {
+                const behindLimit = e.type === 'grass' ? 45 : 200 + mountainRearExtent;
+                if (e.mesh.position.z > airplane.position.z + behindLimit) {
                     if (e.type === 'mountain') {
                         let idx = spawnedMountains.findIndex(m => m.x === e.mesh.position.x && m.z === e.mesh.position.z);
                         if (idx >= 0) spawnedMountains.splice(idx, 1)
@@ -12433,7 +12618,7 @@ function checkCollisions() {
             let s = loadSave();
             if (s.lastPlaneColor) planeColor = s.lastPlaneColor;
             init3D();
-            setupMobileControls();
+            if (DEVICE_PROFILE.mobile) setupMobileControls();
             renderer.render(scene, camera);
             document.getElementById('loadingOverlay').style.display = 'flex';
             document.getElementById('loadingText').innerText = t('loading');
@@ -12497,6 +12682,9 @@ function checkCollisions() {
                 playClickSound(); });
             document.getElementById('pauseMuteBtn').addEventListener('click', () => { toggleMusic();
                 playClickSound(); });
+            document.getElementById('sfxVolumeSlider')?.addEventListener('input', event =>
+                setSoundEffectsVolume(Number(event.target.value) / 100));
+            updateSoundEffectsUI();
             updateMuteButtonUI();
             updateHeadlightButton();
             window.addEventListener('resize', function() {
