@@ -9072,21 +9072,34 @@ function _obstacleMountainDims(b, central, rng) {
                 Math.abs(distance - MP_RACE_DISTANCE) < 180
         }
 
+        function spawnOuterDecorativeMountains(z, b, rng, spawnMtn) {
+            // Duas fileiras visuais de cada lado, chegando perto da borda do terreno de 2.200 unidades.
+            // O quinto argumento ativa o modo sem colisão e sem reserva de espaço no corredor.
+            for (const side of [-1, 1]) {
+                const middleEdgeX = side * (790 + rng() * 42),
+                    farEdgeX = side * (965 + rng() * 28),
+                    middleZ = z + (rng() - .5) * 58,
+                    farZ = z + (rng() - .5) * 72;
+                spawnMtn(middleZ, middleEdgeX, b, false, true);
+                spawnMtn(farZ, farEdgeX, b, false, true)
+            }
+        }
+
         // Gera o mesmo bloco para os dois pilotos quando há uma corrida em preparação ou ativa.
         function spawnChunk(z, b) {
             const shadowStartIndex = scene ? scene.children.length : 0,
-                rng = getRng(z);
+                rng = getRng(z),
+                spawnMtn = b.id === 'canions' ? _spawnCanyonMountain : _spawnMountain;
             // As áreas dos vulcões e da chegada ficam livres de obstáculos aleatórios. O cenário
             // lateral continua visível, mas a passagem depende apenas dos marcos compartilhados.
             if (isMultiplayerReservedChunk(z)) {
                 if (rng() < .65) _spawnCloud(z + (rng() - .5) * 70, (rng() - .5) * 700);
+                spawnOuterDecorativeMountains(z, b, rng, spawnMtn);
                 if (b.river) _spawnRiverSeg(z);
                 _spawnGrass(z, b, rng);
                 enableSceneShadowsFrom(shadowStartIndex);
                 return
             }
-            // Escolhe a função de montanha correta com base no bioma
-            const spawnMtn = (b.id === "canions") ? _spawnCanyonMountain : _spawnMountain;
 
             spawnMtn(z, -b.mountLateral - rng() * 50, b, false);
             spawnMtn(z, b.mountLateral + rng() * 50, b, false);
@@ -9107,14 +9120,7 @@ function _obstacleMountainDims(b, central, rng) {
             }
             // Cordilheiras puramente visuais avançam até as duas bordas do terreno (±1.100).
             // São menores e não entram na lista de colisores nem nas reservas de obstáculos.
-            for (const side of [-1, 1]) {
-                const middleEdgeX = side * (790 + rng() * 42),
-                    farEdgeX = side * (965 + rng() * 28),
-                    middleZ = z + (rng() - .5) * 58,
-                    farZ = z + (rng() - .5) * 72;
-                spawnMtn(middleZ, middleEdgeX, flankRange, false, true);
-                spawnMtn(farZ, farEdgeX, flankRange, false, true);
-            }
+            spawnOuterDecorativeMountains(z, flankRange, rng, spawnMtn);
             if (b.lakes && rng() < b.lakeChance) {
                 const lx = safeX(z, -185, 185, 55);
                 if (lx !== null) _spawnLake(z + (rng() - .5) * 55, lx, b.id);
@@ -9227,6 +9233,7 @@ function _obstacleMountainDims(b, central, rng) {
                     _spawnGrass(nextSpawnZ, b, rng);
                     spawnMtn(nextSpawnZ, -b.mountLateral - 10 - rng() * 60, b, false);
                     spawnMtn(nextSpawnZ, b.mountLateral + 10 + rng() * 60, b, false);
+                    spawnOuterDecorativeMountains(nextSpawnZ, b, rng, spawnMtn);
                     if (selectedGameMode !== 'music' && (gen === 1 || gen === 3)) _spawnRing(nextSpawnZ, 0, 45);
                     _spawnCloud(nextSpawnZ, (rng() - .5) * 600);
                     nextSpawnZ -= 120;
