@@ -7824,9 +7824,13 @@ function setFlightCameraMode(firstPerson) {
                 camera.updateMatrixWorld(true);
                 if (flightCockpit) flightCockpit.visible = true
             } else {
+                // Reparenting preserves the world position so switching back to chase view is smooth.
+                camera.updateMatrixWorld(true);
+                const worldPosition = camera.getWorldPosition(new THREE.Vector3()),
+                    worldQuaternion = camera.getWorldQuaternion(new THREE.Quaternion());
                 scene.add(camera);
-                camera.position.set(0, 0, 0);
-                camera.rotation.set(0, 0, 0);
+                camera.position.copy(worldPosition);
+                camera.quaternion.copy(worldQuaternion);
                 camera.up.set(0, 1, 0);
                 if (flightCockpit) flightCockpit.visible = false
             }
@@ -9405,7 +9409,11 @@ function _obstacleMountainDims(b, central, rng) {
 
         function spawnAirplane(forcedPlaneId = null) {
             if (airplane) {
-                if (camera && camera.parent === airplane) scene.add(camera);
+                if (camera && camera.parent === airplane) {
+                    scene.add(camera);
+                    camera.position.set(0, 52, 30);
+                    camera.rotation.set(0, 0, 0);
+                }
                 scene.remove(airplane);
                 const geometries = new Set(), materials = new Set();
                 airplane.traverse(part => {
