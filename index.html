@@ -5431,8 +5431,8 @@
                 mountR: [65, 130], mountCentralChance: 0.35, mountCentralH: [200, 380], mountCentralR: [60, 120],
                 ringFreq: .46, ringExtra: .22, treeGroups: false, treeCount: [0, 0], treeDense: false, towers: true,
                 blimps: false, balloons: false, camps: false, campChance: 0, lakes: false, lakeChance: 0, river: true },
-            { id: 'tempestades', name: 'Tempestades', icon: '⛈️', startDist: 44000, mountLateral: 245, mountH: [180, 275],
-                    mountR: [50, 90], mountCentralChance: 0.08, mountCentralH: [140, 220], mountCentralR: [40, 70],
+            { id: 'tempestades', name: 'Tempestades', icon: '⛈️', startDist: 44000, mountLateral: 245, mountH: [180, 295],
+                    mountR: [58, 102], mountCentralChance: 0.22, mountCentralH: [155, 245], mountCentralR: [48, 82],
                     ringFreq: .40, ringExtra: .18, treeGroups: true, treeCount: [2, 4], treeDense: false,
                 towers: true, blimps: true, balloons: false, camps: false, campChance: 0, lakes: false, lakeChance: 0,
                 river: false },
@@ -5551,7 +5551,8 @@
         const keyboard = {},
             touchInputs = { up: false, down: false, left: false, right: false };
         const cameraFlightTarget = new THREE.Vector3(), cameraLookTarget = new THREE.Vector3();
-        let flightCockpit = null;
+        let flightCockpit = null,
+            firstPersonFlightView = false;
         let localColliders = [],
             worldColliderPoints = [],
             airplaneColliderHalfLength = 8,
@@ -7811,6 +7812,26 @@ const moonPos = new THREE.Vector3(0, moonY, moonZ);
     }
 }
 
+function setFlightCameraMode(firstPerson) {
+            if (!camera || !scene || !airplane || battleActive) return;
+            firstPersonFlightView = !!firstPerson;
+            if (firstPersonFlightView) {
+                // A câmera passa a ser filha do avião: herda posição, inclinação, guinada e rolagem.
+                airplane.add(camera);
+                camera.position.set(0, 2.65, -.55);
+                camera.rotation.set(0, Math.PI, 0);
+                camera.up.set(0, 1, 0);
+                camera.updateMatrixWorld(true);
+                if (flightCockpit) flightCockpit.visible = true
+            } else {
+                scene.add(camera);
+                camera.position.set(0, 0, 0);
+                camera.rotation.set(0, 0, 0);
+                camera.up.set(0, 1, 0);
+                if (flightCockpit) flightCockpit.visible = false
+            }
+        }
+
         function createFlightCockpit() {
             if (!camera) return;
             if (flightCockpit) camera.remove(flightCockpit);
@@ -7864,6 +7885,7 @@ const moonPos = new THREE.Vector3(0, moonY, moonZ);
             scene.background = null;
             scene.fog = new THREE.Fog(0xff9944, 700, 1500);
             camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, .1, 4000);
+            scene.add(camera);
             renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
             renderer.setSize(innerWidth, innerHeight);
@@ -9072,19 +9094,6 @@ function _obstacleMountainDims(b, central, rng) {
                 Math.abs(distance - MP_RACE_DISTANCE) < 180
         }
 
-        function spawnOuterDecorativeMountains(z, b, rng, spawnMtn) {
-            // Duas fileiras visuais de cada lado, chegando perto da borda do terreno de 2.200 unidades.
-            // O quinto argumento ativa o modo sem colisão e sem reserva de espaço no corredor.
-            for (const side of [-1, 1]) {
-                const middleEdgeX = side * (790 + rng() * 42),
-                    farEdgeX = side * (965 + rng() * 28),
-                    middleZ = z + (rng() - .5) * 58,
-                    farZ = z + (rng() - .5) * 72;
-                spawnMtn(middleZ, middleEdgeX, b, false, true);
-                spawnMtn(farZ, farEdgeX, b, false, true)
-            }
-        }
-
         // Gera o mesmo bloco para os dois pilotos quando há uma corrida em preparação ou ativa.
         function spawnChunk(z, b) {
             const shadowStartIndex = scene ? scene.children.length : 0,
@@ -9094,7 +9103,6 @@ function _obstacleMountainDims(b, central, rng) {
             // lateral continua visível, mas a passagem depende apenas dos marcos compartilhados.
             if (isMultiplayerReservedChunk(z)) {
                 if (rng() < .65) _spawnCloud(z + (rng() - .5) * 70, (rng() - .5) * 700);
-                spawnOuterDecorativeMountains(z, b, rng, spawnMtn);
                 if (b.river) _spawnRiverSeg(z);
                 _spawnGrass(z, b, rng);
                 enableSceneShadowsFrom(shadowStartIndex);
@@ -9105,22 +9113,34 @@ function _obstacleMountainDims(b, central, rng) {
             spawnMtn(z, b.mountLateral + rng() * 50, b, false);
             // Cordilheiras contínuas em TODO o mapa: duas fileiras extras em cada lateral.
             // Mantêm a identidade visual do bioma e deixam o corredor central livre.
-            const flankRange = {
+            const innerFlankRange = {
                 ...b,
                 mountH: [b.mountH[0] * .72, b.mountH[1] * .84],
                 mountR: [b.mountR[0] * .88, b.mountR[1] * .94]
+            };
+            // A segunda fileira externa fica mais encorpada, mas sem chegar à borda do terreno.
+            const outerFlankRange = {
+                ...b,
+                mountH: [b.mountH[0] * .86, b.mountH[1] * .96],
+                mountR: [b.mountR[0] * 1.02, b.mountR[1] * 1.08]
             };
             for (const side of [-1, 1]) {
                 const innerOffset = b.mountLateral + 105 + rng() * 22,
                     outerOffset = b.mountLateral + 220 + rng() * 28,
                     innerZ = z + (rng() - .5) * 34,
                     outerZ = z + (rng() - .5) * 48;
-                spawnMtn(innerZ, side * innerOffset, flankRange, false);
-                spawnMtn(outerZ, side * outerOffset, flankRange, false);
+                spawnMtn(innerZ, side * innerOffset, innerFlankRange, false);
+                spawnMtn(outerZ, side * outerOffset, outerFlankRange, false);
             }
-            // Cordilheiras puramente visuais avançam até as duas bordas do terreno (±1.100).
-            // São menores e não entram na lista de colisores nem nas reservas de obstáculos.
-            spawnOuterDecorativeMountains(z, flankRange, rng, spawnMtn);
+            // Tempestades ganha uma linha interna adicional de montanhas cinzentas.
+            // Elas são obstáculos reais, colocados perto dos limites laterais da rota.
+            if (b.id === 'tempestades') {
+                for (const side of [-1, 1]) {
+                    const x = side * (b.mountLateral + 45 + rng() * 35),
+                        mountainZ = z + (rng() - .5) * 54;
+                    spawnMtn(mountainZ, x, b, false);
+                }
+            }
             if (b.lakes && rng() < b.lakeChance) {
                 const lx = safeX(z, -185, 185, 55);
                 if (lx !== null) _spawnLake(z + (rng() - .5) * 55, lx, b.id);
@@ -9388,6 +9408,7 @@ function _obstacleMountainDims(b, central, rng) {
 
         function spawnAirplane(forcedPlaneId = null) {
             if (airplane) {
+                if (camera && camera.parent === airplane) scene.add(camera);
                 scene.remove(airplane);
                 const geometries = new Set(), materials = new Set();
                 airplane.traverse(part => {
@@ -9409,6 +9430,8 @@ function _obstacleMountainDims(b, central, rng) {
             });
             airplane.rotation.y = Math.PI;
             airplane.position.set(0, 45, 0);
+            firstPersonFlightView = false;
+            if (camera && camera.parent !== scene) scene.add(camera);
             scene.add(airplane);
             applyPlaneStats(planeId);
             rebuildAirplaneCollider();
@@ -9427,6 +9450,12 @@ function _obstacleMountainDims(b, central, rng) {
                 !isGeneratingWorld) {
                 e.preventDefault();
                 toggleHeadlight()
+            }
+            if (e.key.toLowerCase() === 'v' && gameActive && !isPaused && !resumeCountdownActive &&
+                !isGeneratingWorld && !battleActive) {
+                e.preventDefault();
+                setFlightCameraMode(!firstPersonFlightView);
+                showFeedback(firstPersonFlightView ? 'Visão da cabine' : 'Visão externa', true)
             }
         });
         window.addEventListener('keyup', e => { keyboard[e.key.toLowerCase()] = false; });
@@ -9670,30 +9699,42 @@ function _obstacleMountainDims(b, central, rng) {
             }
             updateAircraftLights();
             updatePcRadioPlayer(dt);
-            let camPos = cameraFlightTarget.copy(airplane.position);
-            // Câmera na posição do piloto, ligeiramente atrás do centro da fuselagem.
-            camPos.y += 3.8;
-            camPos.z += 9.5;
-            if (alienEvent.active && alienEvent.interference > .02) {
-                camPos.x += Math.sin(alienEvent.totalTimer * 39) * 2.7 * alienEvent.interference;
-                camPos.y += Math.cos(alienEvent.totalTimer * 33) * 1.65 * alienEvent.interference
+            if (firstPersonFlightView && !battleActive) {
+                if (camera.parent !== airplane) setFlightCameraMode(true);
+                // A perspectiva é calculada no referencial local do avião, não por aproximação externa.
+                camera.position.set(0, 2.65, -.55);
+                camera.rotation.set(0, Math.PI, 0);
+                if (alienEvent.active && alienEvent.interference > .02) {
+                    camera.position.x += Math.sin(alienEvent.totalTimer * 39) * 1.5 * alienEvent.interference;
+                    camera.position.y += Math.cos(alienEvent.totalTimer * 33) * 1.0 * alienEvent.interference
+                }
+                if (flightCockpit) flightCockpit.visible = gameActive && worldReady
+            } else {
+                if (camera.parent !== scene) setFlightCameraMode(false);
+                // Distância externa original, antes da tentativa anterior de primeira pessoa.
+                let camPos = cameraFlightTarget.copy(airplane.position);
+                camPos.y += 7;
+                camPos.z += 30;
+                if (alienEvent.active && alienEvent.interference > .02) {
+                    camPos.x += Math.sin(alienEvent.totalTimer * 39) * 2.7 * alienEvent.interference;
+                    camPos.y += Math.cos(alienEvent.totalTimer * 33) * 1.65 * alienEvent.interference
+                }
+                if (volcanoEvent.active && volcanoEvent.impactShake > .01) {
+                    camPos.x += (Math.random() - .5) * 7 * volcanoEvent.impactShake;
+                    camPos.y += (Math.random() - .5) * 5 * volcanoEvent.impactShake
+                }
+                if (meteorEvent.active && meteorEvent.impactShake > .01) {
+                    camPos.x += (Math.random() - .5) * 8 * meteorEvent.impactShake;
+                    camPos.y += (Math.random() - .5) * 6 * meteorEvent.impactShake
+                }
+                let camAlpha = 1 - Math.pow(0.003, dt);
+                camera.position.lerp(camPos, camAlpha);
+                cameraLookTarget.copy(airplane.position);
+                cameraLookTarget.z -= 40;
+                camera.lookAt(cameraLookTarget);
+                camera.rotation.z = bankAngle * -.30;
+                if (flightCockpit) flightCockpit.visible = false
             }
-            if (volcanoEvent.active && volcanoEvent.impactShake > .01) {
-                camPos.x += (Math.random() - .5) * 7 * volcanoEvent.impactShake;
-                camPos.y += (Math.random() - .5) * 5 * volcanoEvent.impactShake
-            }
-            if (meteorEvent.active && meteorEvent.impactShake > .01) {
-                camPos.x += (Math.random() - .5) * 8 * meteorEvent.impactShake;
-                camPos.y += (Math.random() - .5) * 6 * meteorEvent.impactShake
-            }
-            let camAlpha = 1 - Math.pow(0.003, dt);
-            camera.position.lerp(camPos, camAlpha);
-            cameraLookTarget.copy(airplane.position);
-            cameraLookTarget.y += 2.2;
-            cameraLookTarget.z -= 130;
-            camera.lookAt(cameraLookTarget);
-            camera.rotation.z = bankAngle * -.22;
-            if (flightCockpit) flightCockpit.visible = gameActive && worldReady;
             manageEnvironment(currentBiome);
             updateStats(dt, dist);
             updateMultiplayerRaceHud(Math.abs(airplane.position.z));
